@@ -1,5 +1,7 @@
 # ite8291r3-gui
 
+![](imgs/ss.png)
+
 **Tested on Tuxedo Stellaris 15. Still in development!**
 
 - Install dependencies
