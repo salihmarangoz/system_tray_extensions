@@ -19,3 +19,22 @@ $ sudo cp tray.py /usr/local/bin/ite_tray.py
   - Command: `/usr/bin/python3 /usr/local/bin/ite_tray.py`
 
 - Reboot
+
+
+
+# Extra: Lightbar for Stellaris 15
+
+- Make sure `tuxedo_keyboard` is installed.
+
+```
+sudo crontab -e
+```
+
+- Add this line then save
+
+```
+@reboot echo 1 > /sys/devices/platform/tuxedo_keyboard/leds/lightbar_animation::status/brightness
+```
+
+- Reboot
+
