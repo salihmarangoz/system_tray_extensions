@@ -22,6 +22,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="6004", MODE:="066
 
 ```python
 $ sudo cp tray.py /usr/local/bin/ite_tray.py
+$ sudo cp icon.png /usr/local/etc/ite_tray_icon.png
 ```
 
 - Open `Startup Applications Preferences` and add the application
