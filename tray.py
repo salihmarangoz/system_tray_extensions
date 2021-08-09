@@ -1,6 +1,7 @@
 from PyQt5.QtGui import * 
 from PyQt5.QtWidgets import * 
 from ite8291r3_ctl import ite8291r3
+import webbrowser
 
 
 ite = ite8291r3.get()
@@ -19,7 +20,7 @@ tray.setVisible(True)
 
 menu = QMenu()
 
-turnoff = QAction("Turn Off")
+turnoff = QAction("Turn Off Keyboard Backlight")
 menu.addAction(turnoff)
 exec("turnoff.triggered.connect(lambda: ite.turn_off() )")
 
@@ -27,7 +28,7 @@ testpattern = QAction("Test Pattern")
 menu.addAction(testpattern)
 exec("testpattern.triggered.connect(lambda: ite.test_pattern() )")
 
-freeze = QAction("Freeze")
+freeze = QAction("Freeze Animation")
 menu.addAction(freeze)
 exec("freeze.triggered.connect(lambda: ite.freeze() )")
 
@@ -44,8 +45,8 @@ exec("decbrightness.triggered.connect(lambda: ite.set_brightness(ite.get_brightn
 
 menu.addSeparator()
 
-
-colors = {"red":    (255,   0,   0),
+colors = {"white":  (255, 255, 255),
+          "red":    (255,   0,   0),
           "orange": (255,  28,   0),
           "yellow": (255, 119,   0),
           "green":  (  0, 255,   0),
@@ -54,25 +55,38 @@ colors = {"red":    (255,   0,   0),
           "purple": (255,   0, 255),
           }
 
+color_menu = QMenu("Mono Color")
+
 qactions_colors = {}
 for k,v in colors.items():
     action = QAction(k.capitalize())
     qactions_colors[k] = action
-    menu.addAction(action)
+    color_menu.addAction(action)
     exec("action.triggered.connect(lambda: ite.set_color("+str(v)+"))")
 
-menu.addSeparator()
+menu.addMenu(color_menu)
+
+
+effect_menu = QMenu("Effects")
 
 # Creating the options dynamically
 qactions_effects = {}
 for k,v in ite8291r3.effects.items():
     action = QAction(k.capitalize())
     qactions_effects[k] = action
-    menu.addAction(action)
+    effect_menu.addAction(action)
     exec("action.triggered.connect(lambda: ite.set_effect( ite8291r3.effects[\""+k+"\"]()) )")
+
+menu.addMenu(effect_menu)
 
 
 menu.addSeparator()
+
+
+about = QAction("About")
+project_webpage_url = "https://github.com/salihmarangoz/ite8291r3-gui"
+exec("about.triggered.connect(lambda: webbrowser.open(project_webpage_url) )")
+menu.addAction(about)
 
 # To quit the app
 quit = QAction("Quit")
