@@ -1,35 +1,21 @@
 # ite8291r3-gui
 
+**Tested on Tuxedo Stellaris 15**
+
+**Still in development!**
+
 **Image below may be outdated**
 
 ![](imgs/ss.png)
 
-**Tested on Tuxedo Stellaris 15. Still in development!**
+## Install
 
-- Install dependencies
-
-```
-pip install ite8291r3-ctl PyQt5 pyusb python-is-python3
+```bash
+$ bash install.sh
 ```
 
-- Create a file `/etc/udev/rules.d/99-ite8291.rules`:
+- You can reboot and run `ite8291r3-ctl test-pattern` for testing if installation of `ite8291r3-ctl` was done correctly.
 
-```
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="ce00", MODE:="0666"
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="6004", MODE:="0666"
-```
-
-- You can reboot and run `ite8291r3-ctl test-pattern` for testing if installation was done correclty.
-- Install the system tray application:
-
-```python
-$ sudo cp tray.py /usr/local/bin/ite_tray.py
-$ sudo cp icon.png /usr/local/etc/ite_tray_icon.png
-```
-
-- Open `Startup Applications Preferences` and add the application
-  - Name: `ite_tray`
-  - Command: `/usr/bin/python3 /usr/local/bin/ite_tray.py`
 - Currently there is no saving feature. If you would like to setup a default mod then run `sudo crontab -e`  and add this line:
 
 ```
@@ -41,7 +27,9 @@ $ sudo cp icon.png /usr/local/etc/ite_tray_icon.png
 
 
 
-# Extra: Lightbar for Stellaris 15
+## Extra: Lightbar for Stellaris 15
+
+Currently lightbar is not managed by this app. However you can add an animation to the lightbar.
 
 - Make sure `tuxedo_keyboard` is installed.
 

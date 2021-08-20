@@ -15,7 +15,7 @@ app = QApplication([])
 app.setQuitOnLastWindowClosed(False)
   
 # Adding an icon
-icon = QIcon("/usr/local/etc/ite_tray_icon.png")
+icon = QIcon("icon.png")
   
 # Adding item on the menu bar
 tray = QSystemTrayIcon()
