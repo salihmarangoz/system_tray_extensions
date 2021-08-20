@@ -2,10 +2,13 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import * 
 from ite8291r3_ctl import ite8291r3
 import webbrowser
+import os
 
 
 import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 ite = ite8291r3.get()
