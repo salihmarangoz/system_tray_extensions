@@ -5,7 +5,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 
 echo "[*] Installing Python3 Dependencies"
-pip install ite8291r3-ctl PyQt5 pyusb
+pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
 
 
 echo "[*] Creating udev rules for ite8291"
@@ -19,6 +19,9 @@ echo "[*] Installing the app into $INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 cp "$SCRIPT_DIR/app/ite_tray.py" "$INSTALL_DIR/ite_tray.py"
 cp "$SCRIPT_DIR/app/icon.png" "$INSTALL_DIR/icon.png"
+
+mkdir -p "$HOME/.ite_tray_layouts"
+cp -r "$SCRIPT_DIR/default_layouts/." "$HOME/.ite_tray_layouts/"
 
 
 echo "[*] Creating/overwriting autostart entry"
