@@ -11,6 +11,7 @@
 ## Install/Update
 
 ```bash
+$ pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
 $ bash install.sh
 ```
 

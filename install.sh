@@ -3,11 +3,6 @@
 INSTALL_DIR="$HOME/.local/share/ite8291r3_gui"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-
-echo "[*] Installing Python3 Dependencies"
-pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
-
-
 echo "[*] Creating udev rules for ite8291"
 sudo tee /etc/udev/rules.d/99-ite8291.rules << END
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="ce00", MODE:="0666"
