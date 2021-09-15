@@ -1,12 +1,10 @@
 # ite8291r3-gui
 
-**Tested on Tuxedo Stellaris 15**
-
-**Still in development!**
-
-**Image below may be outdated**
+**GUI for [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl)**
 
 ![](imgs/ss.png)
+
+
 
 ## Install/Update
 
@@ -15,16 +13,35 @@ $ pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
 $ bash install.sh
 ```
 
-- You can reboot and run `ite8291r3-ctl test-pattern` for testing if installation of `ite8291r3-ctl` was done correctly.
-
 - Currently there is no saving feature. If you would like to setup a default mod then run `sudo crontab -e`  and add this line:
 
 ```
-# DEFAULT KEYBOARD BACKLIGHT MODE AFTER REBOOT
 @reboot /usr/local/bin/ite8291r3-ctl effect rainbow
 ```
 
-- Reboot
+
+
+## Running
+
+App will start on boot by default. You can start it just after the installation with this command:
+
+```bash
+$ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the terminal
+```
+
+
+
+## Custom Layouts
+
+- Custom layouts are located at `~/.ite_tray_layouts`. 
+- Copy `default.png`, rename and modify using Gimp or a similar image editing software.
+- Deleting `default.png` triggers generating it again. 
+- Some cells may not be mapped to a RGB light, do not worry. 
+- This app only reads center pixels of the cells. Do not worry about the edges.
+
+
+
+![](imgs/photo.jpg)
 
 
 
@@ -46,3 +63,21 @@ sudo crontab -e
 ```
 
 - Reboot
+
+
+
+## To-Do
+
+- Remember the last state.
+- Frequently used effects, colors.
+- Better gamma correction. (I don't have any device to calibrate it. Also this is not a solution. But better estimations would be nice.)
+- Report brightness in the menu. And put "+" and "-" into the same entry.
+- Update checking feature.
+- pip3 install to virtual environment?
+- Start on boot enable/disable button.
+- Keyboard shortcuts for effects? "Save this state to shortcut: xyz"
+
+- Report cpu/gpu temps and battery state
+- Alerts for low battery
+- Sound spectrum analyzer
+- Forwards logs to journalctl or to a file.
