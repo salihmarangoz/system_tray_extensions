@@ -8,7 +8,7 @@
 
 ![](imgs/ss.png)
 
-## Install
+## Install/Update
 
 ```bash
 $ bash install.sh
@@ -45,4 +45,3 @@ sudo crontab -e
 ```
 
 - Reboot
-
