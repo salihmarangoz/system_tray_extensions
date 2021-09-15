@@ -56,11 +56,39 @@ def exit_confirmation():
      app.quit()
 
 
+previous_brightness = 50
+def toggle_onoff():
+    global previous_brightness
+    current_brightness = ite.get_brightness()
+    if current_brightness > 0:
+        previous_brightness = current_brightness
+        ite.set_brightness(0)
+    else:
+        ite.set_brightness(previous_brightness)
+
+
 create_menu_memory = [] # this is needed because garbage collector removes actions after the function returns
 def create_menu():
     create_menu_memory.clear()
 
     menu = QMenu()
+
+    toggle = QAction("Toggle On/Off")
+    create_menu_memory.append(toggle)
+    menu.addAction(toggle)
+    exec("toggle.triggered.connect(lambda: toggle_onoff() )")
+
+    incbrightness = QAction("Increase Brightness")
+    create_menu_memory.append(incbrightness)
+    menu.addAction(incbrightness)
+    exec("incbrightness.triggered.connect(lambda: ite.set_brightness(min(ite.get_brightness()+10,50)) )")
+
+    decbrightness = QAction("Decrease Brightness")
+    create_menu_memory.append(decbrightness)
+    menu.addAction(decbrightness)
+    exec("decbrightness.triggered.connect(lambda: ite.set_brightness(max(ite.get_brightness()-10,10)) )")
+
+    menu.addSeparator() #================================================================
 
     effect_menu = QMenu("Effects")
 
@@ -136,24 +164,6 @@ def create_menu():
     menu.addMenu(custom_layout_menu)
 
     menu.addSeparator() #================================================================
-
-    incbrightness = QAction("Increase Brightness")
-    create_menu_memory.append(incbrightness)
-    menu.addAction(incbrightness)
-    exec("incbrightness.triggered.connect(lambda: ite.set_brightness(min(ite.get_brightness()+10,50)) )")
-
-    decbrightness = QAction("Decrease Brightness")
-    create_menu_memory.append(decbrightness)
-    menu.addAction(decbrightness)
-    exec("decbrightness.triggered.connect(lambda: ite.set_brightness(max(ite.get_brightness()-10,10)) )")
-
-    menu.addSeparator() #================================================================
-
-
-    turnoff = QAction("Turn Off Keyboard Backlight")
-    create_menu_memory.append(turnoff)
-    menu.addAction(turnoff)
-    exec("turnoff.triggered.connect(lambda: ite.turn_off() )")
 
     freeze = QAction("Freeze Animation")
     create_menu_memory.append(freeze)
