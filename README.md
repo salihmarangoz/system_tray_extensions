@@ -6,10 +6,22 @@
 
 
 
+## Check Device Compatibility
+
+This command should return an entry similar to `Bus 003 Device 004: ID 048d:6004 Integrated Technology Express, Inc.` Nothing returning means you may not have compatible devices. If you find similar drivers to `ite8291r3-ctl` I can add them to the project, open an issue for it.
+
+```bash
+$ lsusb | grep -e 048d:6004 -e 048d:ce00
+```
+
+
+
 ## Install/Update
 
 ```bash
 $ pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
+$ git clone https://github.com/salihmarangoz/ite8291r3-gui
+$ cd ite8291r3-gui
 $ bash install.sh
 ```
 
@@ -63,6 +75,7 @@ sudo crontab -e
 ```
 
 - Reboot
+- Also another good idea for using the lightbar: https://github.com/salihmarangoz/ite8291r3-gui/issues/1#issuecomment-919353029
 
 
 
@@ -76,8 +89,8 @@ sudo crontab -e
 - pip3 install to virtual environment?
 - Start on boot enable/disable button.
 - Keyboard shortcuts for effects? "Save this state to shortcut: xyz"
-
 - Report cpu/gpu temps and battery state
 - Alerts for low battery
 - Sound spectrum analyzer
 - Forwards logs to journalctl or to a file.
+- Control lightbar if it is detected.
