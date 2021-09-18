@@ -94,3 +94,13 @@ sudo crontab -e
 - Sound spectrum analyzer
 - Forwards logs to journalctl or to a file.
 - Control lightbar if it is detected.
+
+**Rework Path:**
+
+- Install will be done via `git clone` and `bash install.sh`, update will be done via `git pull` 
+- $HOME/.rgb_keyboard_gui/custom_presets (png, py, .gitignore?)
+- $HOME/.rgb_keyboard_gui/settings.ini
+- $HOME/.rgb_keyboard_gui/app.py
+- $HOME/.rgb_keyboard_gui/venv (optional) (.gitignore?)
+- ite8291r3-ctl will wrapped in a Driver class. Project may support other drivers in the future.
+- change project name to rgb_keyboard_gui
