@@ -4,11 +4,14 @@
 
 ## Extensions
 
+**TODO: add readme per extension**
+
 - [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) (RGB Keyboard Driver for `048d:6004` and `048d:ce00`)
 - Lightbar Controller (e.g. [Tuxedo laptops](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo))
 - Touchpad Toggle On/Off
 - dGPU Powerstate Monitor (for laptops)
 - Battery Power Draw Monitor (for laptops)
+- Enable Pulseaudio suspend on battery (for laptops)
 
 
 
