@@ -12,20 +12,47 @@ from PIL import Image
 #################### BASE EXTENSION CLASSES #####################################
 
 class BaseExtension:
-    def __init__(self, path, settings):
+    def __init__(self, state, path, settings):
         self.path = path
         self.settings = settings
-        self.gamma_correction = (2.0, 3.0, 7.0) #todo
-        # todo layout sizes
-
-    def add_actions(self, menu):
-        raise NotImplementedError
-
-    def load_state(self):
-        pass
 
     def save_state(self, state):
+        # TODO
         pass
+
+    def on_add_actions(self, menu):
+        raise NotImplementedError
+
+    def on_load_state(self):
+        raise NotImplementedError
+
+    def on_battery(self):
+        pass
+
+    def on_ac(self):
+        pass
+
+    def on_battery_level_change(self, battery_level):
+        pass
+
+    def on_presuspend(self):
+        pass
+
+    def on_postsuspend(self):
+        pass
+
+    def on_prehibernate(self):
+        pass
+
+    def on_posthibernate(self):
+        pass
+
+
+class BaseRgbKeyboardExtension(BaseExtension):
+    def __init__(self, path, settings):
+        super().__init__(path, settings)
+        self.gamma_correction = (2.0, 3.0, 7.0) #todo
+        # todo layout sizes
 
     def create_default_layout(self, fill_value=(80,80,80)): # todo size
         img = np.ones((6*20+7*5, 18*20+19*5, 3), dtype=np.uint8)*255
@@ -56,11 +83,6 @@ class BaseExtension:
             img = img**self.gamma_correction
         img = np.array(img*255, dtype=np.uint8)
         return img
-
-
-class BaseRgbKeyboardExtension(BaseExtension):
-    def __init__(self, path, settings):
-        super().__init__(path, settings)
 
 
 #################### MAIN APP #####################################
