@@ -68,7 +68,7 @@ class BaseRgbKeyboardExtension(BaseExtension):
 class MainApp():
     def __init__(self):
         self.repository_url = "https://github.com/salihmarangoz/ite8291r3-gui"
-        self.app_title = "Linux Desktop Extensions"
+        self.app_title = "System Tray Extensions"
 
         signal.signal(signal.SIGINT, signal.SIG_DFL) # CTRL+C fix
 

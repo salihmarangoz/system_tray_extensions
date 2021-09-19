@@ -1,4 +1,4 @@
-# Linux Desktop Extensions
+# System Tray Extensions
 
 
 
@@ -39,3 +39,4 @@ $ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the te
 - Install will be done via `git clone` and `bash install.sh`, update will be done via `git pull` 
 - https://askubuntu.com/questions/308067/how-to-run-a-script-after-or-before-hibernate
 
+ 
