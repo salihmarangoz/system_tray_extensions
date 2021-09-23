@@ -1,4 +1,20 @@
 
+
+
+
+
+class SteQtBackend():
+    def __init__(self):
+        print("Init ste qt backend!")
+
+
+
+
+
+
+
+
+
 import os
 import sys
 import signal
@@ -6,12 +22,6 @@ from pathlib import Path
 import numpy as np
 
 from PIL import Image
-
-
-
-class SteQtBackend():
-    def __init__(self):
-        print("Init ste qt backend!")
 
 
 
