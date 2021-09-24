@@ -3,7 +3,7 @@
 
 
 
-class SteQtBackend():
+class DefaultBackend():
     def __init__(self):
         print("Init ste qt backend!")
 
