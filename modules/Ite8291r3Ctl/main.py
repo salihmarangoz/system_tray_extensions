@@ -8,13 +8,14 @@ class Ite8291r3Ctl:
 
         self.ite.set_effect( ite8291r3.effects["wave"]())
 
-        self.core.add_callback("Ite8291r3Ctl", "sigint", self.custom_event)
+        self.core.add_callback("Ite8291r3Ctl", "resume", self.custom_event)
 
         mt = self.core.run_on_main_thread
         mt(self.foobar, text="This is running on the main thread")
 
     def custom_event(self, event):
         print("custom_event", event)
+        self.ite.set_effect( ite8291r3.effects["wave"]())
 
     def foobar(self, text):
         print(text)

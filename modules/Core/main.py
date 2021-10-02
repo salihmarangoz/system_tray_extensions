@@ -23,6 +23,7 @@ class Core():
 
         self.main_thread_queue = queue.Queue()
 
+
     def init_module(self, module_class, module_name):
         if module_name in self.modules:
             raise Exception("Module {} is already loaded".format(module_name))
@@ -77,5 +78,4 @@ class Core():
         for module_name, queue in self.queues.items():
             print("Waiting for {}".format(module_name))
             queue.join() # todo: timeout
-
         sys.exit(0)
