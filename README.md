@@ -1,6 +1,20 @@
+# For ite8291r3-gui check the other branch
+
+Old package is here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
+
+The new app (STE) will include ite8291r3 as an extension with many features. Also, lightbar control, custom scripts, and many things will be available. Custom modules will be able to to access useful events (lid opened, lid closed, before suspend, after suspend, ac adapter plugged in, battery mode, etc.) without effort.
+
+
+
 # [STE] System Tray Extensions
 
-Description todo
+Currently under development. Don't pay attention to the docs!
+
+Currently under development. Don't pay attention to the docs!
+
+Currently under development. Don't pay attention to the docs!
+
+Currently under development. Don't pay attention to the docs!
 
 
 
@@ -45,10 +59,6 @@ Do you have a good idea? Would you like to send a pull request? See [CONTRIBUTIN
 ## Core ToDo's
 
 - Add callback in an anonymous way
-- Change to RGB keyboard Controller
-- 
-
-
 
 
 
