@@ -20,7 +20,7 @@ $ lsusb | grep -e 048d:6004 -e 048d:ce00
 
 ```bash
 $ pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
-$ git clone https://github.com/salihmarangoz/ite8291r3-gui
+$ git clone https://github.com/salihmarangoz/ite8291r3-gui -b ite8291r3-gui
 $ cd ite8291r3-gui
 $ bash install.sh
 ```
