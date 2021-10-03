@@ -1,35 +1,40 @@
-# ite8291r3-gui
+# For ite8291r3-gui check the other branch
 
-**GUI for [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl)**
+Old package is here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
 
-![](imgs/ss.png)
-
-
-
-## Check Device Compatibility
-
-This command should return an entry similar to `Bus 003 Device 004: ID 048d:6004 Integrated Technology Express, Inc.` Nothing returning means you may not have compatible devices. If you find similar drivers to `ite8291r3-ctl` I can add them to the project, open an issue for it.
-
-```bash
-$ lsusb | grep -e 048d:6004 -e 048d:ce00
-```
+The new app (STE) will include ite8291r3 as an extension with many features. Also, lightbar control, custom scripts, and many things will be available. Custom modules will be able to to access useful events (lid opened, lid closed, before suspend, after suspend, ac adapter plugged in, battery mode, etc.) without effort.
 
 
 
-## Install/Update
+# [STE] System Tray Extensions
 
-```bash
-$ pip3 install ite8291r3-ctl PyQt5 pyusb numpy pillow
-$ git clone https://github.com/salihmarangoz/ite8291r3-gui
-$ cd ite8291r3-gui
-$ bash install.sh
-```
+Currently under development. Don't pay attention to the docs!
 
-- Currently there is no saving feature. If you would like to setup a default mod then run `sudo crontab -e`  and add this line:
+Currently under development. Don't pay attention to the docs!
 
-```
-@reboot /usr/local/bin/ite8291r3-ctl effect rainbow
-```
+Currently under development. Don't pay attention to the docs!
+
+Currently under development. Don't pay attention to the docs!
+
+
+
+## Modules
+
+| Ready? | Name (click for readme)                                      | Description                                                  |
+| ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| No     | [Ite8291r3Ctl](modules/Ite8291r3Ctl/README.md)               | [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) RGB Keyboard Driver for `048d:6004` and `048d:ce00` |
+| No     | [LightbarHid](modules/LightbarHid/README.md)                 | Lightbar controller for TongFang based laptops (e.g. [Tuxedo](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo), XMG, Eluktronics) |
+| No     | [TouchpadToggle](modules/TouchpadToggle/README.md)           | Enable/disable touchpad device with `xinput`                 |
+| No     | [DgpuPowerstateMonitor](modules/DgpuPowerstateMonitor/README.md) | Adds a system tray icon indicating dGPU is active. Can be activated only in battery mode. |
+| No     | [BatteryPowerDrawMonitor](modules/BatteryPowerDrawMonitor/README.md) | Adds a system tray icon indicating power drawn from the battery. Can be activated only in battery mode. |
+| No     | [TogglePulseaudioSuspend](modules/TogglePulseaudioSuspend/README.md) | Adds/removes [`module-suspend-on-idle`](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/#module-suspend-on-idle) depending on if the device is in laptop or AC mode. |
+| No     | CheckUpdates                                                 | todo                                                         |
+
+
+
+## Installation/Update
+
+todo
 
 
 
@@ -43,64 +48,34 @@ $ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the te
 
 
 
-## Custom Layouts
+## Contributing
 
-- Custom layouts are located at `~/.ite_tray_layouts`. 
-- Copy `default.png`, rename and modify using Gimp or a similar image editing software.
-- Deleting `default.png` triggers generating it again. 
-- Some cells may not be mapped to a RGB light, do not worry. 
-- This app only reads center pixels of the cells. Do not worry about the edges.
+Do you have a good idea? Would you like to send a pull request? See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 
-![](imgs/photo.jpg)
 
 
+## Core ToDo's
 
-## Extra: Lightbar for Stellaris 15
-
-Currently lightbar is not managed by this app. However you can add an animation to the lightbar.
-
-- Make sure `tuxedo_keyboard` is installed.
-
-```
-sudo crontab -e
-```
-
-- Add this line then save
-
-```
-# ENABLE LIGHTBAR ANIMATION
-@reboot echo 1 > /sys/devices/platform/tuxedo_keyboard/leds/lightbar_animation::status/brightness
-```
-
-- Reboot
-- Also another good idea for using the lightbar: https://github.com/salihmarangoz/ite8291r3-gui/issues/1#issuecomment-919353029
+- Add callback in an anonymous way
 
 
 
 ## To-Do
 
-- Remember the last state.
-- Frequently used effects, colors.
+- Track hibernate/suspend and battery plugged/unplugged actions and send them as events
 - Better gamma correction. (I don't have any device to calibrate it. Also this is not a solution. But better estimations would be nice.)
 - Report brightness in the menu. And put "+" and "-" into the same entry.
-- Update checking feature.
 - pip3 install to virtual environment?
-- Start on boot enable/disable button.
 - Keyboard shortcuts for effects? "Save this state to shortcut: xyz"
-- Report cpu/gpu temps and battery state
-- Alerts for low battery
 - Sound spectrum analyzer
-- Forwards logs to journalctl or to a file.
-- Control lightbar if it is detected.
+- Forwards logs to journalctl or to a file?
+- low battery alert with ite drivers
 
 **Rework Path:**
 
 - Install will be done via `git clone` and `bash install.sh`, update will be done via `git pull` 
-- $HOME/.rgb_keyboard_gui/custom_presets (png, py, .gitignore?)
-- $HOME/.rgb_keyboard_gui/settings.ini
-- $HOME/.rgb_keyboard_gui/app.py
-- $HOME/.rgb_keyboard_gui/venv (optional) (.gitignore?)
-- ite8291r3-ctl will wrapped in a Driver class. Project may support other drivers in the future.
-- change project name to rgb_keyboard_gui
+- https://askubuntu.com/questions/308067/how-to-run-a-script-after-or-before-hibernate
+
+ 

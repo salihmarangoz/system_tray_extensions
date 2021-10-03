@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "dont use this"
+exit
+
 INSTALL_DIR="$HOME/.local/share/ite8291r3_gui"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
