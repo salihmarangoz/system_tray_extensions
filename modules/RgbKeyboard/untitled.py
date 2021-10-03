@@ -16,8 +16,6 @@ create_menu_memory = [] # this is needed because garbage collector removes actio
 def create_menu():
     create_menu_memory.clear()
 
-    
-
     toggle = QAction("Toggle On/Off")
     create_menu_memory.append(toggle)
     menu.addAction(toggle)

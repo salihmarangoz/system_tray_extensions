@@ -5,9 +5,12 @@ import traceback
 import signal
 import sys
 import time
+import os
 
-# Available events:
-# sigint
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+
+from .events import Events
 
 class Core():
     def __init__(self):
@@ -16,15 +19,41 @@ class Core():
         self.queues = {}
         self.event_connections = {}
 
-        signal.signal(signal.SIGINT, self._signal_handler)
-
+        # init event handlers
         self.core_event_queue = queue.Queue()
         self.core_event_thread = threading.Thread(target=self._core_thread_function, daemon=True).start()
+        self._init_module(Events, "Events") # this includes sigint signal exceptionally
 
-        self.main_thread_queue = queue.Queue()
+        # init gui
+        self.app = QApplication([])
+        self.tray = QSystemTrayIcon()
+        #self.tray.setIcon(icon)
+        self.tray.setVisible(True)
+        self.menu = QMenu()
+        self._quit_action = QAction("Quit")
+        self._quit_action.triggered.connect(self.exit_app)
+        self.menu.addAction(self._quit_action)
+        self.tray.setContextMenu(self.menu)
+        QApplication.setQuitOnLastWindowClosed(False)
+        
 
+        self.test_thread = threading.Thread(target=self.test_handler, daemon=True).start()
+    def test_handler(self):
+        import time
+        time.sleep(5)
 
-    def init_module(self, module_class, module_name):
+    def add_event_callback(self, module_name, event_name, function):
+        self.event_connections[module_name][event_name] = function
+
+    def exit_app(self):
+        self.core_event_queue.put({"name": "exit"})
+
+    def restart_app(self):
+        raise NotImplementedError # todo
+
+    ###########################################################################
+
+    def _init_module(self, module_class, module_name):
         if module_name in self.modules:
             raise Exception("Module {} is already loaded".format(module_name))
 
@@ -33,13 +62,12 @@ class Core():
         self.threads[module_name] = threading.Thread(target=self._module_thread_function, daemon=True, args=(module_name,)).start()
         self.modules[module_name] = module_class(self)
 
-    def add_callback(self, module_name, event_name, function):
-        self.event_connections[module_name][event_name] = function
-
-    def run_on_main_thread(self, function, *args, **kwargs):
-        self.main_thread_queue.put((function, args, kwargs))
-
-    ###########################################################################
+    def _keep_main_thread(self):
+        try:
+            self.app.exec_()
+        except KeyboardInterrupt:
+            print("Qt interrupted by SIGINT")
+            sys.exit(0)
 
     # Module event threading
     def _module_thread_function(self, module_name):
@@ -49,8 +77,7 @@ class Core():
                 try:
                     self.event_connections[module_name][event["name"]](event)
                 except Exception as e:
-                    #print(traceback.print_exc())
-                    print(e)
+                    print(traceback.print_exc())
             self.queues[module_name].task_done() # this may not be needed
 
     # Main event threading (may not be the main thread)
@@ -60,22 +87,17 @@ class Core():
             for module_name, queue in self.queues.items():
                 # todo check if needed to add?
                 queue.put(event)
-            self.core_event_queue.task_done() # this may not be needed
 
-    # Main thread function for some spesifical tasks like GUI
-    def _main_thread_function(self):
-        while True:
-            function, args, kwargs = self.main_thread_queue.get() # blocks the thread
-            try:
-                function(*args, **kwargs)
-            except Exception as e:
-                print(traceback.print_exc())
-            self.main_thread_queue.task_done() # this may not be needed
+            if event["name"] == "exit":
+                self.exit_thread = threading.Thread(target=self._exit_handler, daemon=True).start()
 
-    def _signal_handler(self, sig, frame):
-        self.core_event_queue.put({"name": "sigint"})
+            self.core_event_queue.task_done()
+
+    def _exit_handler(self):
         self.core_event_queue.join()
         for module_name, queue in self.queues.items():
             print("Waiting for {}".format(module_name))
             queue.join() # todo: timeout
+        print("Waiting for Qt")
+        self.app.exit()
         sys.exit(0)

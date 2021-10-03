@@ -42,6 +42,16 @@ Do you have a good idea? Would you like to send a pull request? See [CONTRIBUTIN
 
 
 
+## Core ToDo's
+
+- Add callback in an anonymous way
+- Change to RGB keyboard Controller
+- 
+
+
+
+
+
 ## To-Do
 
 - Track hibernate/suspend and battery plugged/unplugged actions and send them as events

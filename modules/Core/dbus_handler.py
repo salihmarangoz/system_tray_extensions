@@ -3,6 +3,8 @@
 import dbus
 from gi.repository import GLib
 from dbus.mainloop.glib import DBusGMainLoop
+import signal
+import sys
 
 def handle_suspend_callback(mode):
     if mode == 0:
@@ -40,5 +42,10 @@ bus.add_signal_receiver(
     path='/org/freedesktop/UPower',
 )
 
+def signal_handler(*args):
+    print("exit")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 loop = GLib.MainLoop()
 loop.run()
