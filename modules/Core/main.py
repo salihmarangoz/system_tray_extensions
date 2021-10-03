@@ -30,13 +30,10 @@ class Core():
         #self.tray.setIcon(icon)
         self.tray.setVisible(True)
         self.menu = QMenu()
-        self._quit_action = QAction("Quit")
-        self._quit_action.triggered.connect(self.exit_app)
-        self.menu.addAction(self._quit_action)
         self.tray.setContextMenu(self.menu)
         QApplication.setQuitOnLastWindowClosed(False)
-        
 
+        # todo
         self.test_thread = threading.Thread(target=self.test_handler, daemon=True).start()
     def test_handler(self):
         import time
@@ -48,8 +45,24 @@ class Core():
     def exit_app(self):
         self.core_event_queue.put({"name": "exit"})
 
+    def exit_app_ask_confirmation(self):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Question)
+        msgBox.setText("Are you sure to exit?")
+        msgBox.setWindowTitle("System Tray Extensions (STE)")
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        returnValue = msgBox.exec()
+        if returnValue == QMessageBox.Yes:
+            self.exit_app()
+
     def restart_app(self):
         raise NotImplementedError # todo
+
+    def get_tray_menu(self):
+        return self.menu
+
+    def get_application(self):
+        return self.app
 
     ###########################################################################
 
@@ -64,6 +77,9 @@ class Core():
 
     def _keep_main_thread(self):
         try:
+            self._quit_action = QAction("Quit")
+            self._quit_action.triggered.connect(self.exit_app_ask_confirmation)
+            self.menu.addAction(self._quit_action)
             self.app.exec_()
         except KeyboardInterrupt:
             print("Qt interrupted by SIGINT")

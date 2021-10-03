@@ -47,29 +47,6 @@ def create_menu():
     create_menu_memory.append(effect_menu)
     menu.addMenu(effect_menu)
 
-    colors = {"white":  (255, 255, 255),
-             "red":    (255,   0,   0),
-             "orange": (255,  28,   0),
-             "yellow": (255, 119,   0),
-             "green":  (  0, 255,   0),
-             "blue":   (  0,   0, 255),
-             "teal":   (  0, 255, 255),
-             "purple": (255,   0, 255),
-             }
-
-    color_menu = QMenu("Mono Color")
-
-    qactions_colors = {}
-    for k,v in colors.items():
-        action = QAction(k.capitalize())
-        qactions_colors[k] = action
-        create_menu_memory.append(action)
-        color_menu.addAction(action)
-        exec("action.triggered.connect(lambda: ite.set_color("+str(v)+"))")
-
-    create_menu_memory.append(color_menu)
-    menu.addMenu(color_menu)
-
     custom_layout_menu = QMenu("Custom Layouts")
 
     custom_layouts = {}
