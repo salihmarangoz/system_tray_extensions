@@ -50,9 +50,7 @@ $ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the te
 
 ## Contributing
 
-Do you have a good idea? Would you like to send a pull request? See [CONTRIBUTING.md](CONTRIBUTING.md)
-
-
+Contributions of any kind are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 
