@@ -92,6 +92,7 @@ class Ite8291r3Ctl(RgbKeyboardBase):
 
         # init screen flag
         self.screen_thread_enable = False
+        self.video_thread_enable = False
 
         # get saved state
         self.state = self.get_state()
@@ -150,6 +151,9 @@ class Ite8291r3Ctl(RgbKeyboardBase):
             if self.screen_thread_enable:
                 self.screen_thread_enable = False
                 self.screen_thread.join()
+            if self.video_thread_enable:
+                self.video_thread_enable = False
+                self.video_thread.join()
 
             if new_state["mode"] == "mono":
                 self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
@@ -162,6 +166,17 @@ class Ite8291r3Ctl(RgbKeyboardBase):
                 self.screen_thread_enable = True
                 self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
                 self.screen_thread.start()
+            if new_state["mode"] == "custom":
+                if len(new_state["value"]) == 0:
+                    return # cancel update_state
+                if os.path.splitext(new_state["value"])[1].lower() == ".png":
+                    pass
+                if os.path.splitext(new_state["value"])[1].lower() == ".mp4":
+                    self.video_thread_enable = True
+                    self.video_file = new_state["value"]
+                    self.video_thread = threading.Thread(target=self.video_function, daemon=True)
+                    self.video_thread.start()
+
 
         if "toggle" in new_state:
             if new_state["toggle"]:
@@ -171,6 +186,9 @@ class Ite8291r3Ctl(RgbKeyboardBase):
                 if self.screen_thread_enable:
                     self.screen_thread_enable = False
                     self.screen_thread.join()
+                if self.video_thread_enable:
+                    self.video_thread_enable = False
+                    self.video_thread.join()
                 self.ite.set_brightness(0)
                 # self.ite.freeze() # NEVER USE THIS COMMAND
 
@@ -210,12 +228,20 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
         self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
         self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
-        self.ef_ac10 = QAction("Screen");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
+        self.ef_ac10 = QAction("Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
         menu.addMenu(self.ef)
+
+        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
 
     def mono_color_picker(self):
         color = QColorDialog.getColor().getRgb()
         return (color[0]/255, color[1]/255, color[2]/255)
+
+    def custom_file_picker(self):
+      dlg = QFileDialog()
+      dlg.setFileMode(QFileDialog.ExistingFile)
+      filename = dlg.getOpenFileName(filter="Custom effect files (*.mp4 *.png)")[0]
+      return filename
 
     def voltmap_to_itemap(self, voltmap):
         itemap = {}
@@ -239,7 +265,52 @@ class Ite8291r3Ctl(RgbKeyboardBase):
             img = cv2.cvtColor(np.asarray(sct.grab(bbox)), cv2.COLOR_BGRA2RGB)
             img = cv2.flip(img, 0)
             img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
-            colormap = img / 255.0 # normalize after c2 operations
+            colormap = img / 255.0 # normalize after cv2 operations
             itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self.state["brightness"] )
             self.ite.set_key_colors(itemap)
             time.sleep(1/60) # todo: count delays
+
+    def video_function(self):
+        is_video_loop = False # todo
+
+        while self.video_thread_enable:
+            cap = cv2.VideoCapture(self.video_file)
+            # todo: warn user if tries to open a big file
+
+            dim = (18, 6) # (width, height)
+            if not cap.isOpened():
+                print("Video not found!")
+                break
+
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            enter_animation = True
+            self._video_brightness = 0.0
+
+            while self.video_thread_enable:
+                ret, frame = cap.read()
+                if ret == False:
+                    break
+
+                # enter animation
+                if enter_animation and not is_video_loop:
+                    self._video_brightness += 1/(fps*2)
+
+                    if self._video_brightness >= self.state["brightness"]:
+                        enter_animation = False
+                else:
+                    self._video_brightness = self.state["brightness"]
+
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+                colormap = img / 255.0 # normalize after cv2 operations
+                itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self._video_brightness)
+                self.ite.set_key_colors(itemap)
+                time.sleep(1/fps) # todo: count delays
+
+            # exit animation
+            while self._video_brightness > 0 and not is_video_loop:
+                self._video_brightness -= 1/(fps*2)
+                itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self._video_brightness)
+                self.ite.set_key_colors(itemap)
+                time.sleep(1/fps) # todo: count delays
+
