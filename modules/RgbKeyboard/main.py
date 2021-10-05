@@ -27,12 +27,15 @@ class RgbKeyboard:
 
 class RgbKeyboardBase:
     """RgbKeyboard Base Class
-    [png file] -> layout (0-255) -> colormap (0-1) x brightness -> voltmap (0-1) -> [keyboard driver]
+    [png file] -> layout (0-255) -> colormap (0-1) x brightness (0-1) -> voltmap (0-1) -> [keyboard driver]
     """
+
     def __init__(self, core):
         self.core = core
-        self.layouts_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../rgb_kb_layouts')
-        self.gamma = (0.6, 0.5, 0.43)
+        self.layouts_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../rgb_kb_custom')
+        self.gamma = (0.55, 0.48, 0.43)
+        self.screen_thread_enable = False
+        self.video_thread_enable = False
 
     def get_layouts(self, include_default=False):
         layouts = glob.glob(self.layouts_path + '/*.png', recursive=True)
@@ -41,7 +44,7 @@ class RgbKeyboardBase:
         return list(layouts)
 
     def save_state(self, state):
-        pass
+        pass # todo
 
     def get_state(self):
         return None # todo
@@ -83,60 +86,22 @@ class RgbKeyboardBase:
     def open_layout(self, path):
         return np.array( Image.open(path) )
 
+    def mono_color_picker(self):
+        color = QColorDialog.getColor().getRgb()
+        return (color[0]/255, color[1]/255, color[2]/255)
 
-############################################################################################
+    def custom_file_picker(self, extfilter="Custom effect files (*.mp4 *.png)"):
+        dlg = QFileDialog()
+        dlg.setDirectory(self.layouts_path)
+        dlg.setFileMode(QFileDialog.ExistingFile)
+        filename = dlg.getOpenFileName(filter=extfilter)[0]
+        return filename
 
-class Ite8291r3Ctl(RgbKeyboardBase):
-    def __init__(self, core):
-        super().__init__(core)
+    def apply_voltmap(self, voltmap):
+        pass # not implemented
 
-        # init screen flag
-        self.screen_thread_enable = False
-        self.video_thread_enable = False
-
-        # get saved state
-        self.state = self.get_state()
-        if self.state is None:
-            self.state = self.get_default_state()
-
-        # init rgb kb driver and load state
-        self.ite = ite8291r3.get()
-        self.reload_state()
-
-        # init qt gui
-        menu = core.get_tray_menu()
-        app = core.get_application()
-        self.init_gui(menu, app)
-
-        # register callbacks
-        self.core.add_event_callback("RgbKeyboard", "resume",       self.on_resume)
-        self.core.add_event_callback("RgbKeyboard", "suspend",      self.on_suspend)
-        self.core.add_event_callback("RgbKeyboard", "lid_opened",   self.on_lid_opened)
-        self.core.add_event_callback("RgbKeyboard", "lid_closed",   self.on_lid_closed)
-        self.core.add_event_callback("RgbKeyboard", "on_ac",        self.on_ac)
-        self.core.add_event_callback("RgbKeyboard", "on_battery",   self.on_battery)
-
-    #################################################
-
-    def on_resume(self, event):
-        self.reload_state()
-
-    def on_suspend(self, event):
-        self.update_state({"toggle": False}, save_state=False)
-
-    def on_lid_opened(self, event):
-        self.reload_state()
-
-    def on_lid_closed(self, event):
-        self.update_state({"toggle": False}, save_state=False)
-
-    def on_ac(self, event):
-        self.reload_state()
-
-    def on_battery(self, event):
-        self.update_state({"toggle": False}, save_state=False) # todo
-
-    #################################################
+    def apply_colormap(self, colormap):
+        self.apply_voltmap( self.color_to_voltage(colormap) * self.state["brightness"] )
 
     def reload_state(self):
         time.sleep(1)
@@ -144,111 +109,24 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.state = self.get_default_state()
         self.update_state(new_state=cur_state, save_state=False)
 
-
-    def update_state(self, new_state={}, save_state=True):
-        if "mode" in new_state:
-            # stop screen thread
-            if self.screen_thread_enable:
-                self.screen_thread_enable = False
-                self.screen_thread.join()
-            if self.video_thread_enable:
-                self.video_thread_enable = False
-                self.video_thread.join()
-
-            if new_state["mode"] == "mono":
-                self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
-                colormap = self.create_default_colormap(cell_value=new_state["value"])
-                self.apply_colormap(colormap)
-            if new_state["mode"] == "effect":
-                self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
-                self.ite.set_brightness( int(self.state["brightness"] * 50) )
-            if new_state["mode"] == "screen":
-                self.screen_thread_enable = True
-                self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
-                self.screen_thread.start()
-            if new_state["mode"] == "custom":
-                if len(new_state["value"]) == 0:
-                    return # cancel update_state
-                if os.path.splitext(new_state["value"])[1].lower() == ".png":
-                    pass
-                if os.path.splitext(new_state["value"])[1].lower() == ".mp4":
-                    self.video_thread_enable = True
-                    self.video_file = new_state["value"]
-                    self.video_thread = threading.Thread(target=self.video_function, daemon=True)
-                    self.video_thread.start()
-
-
-        if "toggle" in new_state:
-            if new_state["toggle"]:
-                self.ite.set_brightness(50)
-            else:
-                # stop screen thread
-                if self.screen_thread_enable:
-                    self.screen_thread_enable = False
-                    self.screen_thread.join()
-                if self.video_thread_enable:
-                    self.video_thread_enable = False
-                    self.video_thread.join()
-                self.ite.set_brightness(0)
-                # self.ite.freeze() # NEVER USE THIS COMMAND
-
-        if save_state:
-            self.state.update(new_state)
-            self.save_state(self.state)
-
     def get_default_state(self):
         return {"mode": "mono",
                 "value": (1., 1., 1.),
                 "brightness": 1.0,
                 "toggle": True}
 
-    def apply_colormap(self, colormap):
-        itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self.state["brightness"] )
-        self.ite.set_key_colors(itemap)
+    def stop_animation_threads(self):
+        if self.screen_thread_enable:
+            self.screen_thread_enable = False
+            self.screen_thread.join()
+        if self.video_thread_enable:
+            self.video_thread_enable = False
+            self.video_thread.join()
 
-
-    #################################################
-
-    def init_gui(self, menu, app):
-        self.mc = QMenu("Mono Color")
-        self.mc_ac1 = QAction("White");         self.mc_ac1.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,  1.0,  1.0)} ));           self.mc.addAction(self.mc_ac1)
-        self.mc_ac2 = QAction("Red");           self.mc_ac2.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,    0,    0)} ));           self.mc.addAction(self.mc_ac2)
-        self.mc_ac3 = QAction("Green");         self.mc_ac3.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (  0,  1.0,    0)} ));           self.mc.addAction(self.mc_ac3)
-        self.mc_ac4 = QAction("Blue");          self.mc_ac4.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (  0,    0,  1.0)} ));           self.mc.addAction(self.mc_ac4)
-        self.mc_ac5 = QAction("Pick a color");  self.mc_ac5.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": self.mono_color_picker()} ));    self.mc.addAction(self.mc_ac5)
-        menu.addMenu(self.mc)
-
-        self.ef = QMenu("Effects")
-        self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
-        self.ef_ac2 = QAction("Wave");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave"} ));        self.ef.addAction(self.ef_ac2)
-        self.ef_ac3 = QAction("Random");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac3)
-        self.ef_ac4 = QAction("Rainbow");   self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac4)
-        self.ef_ac5 = QAction("Ripple");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac5)
-        self.ef_ac6 = QAction("Marquee");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac6)
-        self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
-        self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
-        self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
-        self.ef_ac10 = QAction("Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
-        menu.addMenu(self.ef)
-
-        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
-
-    def mono_color_picker(self):
-        color = QColorDialog.getColor().getRgb()
-        return (color[0]/255, color[1]/255, color[2]/255)
-
-    def custom_file_picker(self):
-      dlg = QFileDialog()
-      dlg.setFileMode(QFileDialog.ExistingFile)
-      filename = dlg.getOpenFileName(filter="Custom effect files (*.mp4 *.png)")[0]
-      return filename
-
-    def voltmap_to_itemap(self, voltmap):
-        itemap = {}
-        for i in range(voltmap.shape[0]):
-            for j in range(voltmap.shape[1]):
-                itemap[(voltmap.shape[0]-i-1,j)] = tuple( np.asarray(voltmap[i,j]*255, dtype=np.uint8) )
-        return itemap
+    def start_screen_thread(self):
+        self.screen_thread_enable = True
+        self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
+        self.screen_thread.start()
 
     def screen_function(self):
         top_crop=0.0
@@ -266,9 +144,15 @@ class Ite8291r3Ctl(RgbKeyboardBase):
             img = cv2.flip(img, 0)
             img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
             colormap = img / 255.0 # normalize after cv2 operations
-            itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self.state["brightness"] )
-            self.ite.set_key_colors(itemap)
+            voltmap = self.color_to_voltage(colormap) * self.state["brightness"] 
+            self.apply_voltmap(voltmap)
             time.sleep(1/60) # todo: count delays
+
+    def start_video_thread(self, video_path):
+        self.video_thread_enable = True
+        self.video_file = video_path
+        self.video_thread = threading.Thread(target=self.video_function, daemon=True)
+        self.video_thread.start()
 
     def video_function(self):
         is_video_loop = False # todo
@@ -294,23 +178,140 @@ class Ite8291r3Ctl(RgbKeyboardBase):
                 # enter animation
                 if enter_animation and not is_video_loop:
                     self._video_brightness += 1/(fps*2)
-
                     if self._video_brightness >= self.state["brightness"]:
                         enter_animation = False
+                        self._video_brightness = self.state["brightness"]
                 else:
                     self._video_brightness = self.state["brightness"]
 
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
                 colormap = img / 255.0 # normalize after cv2 operations
-                itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self._video_brightness)
-                self.ite.set_key_colors(itemap)
+                voltmap = self.color_to_voltage(colormap) * self._video_brightness 
+                self.apply_voltmap(voltmap)
                 time.sleep(1/fps) # todo: count delays
 
             # exit animation
-            while self._video_brightness > 0 and not is_video_loop:
+            while self._video_brightness > 0 and not is_video_loop and self.video_thread_enable:
                 self._video_brightness -= 1/(fps*2)
-                itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self._video_brightness)
-                self.ite.set_key_colors(itemap)
+                voltmap = self.color_to_voltage(colormap) * self._video_brightness 
+                self.apply_voltmap(voltmap)
                 time.sleep(1/fps) # todo: count delays
 
+
+
+############################################################################################
+
+class Ite8291r3Ctl(RgbKeyboardBase):
+    def __init__(self, core):
+        super().__init__(core)
+        # get saved state
+        self.state = self.get_state()
+        if self.state is None:
+            self.state = self.get_default_state()
+
+        # init rgb kb driver and load state
+        self.ite = ite8291r3.get()
+        self.reload_state()
+
+        # init qt gui
+        menu = core.get_tray_menu()
+        app = core.get_application()
+        self.init_gui(menu, app)
+
+        # register callbacks
+        self.core.add_event_callback("RgbKeyboard", "resume",       self.on_resume)
+        self.core.add_event_callback("RgbKeyboard", "suspend",      self.on_suspend)
+        self.core.add_event_callback("RgbKeyboard", "lid_opened",   self.on_lid_opened)
+        self.core.add_event_callback("RgbKeyboard", "lid_closed",   self.on_lid_closed)
+        self.core.add_event_callback("RgbKeyboard", "on_ac",        self.on_ac)
+        self.core.add_event_callback("RgbKeyboard", "on_battery",   self.on_battery)
+
+
+    def on_resume(self, event):
+        self.reload_state()
+
+    def on_suspend(self, event):
+        self.update_state({"toggle": False}, save_state=False)
+
+    def on_lid_opened(self, event):
+        self.reload_state()
+
+    def on_lid_closed(self, event):
+        self.update_state({"toggle": False}, save_state=False)
+
+    def on_ac(self, event):
+        self.reload_state()
+
+    def on_battery(self, event):
+        self.update_state({"toggle": False}, save_state=False) # todo
+
+    def init_gui(self, menu, app):
+        self.mc = QMenu("Mono Color")
+        self.mc_ac1 = QAction("White");         self.mc_ac1.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,  1.0,  1.0)} ));           self.mc.addAction(self.mc_ac1)
+        self.mc_ac2 = QAction("Red");           self.mc_ac2.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,    0,    0)} ));           self.mc.addAction(self.mc_ac2)
+        self.mc_ac3 = QAction("Green");         self.mc_ac3.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (  0,  1.0,    0)} ));           self.mc.addAction(self.mc_ac3)
+        self.mc_ac4 = QAction("Blue");          self.mc_ac4.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (  0,    0,  1.0)} ));           self.mc.addAction(self.mc_ac4)
+        self.mc_ac5 = QAction("Pick a color");  self.mc_ac5.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": self.mono_color_picker()} ));    self.mc.addAction(self.mc_ac5)
+        menu.addMenu(self.mc)
+
+        self.ef = QMenu("Effects")
+        self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
+        self.ef_ac2 = QAction("Wave");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave"} ));        self.ef.addAction(self.ef_ac2)
+        self.ef_ac3 = QAction("Random");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac3)
+        self.ef_ac4 = QAction("Rainbow");   self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac4)
+        self.ef_ac5 = QAction("Ripple");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac5)
+        self.ef_ac6 = QAction("Marquee");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac6)
+        self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
+        self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
+        self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
+        self.ef_ac10 = QAction("Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
+        menu.addMenu(self.ef)
+
+        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
+
+    def update_state(self, new_state={}, save_state=True):
+        if "mode" in new_state:
+            self.stop_animation_threads()
+
+            if new_state["mode"] == "mono":
+                self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
+                colormap = self.create_default_colormap(cell_value=new_state["value"])
+                self.apply_colormap(colormap)
+            if new_state["mode"] == "effect":
+                self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
+                self.ite.set_brightness( int(self.state["brightness"] * 50) )
+            if new_state["mode"] == "screen":
+                self.start_screen_thread()
+            if new_state["mode"] == "custom":
+                if len(new_state["value"]) == 0:
+                    return # cancel update_state
+                if os.path.splitext(new_state["value"])[1].lower() == ".png":
+                    layout = self.open_layout(new_state["value"])
+                    colormap = self.layout_to_colormap(layout)
+                    self.apply_colormap(colormap)
+                if os.path.splitext(new_state["value"])[1].lower() == ".mp4":
+                    self.start_video_thread(new_state["value"])
+
+        if "toggle" in new_state:
+            if new_state["toggle"]:
+                self.ite.set_brightness(50)
+            else:
+                self.stop_animation_threads()
+                self.ite.set_brightness(0)
+                # self.ite.freeze() # NEVER USE THIS COMMAND
+
+        if save_state:
+            self.state.update(new_state)
+            self.save_state(self.state)
+
+
+    def voltmap_to_itemap(self, voltmap):
+        itemap = {}
+        for i in range(voltmap.shape[0]):
+            for j in range(voltmap.shape[1]):
+                itemap[(voltmap.shape[0]-i-1,j)] = tuple( np.asarray(voltmap[i,j]*255, dtype=np.uint8) )
+        return itemap
+
+    def apply_voltmap(self, voltmap):
+        self.ite.set_key_colors(self.voltmap_to_itemap(voltmap))
