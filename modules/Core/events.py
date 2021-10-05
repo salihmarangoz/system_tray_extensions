@@ -20,7 +20,6 @@ class Events:
 
     def _dbus_handler(self):
         for line in iter(self.proc.stdout.readline, ''):
-            print(len(line))
             if not self.process_events:
                 break
             if len(line) == 0:

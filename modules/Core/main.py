@@ -14,6 +14,7 @@ from .events import Events
 
 class Core():
     def __init__(self):
+        self.project_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..')
         self.modules = {}
         self.threads = {}
         self.queues = {}
@@ -27,7 +28,7 @@ class Core():
         # init gui
         self.app = QApplication([])
         self.tray = QSystemTrayIcon()
-        #self.tray.setIcon(icon)
+        self.tray.setIcon(QIcon(self.project_path + "/icon.png"))
         self.tray.setVisible(True)
         self.menu = QMenu()
         self.tray.setContextMenu(self.menu)

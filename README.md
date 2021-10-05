@@ -59,6 +59,29 @@ $ pip3 install -r requirements_pip.txt
 # todo
 ```
 
+### Add App Launcher
+
+```bash
+todo
+```
+
+### Enable on Boot
+
+```bash
+$ INSTALL_DIR="$HOME/.system_tray_extensions"
+
+tee system_tray_extensions.desktop << END
+[Desktop Entry]
+Type=Application
+Exec=/bin/sh $INSTALL_DIR/start.sh
+Hidden=false
+NoDisplay=false
+Name=System Tray Extensions
+END
+```
+
+
+
 
 
 ## Update
@@ -105,7 +128,8 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] *: Manage settings and module states.
 - [ ] CheckUpdates: Show QtAction if update is available. Check every 6 hrs.
 - [ ] App: Add on boot and desktop entry for start.sh
-- [ ] App: We need an ICON.
+- [x] App: We need an ICON.
+- [ ] App: Logging has some problems. Not working?!
 
 
 
