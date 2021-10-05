@@ -37,16 +37,19 @@ todo: description
 
 ## Installation
 
+Start a new terminal session and use it for all commands above. If you want to run these in multiple terminals don't forget to define `INSTALL_DIR`.
+
 ```bash
+$ INSTALL_DIR="$HOME/.system_tray_extensions"
+
 # 1. Download the project
-$ cd $HOME
-$ git clone https://github.com/salihmarangoz/system_tray_extensions.git .system_tray_extensions
+$ git clone https://github.com/salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
 # OR
-$ git clone git@github.com:salihmarangoz/system_tray_extensions.git .system_tray_extensions
+$ git clone git@github.com:salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
 
 # 2. Install dependencies to a new virtual environment
 # Note: I recommend using virtual environment to keep your pip installations clean
-$ cd .system_tray_extensions
+$ cd "$INSTALL_DIR"
 $ python3 -m venv ste_env
 $ echo "*" >> ste_env/.gitignore
 $ source ste_env/bin/activate
@@ -55,32 +58,24 @@ $ pip3 install wheel
 $ xargs sudo apt-get install < requirements_apt.txt
 $ pip3 install -r requirements_pip.txt
 
-# 3. Add desktop and on start entries
-# todo
-```
-
-### Add App Launcher
-
-```bash
-todo
-```
-
-### Enable on Boot
-
-```bash
-$ INSTALL_DIR="$HOME/.system_tray_extensions"
-
+# 3. Add App Launcher
+# COPY THIS SECTION AND PASTE INTO TERMINAL
 tee system_tray_extensions.desktop << END
 [Desktop Entry]
 Type=Application
 Exec=/bin/sh $INSTALL_DIR/start.sh
+Icon=$INSTALL_DIR/icon.png
 Hidden=false
 NoDisplay=false
 Name=System Tray Extensions
+GenericName=STE
 END
+# UNTIL HERE
+$ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the desktop entry to the apps menu
+
+# 4. Enable on Boot
+# todo
 ```
-
-
 
 
 
@@ -127,7 +122,8 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] Core: Add callback in an anonymous way
 - [ ] *: Manage settings and module states.
 - [ ] CheckUpdates: Show QtAction if update is available. Check every 6 hrs.
-- [ ] App: Add on boot and desktop entry for start.sh
+- [ ] App: Add on boot entry for start.sh
+- [x] App: Add desktop entry for start.sh
 - [x] App: We need an ICON.
 - [ ] App: Logging has some problems. Not working?!
 
