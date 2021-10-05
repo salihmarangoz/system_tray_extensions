@@ -18,6 +18,14 @@ Currently under development. Don't pay attention to the docs!
 
 
 
+## Demos
+
+### RGB Keyboard Driver
+
+[![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
+
+
+
 ## Modules
 
 | Ready? | Name (click for readme)                                      | Description                                                  |
