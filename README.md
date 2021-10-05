@@ -8,13 +8,7 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 # [STE] System Tray Extensions
 
-Currently under development. Don't pay attention to the docs!
-
-Currently under development. Don't pay attention to the docs!
-
-Currently under development. Don't pay attention to the docs!
-
-Currently under development. Don't pay attention to the docs!
+todo: description
 
 
 
@@ -30,7 +24,8 @@ Currently under development. Don't pay attention to the docs!
 
 | Ready? | Name (click for readme)                                      | Description                                                  |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| No     | [Ite8291r3Ctl](modules/Ite8291r3Ctl/README.md)               | [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) RGB Keyboard Driver for `048d:6004` and `048d:ce00` |
+| Yes    | [Core](modules/Core/README.md)                               | todo                                                         |
+| Yes    | [RgbKeyboard](modules/RgbKeyboard/README.md)                 | Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
 | No     | [LightbarHid](modules/LightbarHid/README.md)                 | Lightbar controller for TongFang based laptops (e.g. [Tuxedo](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo), XMG, Eluktronics) |
 | No     | [TouchpadToggle](modules/TouchpadToggle/README.md)           | Enable/disable touchpad device with `xinput`                 |
 | No     | [DgpuPowerstateMonitor](modules/DgpuPowerstateMonitor/README.md) | Adds a system tray icon indicating dGPU is active. Can be activated only in battery mode. |
@@ -40,9 +35,43 @@ Currently under development. Don't pay attention to the docs!
 
 
 
-## Installation/Update
+## Installation
 
-todo
+```bash
+# 1. Download the project
+$ cd $HOME
+$ git clone https://github.com/salihmarangoz/system_tray_extensions.git .system_tray_extensions
+# OR
+$ git clone git@github.com:salihmarangoz/system_tray_extensions.git .system_tray_extensions
+
+# 2. Install dependencies to a new virtual environment
+# Note: I recommend using virtual environment to keep your pip installations clean
+$ cd .system_tray_extensions
+$ python3 -m venv ste_env
+$ echo "*" >> ste_env/.gitignore
+$ source ste_env/bin/activate
+$ pip3 install --upgrade pip
+$ pip3 install wheel
+$ xargs sudo apt-get install < requirements_apt.txt
+$ pip3 install -r requirements_pip.txt
+
+# 3. Add desktop and on start entries
+# todo
+```
+
+
+
+## Update
+
+Backup your installation before updating if you modified existing files. If you added new files it is OK. But, for example, if you modified some files (e.g. presets inside rgb_kb_custom) create a file named `.gitignore` and write `*` and place into that folder.
+
+```bash
+$ cd $HOME/.system_tray_extensions
+$ git pull
+$ xargs sudo apt-get install < requirements_apt.txt
+$ source ste_env/bin/activate
+$ pip3 install -r requirements_pip.txt
+```
 
 
 
@@ -51,14 +80,32 @@ todo
 App will start on boot by default. You can start it just after the installation with this command:
 
 ```bash
-$ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the terminal
+$ bash start.sh
 ```
 
 
 
 ## Contributing
 
-Contributions of any kind are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
+Contributions of any kind are welcome. See **ToDo List** for current problems/ideas. Also see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+**Contributors:**
+
+- None
+
+**ToDo List:**
+
+- [ ] Core: Check hibernate/wakeup if it works.
+- [ ] RgbKeyboard: Report brightness in the menu and modify brightness.
+- [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
+- [ ] Core: Forwards logs to journalctl or to a file?
+- [ ] RgbKeyboard: low battery alert
+- [ ] RgbKeyboard: Run screen mimic when screensaver starts on ac mode.
+- [ ] Core: Add callback in an anonymous way
+- [ ] *: Manage settings and module states.
+- [ ] CheckUpdates: Show QtAction if update is available. Check every 6 hrs.
+- [ ] App: Add on boot and desktop entry for start.sh
+- [ ] App: We need an ICON.
 
 
 
@@ -72,31 +119,3 @@ Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxa
 Credit goes to [MrPacMan36](https://www.youtube.com/channel/UC7GfgbTJuA6_gi2XEaBcNRw) for the video used in the RGB Keyboard demo video:
 
 - [Youtube: Fluid Sim Hue Test](https://www.youtube.com/watch?v=qC0vDKVPCrw)
-
-
-
-------------------------------
-
-
-
-## Core ToDo's
-
-- Add callback in an anonymous way
-
-
-
-## To-Do
-
-- Track hibernate/suspend and battery plugged/unplugged actions and send them as events
-- Report brightness in the menu. And put "+" and "-" into the same entry.
-- pip3 install to virtual environment?
-- Keyboard shortcuts for effects? "Save this state to shortcut: xyz"
-- Forwards logs to journalctl or to a file?
-- low battery alert with ite drivers
-
-**Rework Path:**
-
-- Install will be done via `git clone` and `bash install.sh`, update will be done via `git pull` 
-- https://askubuntu.com/questions/308067/how-to-run-a-script-after-or-before-hibernate
-
- 

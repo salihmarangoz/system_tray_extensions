@@ -1,0 +1,1 @@
+libgirepository1.0-dev
