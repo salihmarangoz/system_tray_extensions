@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from ite8291r3_ctl import ite8291r3
 from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
+import usb
 
 import cv2
 import mss
@@ -102,12 +103,6 @@ class RgbKeyboardBase:
 
     def apply_colormap(self, colormap):
         self.apply_voltmap( self.color_to_voltage(colormap) * self.state["brightness"] )
-
-    def reload_state(self):
-        time.sleep(1)
-        cur_state = self.state.copy()
-        self.state = self.get_default_state()
-        self.update_state(new_state=cur_state, save_state=False)
 
     def get_default_state(self):
         return {"mode": "mono",
@@ -227,12 +222,13 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.core.add_event_callback("RgbKeyboard", "on_ac",        self.on_ac)
         self.core.add_event_callback("RgbKeyboard", "on_battery",   self.on_battery)
 
-
     def on_resume(self, event):
+        self.ite = ite8291r3.get() # take the control over the device
         self.reload_state()
 
     def on_suspend(self, event):
         self.update_state({"toggle": False}, save_state=False)
+        usb.util.dispose_resources(self.ite.channel.dev) # release the device
 
     def on_lid_opened(self, event):
         self.reload_state()
@@ -270,6 +266,11 @@ class Ite8291r3Ctl(RgbKeyboardBase):
 
         self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
 
+    def reload_state(self):
+        print("Reloading state:", self.state)
+        time.sleep(1)
+        self.update_state(new_state=self.state)
+
     def update_state(self, new_state={}, save_state=True):
         if "mode" in new_state:
             self.stop_animation_threads()
@@ -298,7 +299,8 @@ class Ite8291r3Ctl(RgbKeyboardBase):
                 self.ite.set_brightness(50)
             else:
                 self.stop_animation_threads()
-                self.ite.set_brightness(0)
+                self.ite.turn_off()
+                # self.ite.set_brightness(0) # turn_off is better...
                 # self.ite.freeze() # NEVER USE THIS COMMAND
 
         if save_state:
