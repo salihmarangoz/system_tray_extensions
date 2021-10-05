@@ -1,3 +1,15 @@
+# README: rgb_kb_custom
+
+
+
+## Modifying Presets
+
+If you want to modify presets without breaking update function add a `.gitignore` file with only `*` inside into this folder (rgb_kb_custom).
+
+
+
+## Preprocessing Videos
+
 If you use a video directly CPU usage may be high because the RGB keyboard module will try to downscale it while animating. So, I recommend preprocessing the video before using daily.
 
 ```bash

@@ -1,9 +1,0 @@
-pyqt5
-numpy
-pillow
-ite8291r3_ctl
-opencv-python
-mss
-gobject
-dbus-python
-PyGObject

@@ -1,14 +1,6 @@
 # Contributing to STE
 
-
-
-## Core Modules
-
-| Ready? | Name | Description                                                  |
-| ------ | ---- | ------------------------------------------------------------ |
-| Maybe  | Core | Core module for handling events, backend initialization, saving/loading module states, saving/loading module settings, etc. |
-
-
+TODO. If you want to contribute your ideas please open an issue to discuss and/or send your pull request with a short description.
 
 ## Example Modules
 
