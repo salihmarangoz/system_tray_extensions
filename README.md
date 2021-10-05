@@ -18,6 +18,14 @@ Currently under development. Don't pay attention to the docs!
 
 
 
+## Demos
+
+### RGB Keyboard Driver
+
+[![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
+
+
+
 ## Modules
 
 | Ready? | Name (click for readme)                                      | Description                                                  |
@@ -54,6 +62,23 @@ Contributions of any kind are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 
+## Credits
+
+Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxacA) for preset videos used in the RGB Keyboard module:
+
+- [Youtube: Aurora Borealis Inspired Ambient Animation Video Backdrop Loop (60 min/No sound) - Free Footage](https://www.youtube.com/watch?v=X6PLRiil2F4)
+- [Youtube: Rotating Colorful Waves - Rainbow Lines - Motion Graphics Video Background](https://www.youtube.com/watch?v=sTsO_NMjb3o)
+
+Credit goes to [MrPacMan36](https://www.youtube.com/channel/UC7GfgbTJuA6_gi2XEaBcNRw) for the video used in the RGB Keyboard demo video:
+
+- [Youtube: Fluid Sim Hue Test](https://www.youtube.com/watch?v=qC0vDKVPCrw)
+
+
+
+------------------------------
+
+
+
 ## Core ToDo's
 
 - Add callback in an anonymous way
@@ -63,11 +88,9 @@ Contributions of any kind are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## To-Do
 
 - Track hibernate/suspend and battery plugged/unplugged actions and send them as events
-- Better gamma correction. (I don't have any device to calibrate it. Also this is not a solution. But better estimations would be nice.)
 - Report brightness in the menu. And put "+" and "-" into the same entry.
 - pip3 install to virtual environment?
 - Keyboard shortcuts for effects? "Save this state to shortcut: xyz"
-- Sound spectrum analyzer
 - Forwards logs to journalctl or to a file?
 - low battery alert with ite drivers
 

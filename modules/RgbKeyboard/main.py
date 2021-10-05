@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from ite8291r3_ctl import ite8291r3
 from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
+import usb
 
 import cv2
 import mss
@@ -27,12 +28,15 @@ class RgbKeyboard:
 
 class RgbKeyboardBase:
     """RgbKeyboard Base Class
-    [png file] -> layout (0-255) -> colormap (0-1) x brightness -> voltmap (0-1) -> [keyboard driver]
+    [png file] -> layout (0-255) -> colormap (0-1) x brightness (0-1) -> voltmap (0-1) -> [keyboard driver]
     """
+
     def __init__(self, core):
         self.core = core
-        self.layouts_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../rgb_kb_layouts')
-        self.gamma = (0.6, 0.5, 0.43)
+        self.layouts_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../rgb_kb_custom')
+        self.gamma = (0.55, 0.48, 0.43)
+        self.screen_thread_enable = False
+        self.video_thread_enable = False
 
     def get_layouts(self, include_default=False):
         layouts = glob.glob(self.layouts_path + '/*.png', recursive=True)
@@ -41,7 +45,7 @@ class RgbKeyboardBase:
         return list(layouts)
 
     def save_state(self, state):
-        pass
+        pass # todo
 
     def get_state(self):
         return None # todo
@@ -83,16 +87,119 @@ class RgbKeyboardBase:
     def open_layout(self, path):
         return np.array( Image.open(path) )
 
+    def mono_color_picker(self):
+        color = QColorDialog.getColor().getRgb()
+        return (color[0]/255, color[1]/255, color[2]/255)
+
+    def custom_file_picker(self, extfilter="Custom effect files (*.mp4 *.png)"):
+        dlg = QFileDialog()
+        dlg.setDirectory(self.layouts_path)
+        dlg.setFileMode(QFileDialog.ExistingFile)
+        filename = dlg.getOpenFileName(filter=extfilter)[0]
+        return filename
+
+    def apply_voltmap(self, voltmap):
+        pass # not implemented
+
+    def apply_colormap(self, colormap):
+        self.apply_voltmap( self.color_to_voltage(colormap) * self.state["brightness"] )
+
+    def get_default_state(self):
+        return {"mode": "mono",
+                "value": (1., 1., 1.),
+                "brightness": 1.0,
+                "toggle": True}
+
+    def stop_animation_threads(self):
+        if self.screen_thread_enable:
+            self.screen_thread_enable = False
+            self.screen_thread.join()
+        if self.video_thread_enable:
+            self.video_thread_enable = False
+            self.video_thread.join()
+
+    def start_screen_thread(self):
+        self.screen_thread_enable = True
+        self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
+        self.screen_thread.start()
+
+    def screen_function(self):
+        top_crop=0.0
+        sct = mss.mss()
+        monitor = sct.monitors[1]
+        left = monitor["left"] + int(monitor["width"]*0.01)
+        top = int(monitor["height"]*top_crop)
+        right = monitor["width"] - int(monitor["width"]*0.01)
+        lower = monitor["height"]
+        bbox = (left, top, right, lower)
+        dim = (18, 6) # (width, height)
+
+        while self.screen_thread_enable:
+            img = cv2.cvtColor(np.asarray(sct.grab(bbox)), cv2.COLOR_BGRA2RGB)
+            img = cv2.flip(img, 0)
+            img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+            colormap = img / 255.0 # normalize after cv2 operations
+            voltmap = self.color_to_voltage(colormap) * self.state["brightness"] 
+            self.apply_voltmap(voltmap)
+            time.sleep(1/60) # todo: count delays
+
+    def start_video_thread(self, video_path):
+        self.video_thread_enable = True
+        self.video_file = video_path
+        self.video_thread = threading.Thread(target=self.video_function, daemon=True)
+        self.video_thread.start()
+
+    def video_function(self):
+        is_video_loop = False # todo
+
+        while self.video_thread_enable:
+            cap = cv2.VideoCapture(self.video_file)
+            # todo: warn user if tries to open a big file
+
+            dim = (18, 6) # (width, height)
+            if not cap.isOpened():
+                print("Video not found!")
+                break
+
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            enter_animation = True
+            self._video_brightness = 0.0
+
+            while self.video_thread_enable:
+                ret, frame = cap.read()
+                if ret == False:
+                    break
+
+                # enter animation
+                if enter_animation and not is_video_loop:
+                    self._video_brightness += 1/(fps*2)
+                    if self._video_brightness >= self.state["brightness"]:
+                        enter_animation = False
+                        self._video_brightness = self.state["brightness"]
+                else:
+                    self._video_brightness = self.state["brightness"]
+
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+                colormap = img / 255.0 # normalize after cv2 operations
+                voltmap = self.color_to_voltage(colormap) * self._video_brightness 
+                self.apply_voltmap(voltmap)
+                time.sleep(1/fps) # todo: count delays
+
+            # exit animation
+            while self._video_brightness > 0 and not is_video_loop and self.video_thread_enable:
+                self._video_brightness -= 1/(fps*2)
+                voltmap = self.color_to_voltage(colormap) * self._video_brightness 
+                self.apply_voltmap(voltmap)
+                time.sleep(1/fps) # todo: count delays
+
+
 
 ############################################################################################
 
 class Ite8291r3Ctl(RgbKeyboardBase):
     def __init__(self, core):
         super().__init__(core)
-
-        # init screen flag
-        self.screen_thread_enable = False
-
         # get saved state
         self.state = self.get_state()
         if self.state is None:
@@ -115,13 +222,13 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.core.add_event_callback("RgbKeyboard", "on_ac",        self.on_ac)
         self.core.add_event_callback("RgbKeyboard", "on_battery",   self.on_battery)
 
-    #################################################
-
     def on_resume(self, event):
+        self.ite = ite8291r3.get() # take the control over the device
         self.reload_state()
 
     def on_suspend(self, event):
         self.update_state({"toggle": False}, save_state=False)
+        usb.util.dispose_resources(self.ite.channel.dev) # release the device
 
     def on_lid_opened(self, event):
         self.reload_state()
@@ -134,62 +241,6 @@ class Ite8291r3Ctl(RgbKeyboardBase):
 
     def on_battery(self, event):
         self.update_state({"toggle": False}, save_state=False) # todo
-
-    #################################################
-
-    def reload_state(self):
-        time.sleep(1)
-        cur_state = self.state.copy()
-        self.state = self.get_default_state()
-        self.update_state(new_state=cur_state, save_state=False)
-
-
-    def update_state(self, new_state={}, save_state=True):
-        if "mode" in new_state:
-            # stop screen thread
-            if self.screen_thread_enable:
-                self.screen_thread_enable = False
-                self.screen_thread.join()
-
-            if new_state["mode"] == "mono":
-                self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
-                colormap = self.create_default_colormap(cell_value=new_state["value"])
-                self.apply_colormap(colormap)
-            if new_state["mode"] == "effect":
-                self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
-                self.ite.set_brightness( int(self.state["brightness"] * 50) )
-            if new_state["mode"] == "screen":
-                self.screen_thread_enable = True
-                self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
-                self.screen_thread.start()
-
-        if "toggle" in new_state:
-            if new_state["toggle"]:
-                self.ite.set_brightness(50)
-            else:
-                # stop screen thread
-                if self.screen_thread_enable:
-                    self.screen_thread_enable = False
-                    self.screen_thread.join()
-                self.ite.set_brightness(0)
-                # self.ite.freeze() # NEVER USE THIS COMMAND
-
-        if save_state:
-            self.state.update(new_state)
-            self.save_state(self.state)
-
-    def get_default_state(self):
-        return {"mode": "mono",
-                "value": (1., 1., 1.),
-                "brightness": 1.0,
-                "toggle": True}
-
-    def apply_colormap(self, colormap):
-        itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self.state["brightness"] )
-        self.ite.set_key_colors(itemap)
-
-
-    #################################################
 
     def init_gui(self, menu, app):
         self.mc = QMenu("Mono Color")
@@ -210,12 +261,52 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
         self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
         self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
-        self.ef_ac10 = QAction("Screen");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
+        self.ef_ac10 = QAction("Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
         menu.addMenu(self.ef)
 
-    def mono_color_picker(self):
-        color = QColorDialog.getColor().getRgb()
-        return (color[0]/255, color[1]/255, color[2]/255)
+        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
+
+    def reload_state(self):
+        print("Reloading state:", self.state)
+        time.sleep(1)
+        self.update_state(new_state=self.state)
+
+    def update_state(self, new_state={}, save_state=True):
+        if "mode" in new_state:
+            self.stop_animation_threads()
+
+            if new_state["mode"] == "mono":
+                self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
+                colormap = self.create_default_colormap(cell_value=new_state["value"])
+                self.apply_colormap(colormap)
+            if new_state["mode"] == "effect":
+                self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
+                self.ite.set_brightness( int(self.state["brightness"] * 50) )
+            if new_state["mode"] == "screen":
+                self.start_screen_thread()
+            if new_state["mode"] == "custom":
+                if len(new_state["value"]) == 0:
+                    return # cancel update_state
+                if os.path.splitext(new_state["value"])[1].lower() == ".png":
+                    layout = self.open_layout(new_state["value"])
+                    colormap = self.layout_to_colormap(layout)
+                    self.apply_colormap(colormap)
+                if os.path.splitext(new_state["value"])[1].lower() == ".mp4":
+                    self.start_video_thread(new_state["value"])
+
+        if "toggle" in new_state:
+            if new_state["toggle"]:
+                self.ite.set_brightness(50)
+            else:
+                self.stop_animation_threads()
+                self.ite.turn_off()
+                # self.ite.set_brightness(0) # turn_off is better...
+                # self.ite.freeze() # NEVER USE THIS COMMAND
+
+        if save_state:
+            self.state.update(new_state)
+            self.save_state(self.state)
+
 
     def voltmap_to_itemap(self, voltmap):
         itemap = {}
@@ -224,22 +315,5 @@ class Ite8291r3Ctl(RgbKeyboardBase):
                 itemap[(voltmap.shape[0]-i-1,j)] = tuple( np.asarray(voltmap[i,j]*255, dtype=np.uint8) )
         return itemap
 
-    def screen_function(self):
-        top_crop=0.0
-        sct = mss.mss()
-        monitor = sct.monitors[1]
-        left = monitor["left"] + int(monitor["width"]*0.01)
-        top = int(monitor["height"]*top_crop)
-        right = monitor["width"] - int(monitor["width"]*0.01)
-        lower = monitor["height"]
-        bbox = (left, top, right, lower)
-        dim = (18, 6) # (width, height)
-
-        while self.screen_thread_enable:
-            img = cv2.cvtColor(np.asarray(sct.grab(bbox)), cv2.COLOR_BGRA2RGB)
-            img = cv2.flip(img, 0)
-            img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
-            colormap = img / 255.0 # normalize after c2 operations
-            itemap = self.voltmap_to_itemap( self.color_to_voltage(colormap) * self.state["brightness"] )
-            self.ite.set_key_colors(itemap)
-            time.sleep(1/60) # todo: count delays
+    def apply_voltmap(self, voltmap):
+        self.ite.set_key_colors(self.voltmap_to_itemap(voltmap))
