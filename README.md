@@ -76,7 +76,7 @@ END
 # 4. Add desktop entry to the Application Menu
 $ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the desktop entry to the apps menu
 
-# 4. Enable application to run on Boot
+# 5. Enable application to run on Boot
 $ cp system_tray_extensions.desktop $HOME/.config/autostart/
 ```
 
@@ -101,7 +101,7 @@ $ pip3 install -r requirements_pip.txt
 App will start on boot by default. You can start it just after the installation with this command:
 
 ```bash
-$ bash start.sh
+$ sh start.sh
 ```
 
 
@@ -119,7 +119,6 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] Core: Check hibernate/wakeup if it works.
 - [ ] RgbKeyboard: Report brightness in the menu and modify brightness.
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
-- [ ] Core: Forwards logs to journalctl or to a file?
 - [ ] RgbKeyboard: low battery alert
 - [ ] RgbKeyboard: Run screen mimic when screensaver starts on ac mode.
 - [ ] Core: Add callback in an anonymous way
@@ -129,6 +128,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [x] App: Add desktop entry for start.sh
 - [x] App: We need an ICON.
 - [ ] App: Logging has some problems. Not working?!
+- [ ] Import RgbKeyboard modules only when needed. (if another drivers are added)
 
 
 
