@@ -34,7 +34,7 @@ class Core():
         self.tray.setContextMenu(self.menu)
         QApplication.setQuitOnLastWindowClosed(False)
 
-        # todo
+        # todo: for some quick tests
         self.test_thread = threading.Thread(target=self.test_handler, daemon=True).start()
     def test_handler(self):
         import time
