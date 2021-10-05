@@ -14,7 +14,15 @@ def main():
     core = core_class()
 
     # Init all modules
-    for module_name in os.listdir(project_path + "/modules"):
+
+    # todo
+    #--------------------------
+    #for module_name in os.listdir(project_path + "/modules"):
+    f = open(project_path + "/modules/loading_order.list", "r")
+    for module_name_ in f.readlines():
+        module_name = module_name_.strip()
+    #--------------------------
+
         if core_name == module_name: continue # the core is already initialized!
 
         try:
