@@ -20,7 +20,11 @@ class Events:
 
     def _dbus_handler(self):
         for line in iter(self.proc.stdout.readline, ''):
+            print(len(line))
             if not self.process_events:
+                break
+            if len(line) == 0:
+                print("dbus_handler.py streamed empty line. exiting...")
                 break
             event = line.decode("utf-8").strip()
             print("New event:", event)

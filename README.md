@@ -42,7 +42,25 @@ Currently under development. Don't pay attention to the docs!
 
 ## Installation/Update
 
-todo
+```bash
+# 1. Download the project
+$ cd $HOME
+$ git clone https://github.com/salihmarangoz/system_tray_extensions.git .system_tray_extensions
+# OR
+$ git clone git@github.com:salihmarangoz/system_tray_extensions.git .system_tray_extensions
+
+# 2. Install dependencies to a new virtual environment
+$ cd .system_tray_extensions
+$ python3 -m venv ste_env
+$ echo "*" > ste_env/.gitignore
+$ source ste_env/bin/activate
+$ pip3 install --upgrade pip
+$ pip3 install wheel
+$ sudo apt install libgirepository1.0-dev
+$ pip3 install -r requirements.txt
+```
+
+
 
 
 
@@ -51,7 +69,7 @@ todo
 App will start on boot by default. You can start it just after the installation with this command:
 
 ```bash
-$ nohup python3 $HOME/.local/share/ite8291r3_gui/ite_tray.py # then close the terminal
+$ bash start.sh
 ```
 
 
