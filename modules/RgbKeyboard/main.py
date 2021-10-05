@@ -33,7 +33,7 @@ class RgbKeyboardBase:
 
     def __init__(self, core):
         self.core = core
-        self.layouts_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../rgb_kb_custom')
+        self.layouts_path = os.path.join(self.core.project_path, 'rgb_kb_custom')
         self.gamma = (0.55, 0.48, 0.43)
         self.screen_thread_enable = False
         self.video_thread_enable = False
@@ -124,6 +124,7 @@ class RgbKeyboardBase:
         self.screen_thread.start()
 
     def screen_function(self):
+        fps = 30
         top_crop=0.0
         sct = mss.mss()
         monitor = sct.monitors[1]
@@ -141,7 +142,7 @@ class RgbKeyboardBase:
             colormap = img / 255.0 # normalize after cv2 operations
             voltmap = self.color_to_voltage(colormap) * self.state["brightness"] 
             self.apply_voltmap(voltmap)
-            time.sleep(1/60) # todo: count delays
+            time.sleep(1/fps) # todo: count delays
 
     def start_video_thread(self, video_path):
         self.video_thread_enable = True
@@ -152,6 +153,7 @@ class RgbKeyboardBase:
     def video_function(self):
         is_video_loop = False # todo
 
+        print("starting video_function")
         while self.video_thread_enable:
             cap = cv2.VideoCapture(self.video_file)
             # todo: warn user if tries to open a big file
@@ -162,6 +164,7 @@ class RgbKeyboardBase:
                 break
 
             fps = cap.get(cv2.CAP_PROP_FPS)
+            print("Loaded video with fps:", fps)
             enter_animation = True
             self._video_brightness = 0.0
 
@@ -192,6 +195,8 @@ class RgbKeyboardBase:
                 voltmap = self.color_to_voltage(colormap) * self._video_brightness 
                 self.apply_voltmap(voltmap)
                 time.sleep(1/fps) # todo: count delays
+
+        print("exiting video_function")
 
 
 

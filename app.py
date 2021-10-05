@@ -6,6 +6,7 @@ import traceback
 
 def main():
     settings = read_settings()
+    project_path = os.path.dirname(os.path.realpath(__file__))
 
     core_name = settings.get('MAIN', 'core_module', fallback='Core')
     core_module = import_module(core_name)
@@ -13,7 +14,7 @@ def main():
     core = core_class()
 
     # Init all modules
-    for module_name in os.listdir("modules"):
+    for module_name in os.listdir(project_path + "/modules"):
         if core_name == module_name: continue # the core is already initialized!
 
         try:
