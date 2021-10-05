@@ -58,7 +58,7 @@ $ pip3 install wheel
 $ xargs sudo apt-get install < requirements_apt.txt
 $ pip3 install -r requirements_pip.txt
 
-# 3. Add App Launcher
+# 3. Create desktop entry
 # COPY THIS SECTION AND PASTE INTO TERMINAL
 tee system_tray_extensions.desktop << END
 [Desktop Entry]
@@ -67,14 +67,17 @@ Exec=/bin/sh $INSTALL_DIR/start.sh
 Icon=$INSTALL_DIR/icon.png
 Hidden=false
 NoDisplay=false
+X-GNOME-Autostart-enabled=true
 Name=System Tray Extensions
 GenericName=STE
 END
 # UNTIL HERE
+
+# 4. Add desktop entry to the Application Menu
 $ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the desktop entry to the apps menu
 
-# 4. Enable on Boot
-# todo
+# 4. Enable application to run on Boot
+$ cp system_tray_extensions.desktop $HOME/.config/autostart/
 ```
 
 
@@ -122,7 +125,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] Core: Add callback in an anonymous way
 - [ ] *: Manage settings and module states.
 - [ ] CheckUpdates: Show QtAction if update is available. Check every 6 hrs.
-- [ ] App: Add on boot entry for start.sh
+- [x] App: Add on boot entry for start.sh
 - [x] App: Add desktop entry for start.sh
 - [x] App: We need an ICON.
 - [ ] App: Logging has some problems. Not working?!
