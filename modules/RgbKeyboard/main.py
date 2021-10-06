@@ -242,10 +242,10 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.update_state({"toggle": False}, save_state=False)
 
     def on_ac(self, event):
-        self.reload_state()
+        pass
 
     def on_battery(self, event):
-        self.update_state({"toggle": False}, save_state=False) # todo
+        pass
 
     def init_gui(self, menu, app):
         self.mc = QMenu("Mono Color")
@@ -278,20 +278,26 @@ class Ite8291r3Ctl(RgbKeyboardBase):
 
     def update_state(self, new_state={}, save_state=True):
         if "mode" in new_state:
-            self.stop_animation_threads()
 
             if new_state["mode"] == "mono":
+                self.stop_animation_threads()
                 self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
                 colormap = self.create_default_colormap(cell_value=new_state["value"])
                 self.apply_colormap(colormap)
+
             if new_state["mode"] == "effect":
+                self.stop_animation_threads()
                 self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
+
             if new_state["mode"] == "screen":
+                self.stop_animation_threads()
                 self.start_screen_thread()
+
             if new_state["mode"] == "custom":
                 if len(new_state["value"]) == 0:
                     return # cancel update_state
+                self.stop_animation_threads()
                 if os.path.splitext(new_state["value"])[1].lower() == ".png":
                     layout = self.open_layout(new_state["value"])
                     colormap = self.layout_to_colormap(layout)
