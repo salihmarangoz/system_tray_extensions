@@ -242,10 +242,10 @@ class Ite8291r3Ctl(RgbKeyboardBase):
         self.update_state({"toggle": False}, save_state=False)
 
     def on_ac(self, event):
-        self.reload_state()
+        pass
 
     def on_battery(self, event):
-        self.update_state({"toggle": False}, save_state=False) # todo
+        pass
 
     def init_gui(self, menu, app):
         self.mc = QMenu("Mono Color")
