@@ -22,16 +22,13 @@ todo: description
 
 ## Modules
 
-| Ready? | Name (click for readme)                                      | Description                                                  |
-| ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Yes    | [Core](modules/Core/README.md)                               | todo                                                         |
-| Yes    | [RgbKeyboard](modules/RgbKeyboard/README.md)                 | Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
-| in dev | CheckUpdates                                                 | todo                                                         |
-| No     | [LightbarHid](modules/LightbarHid/README.md)                 | Lightbar controller for TongFang based laptops (e.g. [Tuxedo](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo), XMG, Eluktronics) |
-| No     | [TouchpadToggle](modules/TouchpadToggle/README.md)           | Enable/disable touchpad device with `xinput`                 |
-| No     | [DgpuPowerstateMonitor](modules/DgpuPowerstateMonitor/README.md) | Adds a system tray icon indicating dGPU is active. Can be activated only in battery mode. |
-| No     | [BatteryPowerDrawMonitor](modules/BatteryPowerDrawMonitor/README.md) | Adds a system tray icon indicating power drawn from the battery. Can be activated only in battery mode. |
-| No     | [TogglePulseaudioSuspend](modules/TogglePulseaudioSuspend/README.md) | Adds/removes [`module-suspend-on-idle`](https://www.freedesktop.org/wiki/Software/PulseAudio/Documentation/User/Modules/#module-suspend-on-idle) depending on if the device is in laptop or AC mode. |
+| Ready?    | Name (click for readme)                          | Description                                                  |
+| --------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| Mostly    | [Core](modules/Core/README.md)                   | todo                                                         |
+| Partially | [CheckUpdates](modules/CheckUpdates/README.md)   | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. |
+| Mostly    | [FullRgbKeyboard](modules/RgbKeyboard/README.md) | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
+| No        | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Also includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
+| No        | Script Manager                                   | todo                                                         |
 
 
 
@@ -134,6 +131,9 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [x] App: We need an ICON.
 - [ ] App: Logging has some problems. Not working?!
 - [ ] Import RgbKeyboard modules only when needed. (if another drivers are added)
+- [ ] DgpuPowerstateMonitor
+- [ ] BatteryPowerDrawMonitor
+- [ ] TogglePulseaudioSuspend
 
 
 

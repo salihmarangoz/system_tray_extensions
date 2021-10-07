@@ -16,7 +16,7 @@ import threading
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-class RgbKeyboard:
+class FullRgbKeyboard:
     """RgbKeyboard Submodule Loader"""
     def __init__(self, core):
         self.core = core
@@ -26,7 +26,7 @@ class RgbKeyboard:
 
 ############################################################################################
 
-class RgbKeyboardBase:
+class FullRgbKeyboardBase:
     """RgbKeyboard Base Class
     [png file] -> layout (0-255) -> colormap (0-1) x brightness (0-1) -> voltmap (0-1) -> [keyboard driver]
     """
@@ -202,7 +202,7 @@ class RgbKeyboardBase:
 
 ############################################################################################
 
-class Ite8291r3Ctl(RgbKeyboardBase):
+class Ite8291r3Ctl(FullRgbKeyboardBase):
     def __init__(self, core):
         super().__init__(core)
         # get saved state
