@@ -6,7 +6,7 @@ import time
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-class CheckUpdates:
+class UpdateManager:
 
     def __init__(self, core):
         self.core = core
