@@ -22,13 +22,13 @@ todo: description
 
 ## Modules
 
-| Ready?    | Name (click for readme)                          | Description                                                  |
-| --------- | ------------------------------------------------ | ------------------------------------------------------------ |
-| Mostly    | [Core](modules/Core/README.md)                   | todo                                                         |
-| Partially | [CheckUpdates](modules/CheckUpdates/README.md)   | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. |
-| Mostly    | [FullRgbKeyboard](modules/RgbKeyboard/README.md) | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
-| No        | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Also includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
-| No        | Script Manager                                   | todo                                                         |
+| Ready?            | Name (click for readme)                          | Description                                                  |
+| ----------------- | ------------------------------------------------ | ------------------------------------------------------------ |
+| Mostly            | [Core](modules/Core/README.md)                   | todo                                                         |
+| Partially         | [UpdateManager](modules/UpdateManager/README.md) | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. |
+| Mostly            | [FullRgbKeyboard](modules/RgbKeyboard/README.md) | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
+| Only for LightBar | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Also includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
+|                   | Script Manager                                   | todo                                                         |
 
 
 
@@ -83,6 +83,32 @@ $ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the d
 $ mkdir -p $HOME/.config/autostart/
 $ cp system_tray_extensions.desktop $HOME/.config/autostart/
 ```
+
+
+
+## Enable Write Permissions for `/sys/class/leds/`
+
+Create a new udev rule:
+
+```bash
+$ sudo nano /etc/udev/rules.d/99-ste-tuxedokeyboard.rules
+```
+
+Copy and paste everything here:
+
+```
+SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
+SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
+```
+
+Create `leds` group and add current user to it. 
+
+```bash
+$ sudo groupadd leds
+$ sudo usermod -a -G leds $USER
+```
+
+Logout and login again.
 
 
 
@@ -147,3 +173,9 @@ Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxa
 Credit goes to [MrPacMan36](https://www.youtube.com/channel/UC7GfgbTJuA6_gi2XEaBcNRw) for the video used in the RGB Keyboard demo video:
 
 - [Youtube: Fluid Sim Hue Test](https://www.youtube.com/watch?v=qC0vDKVPCrw)
+
+
+
+## References
+
+- https://approxeng.github.io/approxeng.input/sys.html

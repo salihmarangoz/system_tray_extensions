@@ -16,6 +16,8 @@ import threading
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+MODULE_NAME = "FullRgbKeyboard"
+
 class FullRgbKeyboard:
     """RgbKeyboard Submodule Loader"""
     def __init__(self, core):
@@ -220,12 +222,12 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.init_gui(menu, app)
 
         # register callbacks
-        self.core.add_event_callback("RgbKeyboard", "resume",       self.on_resume)
-        self.core.add_event_callback("RgbKeyboard", "suspend",      self.on_suspend)
-        self.core.add_event_callback("RgbKeyboard", "lid_opened",   self.on_lid_opened)
-        self.core.add_event_callback("RgbKeyboard", "lid_closed",   self.on_lid_closed)
-        self.core.add_event_callback("RgbKeyboard", "on_ac",        self.on_ac)
-        self.core.add_event_callback("RgbKeyboard", "on_battery",   self.on_battery)
+        self.core.add_event_callback(MODULE_NAME, "resume",       self.on_resume)
+        self.core.add_event_callback(MODULE_NAME, "suspend",      self.on_suspend)
+        self.core.add_event_callback(MODULE_NAME, "lid_opened",   self.on_lid_opened)
+        self.core.add_event_callback(MODULE_NAME, "lid_closed",   self.on_lid_closed)
+        self.core.add_event_callback(MODULE_NAME, "on_ac",        self.on_ac)
+        self.core.add_event_callback(MODULE_NAME, "on_battery",   self.on_battery)
 
     def on_resume(self, event):
         self.ite = ite8291r3.get() # take the control over the device
