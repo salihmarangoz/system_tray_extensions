@@ -36,7 +36,7 @@ class FullRgbKeyboardBase:
     def __init__(self, core):
         self.core = core
         self.layouts_path = os.path.join(self.core.project_path, 'rgb_kb_custom')
-        self.gamma = (0.55, 0.48, 0.43)
+        self.gamma = (0.6, 0.5, 0.5)
         self.screen_thread_enable = False
         self.video_thread_enable = False
 
@@ -47,10 +47,10 @@ class FullRgbKeyboardBase:
         return list(layouts)
 
     def save_state(self, state):
-        pass # todo
+        self.core.save_state(MODULE_NAME, state)
 
-    def get_state(self):
-        return None # todo
+    def load_state(self):
+        return self.core.load_state(MODULE_NAME)
 
     def color_to_voltage(self, color):
         return np.power(color, 1./np.array(self.gamma))
@@ -108,7 +108,7 @@ class FullRgbKeyboardBase:
 
     def get_default_state(self):
         return {"mode": "mono",
-                "value": (1., 1., 1.),
+                "value": (0., 1., 0.),
                 "brightness": 1.0,
                 "toggle": True}
 
@@ -208,7 +208,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
     def __init__(self, core):
         super().__init__(core)
         # get saved state
-        self.state = self.get_state()
+        self.state = self.load_state()
         if self.state is None:
             self.state = self.get_default_state()
 
@@ -228,6 +228,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.core.add_event_callback(MODULE_NAME, "lid_closed",   self.on_lid_closed)
         self.core.add_event_callback(MODULE_NAME, "on_ac",        self.on_ac)
         self.core.add_event_callback(MODULE_NAME, "on_battery",   self.on_battery)
+        self.core.add_event_callback(MODULE_NAME, "exit",         self.on_exit)
 
     def on_resume(self, event):
         self.ite = ite8291r3.get() # take the control over the device
@@ -249,7 +250,24 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
     def on_battery(self, event):
         pass
 
+    def on_exit(self, event):
+        self.update_state({"toggle": False}, save_state=False)
+
     def init_gui(self, menu, app):
+        self.br = QMenu("Set Brightness")
+        self.br0 = QAction("Turn Off");    self.br0.triggered.connect(lambda: self.update_state({"toggle": False}, save_state=True));    self.br.addAction(self.br0)
+        self.br1 = QAction("10%");         self.br1.triggered.connect(lambda: self.update_state( {"brightness": 0.1} ));    self.br.addAction(self.br1)
+        self.br2 = QAction("20%");         self.br2.triggered.connect(lambda: self.update_state( {"brightness": 0.2} ));    self.br.addAction(self.br2)
+        self.br3 = QAction("30%");         self.br3.triggered.connect(lambda: self.update_state( {"brightness": 0.3} ));    self.br.addAction(self.br3)
+        self.br4 = QAction("40%");         self.br4.triggered.connect(lambda: self.update_state( {"brightness": 0.4} ));    self.br.addAction(self.br4)
+        self.br5 = QAction("50%");         self.br5.triggered.connect(lambda: self.update_state( {"brightness": 0.5} ));    self.br.addAction(self.br5)
+        self.br6 = QAction("60%");         self.br6.triggered.connect(lambda: self.update_state( {"brightness": 0.6} ));    self.br.addAction(self.br6)
+        self.br7 = QAction("70%");         self.br7.triggered.connect(lambda: self.update_state( {"brightness": 0.7} ));    self.br.addAction(self.br7)
+        self.br8 = QAction("80%");         self.br8.triggered.connect(lambda: self.update_state( {"brightness": 0.8} ));    self.br.addAction(self.br8)
+        self.br9 = QAction("90%");         self.br9.triggered.connect(lambda: self.update_state( {"brightness": 0.9} ));    self.br.addAction(self.br9)
+        self.br10 = QAction("100%");       self.br10.triggered.connect(lambda: self.update_state( {"brightness": 1.0} ));   self.br.addAction(self.br10)
+        menu.addMenu(self.br)
+
         self.mc = QMenu("Mono Color")
         self.mc_ac1 = QAction("White");         self.mc_ac1.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,  1.0,  1.0)} ));           self.mc.addAction(self.mc_ac1)
         self.mc_ac2 = QAction("Red");           self.mc_ac2.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,    0,    0)} ));           self.mc.addAction(self.mc_ac2)
@@ -279,8 +297,14 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.update_state(new_state=self.state)
 
     def update_state(self, new_state={}, save_state=True):
-        if "mode" in new_state:
+        if "brightness" in new_state and not "mode" in new_state:
+            self.state.update(new_state)
+            if self.state["mode"] == "effect":
+                self.ite.set_brightness( int(self.state["brightness"] * 50) )
+            if self.state["mode"] == "mono":
+                self.update_state(self.state, save_state)
 
+        if "mode" in new_state:
             if new_state["mode"] == "mono":
                 self.stop_animation_threads()
                 self.ite.set_brightness(50) # set internal brightness to maximum. state["brightness"] will handle this feature
@@ -290,6 +314,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
             if new_state["mode"] == "effect":
                 self.stop_animation_threads()
                 self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
+                print(int(self.state["brightness"] * 50))
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
 
             if new_state["mode"] == "screen":
@@ -308,9 +333,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
                     self.start_video_thread(new_state["value"])
 
         if "toggle" in new_state:
-            if new_state["toggle"]:
-                self.ite.set_brightness(50)
-            else:
+            if new_state["toggle"] == False:
                 self.stop_animation_threads()
                 self.ite.turn_off()
                 # self.ite.set_brightness(0) # turn_off is better...
