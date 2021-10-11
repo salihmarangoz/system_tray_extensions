@@ -6,6 +6,12 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 
 
+# Please Share Your Review
+
+Here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
+
+
+
 # [STE] System Tray Extensions
 
 todo: description
