@@ -17,27 +17,32 @@ class UpdateManager:
         menu = core.get_tray_menu()
         app = core.get_application()
         self.init_gui(menu, app)
-        self.update_check_thread = threading.Thread(target=self.check_updates, daemon=True).start()
+        self.check_updates()
 
     def check_updates(self):
+        self.update_action.setText("Checking updates...")
+        self.update_action.setEnabled(False)
+        self.update_check_thread = threading.Thread(target=self.check_updates_thread, daemon=True).start()
+
+    def check_updates_thread(self):
         repo = git.Repo(self.core.project_path)
         for remote in repo.remotes:
             remote.fetch()
         output = repo.git.status("-sb")
 
-        print(output)
+        print("UpdateManager fetch and status:", output)
         if "behind" in output:
-            print("update available!!!!")
             self.update_action.setText("New update available!")
             self.update_action.setEnabled(True)
         else:
-            self.update_action.setVisible(False)
+            self.update_action.setText("No updates available")
+            self.update_action.setEnabled(False)
 
     def init_gui(self, menu, app):
         menu.addSeparator()
-        self.update_action = QAction("Checking updates...")
+        self.update_action = QAction("...")
         self.update_action.setEnabled(False)
-        self.update_action.triggered.connect(lambda: self.on_update_triggered());
+        self.update_action.triggered.connect(self.on_update_triggered);
         menu.addAction(self.update_action)
 
     def on_update_triggered(self):
