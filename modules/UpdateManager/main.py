@@ -2,6 +2,7 @@
 import sys
 import os
 import time
+import threading
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -16,7 +17,7 @@ class UpdateManager:
         menu = core.get_tray_menu()
         app = core.get_application()
         self.init_gui(menu, app)
-        self.check_updates()
+        self.update_check_thread = threading.Thread(target=self.check_updates, daemon=True).start()
 
     def check_updates(self):
         repo = git.Repo(self.core.project_path)
@@ -24,22 +25,20 @@ class UpdateManager:
             remote.fetch()
         output = repo.git.status("-sb")
 
+        print(output)
         if "behind" in output:
-            return True
-        return False
+            print("update available!!!!")
+            self.update_action.setText("New update available!")
+            self.update_action.setEnabled(True)
+        else:
+            self.update_action.setVisible(False)
 
     def init_gui(self, menu, app):
-        update_status = self.check_updates()
-
         menu.addSeparator()
-        if update_status:
-            self.update_action = QAction("New Update Available!")
-        else:
-            self.update_action = QAction("No updates available")
-            self.update_action.setEnabled(False)
+        self.update_action = QAction("Checking updates...")
+        self.update_action.setEnabled(False)
         self.update_action.triggered.connect(lambda: self.on_update_triggered());
         menu.addAction(self.update_action)
-        menu.addSeparator()
 
     def on_update_triggered(self):
         import webbrowser
