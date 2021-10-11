@@ -25,4 +25,4 @@ class UpdateManager:
 
     def on_update_triggered(self):
         import webbrowser
-        webbrowser.open("https://github.com/salihmarangoz/system_tray_extensions")
+        webbrowser.open("https://github.com/salihmarangoz/system_tray_extensions#update")
