@@ -257,7 +257,6 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
 
     def init_gui(self, menu, app):
         self.br = QMenu("Brightness")
-        self.br0 = QAction("Turn Off");    self.br0.triggered.connect(lambda: self.update_state({"toggle": False}, save_state=True));    self.br.addAction(self.br0)
         self.br1 = QAction("10%");         self.br1.triggered.connect(lambda: self.update_state( {"brightness": 0.1} ));    self.br.addAction(self.br1)
         self.br2 = QAction("20%");         self.br2.triggered.connect(lambda: self.update_state( {"brightness": 0.2} ));    self.br.addAction(self.br2)
         self.br3 = QAction("30%");         self.br3.triggered.connect(lambda: self.update_state( {"brightness": 0.3} ));    self.br.addAction(self.br3)
@@ -271,6 +270,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         menu.addMenu(self.br)
 
         self.mc = QMenu("Mono Color")
+        self.mc_ac0 = QAction("Black (Turn off)"); self.mc_ac0.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (0.0,  0.0,  0.0)} ));           self.mc.addAction(self.mc_ac0)
         self.mc_ac1 = QAction("White");         self.mc_ac1.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,  1.0,  1.0)} ));           self.mc.addAction(self.mc_ac1)
         self.mc_ac2 = QAction("Red");           self.mc_ac2.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (1.0,    0,    0)} ));           self.mc.addAction(self.mc_ac2)
         self.mc_ac3 = QAction("Green");         self.mc_ac3.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": (  0,  1.0,    0)} ));           self.mc.addAction(self.mc_ac3)
@@ -300,7 +300,6 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.update_state(new_state=self.state)
 
     def update_state(self, new_state={}, save_state=True):
-
         if "brightness" in new_state and not "mode" in new_state:
             self.state.update(new_state)
             if self.state["mode"] == "effect":
@@ -341,7 +340,6 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
 
         if "toggle" in new_state:
             if new_state["toggle"] == False:
-                self.br.setTitle("Brightness (Turned Off)")
                 self.stop_animation_threads()
                 self.ite.turn_off()
                 # self.ite.set_brightness(0) # turn_off is better...
