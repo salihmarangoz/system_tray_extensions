@@ -11,6 +11,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from .events import Events
+from .states import States
 
 class Core():
     def __init__(self):
@@ -19,6 +20,9 @@ class Core():
         self.threads = {}
         self.queues = {}
         self.event_connections = {}
+
+        # init state manager
+        self.state_manager = States(filename=self.project_path + "/state.json")
 
         # init event handlers
         self.core_event_queue = queue.Queue()
@@ -43,18 +47,17 @@ class Core():
     def add_event_callback(self, module_name, event_name, function):
         self.event_connections[module_name][event_name] = function
 
-    def exit_app(self):
+    def exit_app(self, ask_confirmation=False):
+        if ask_confirmation:
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Question)
+            msgBox.setText("Are you sure to exit?")
+            msgBox.setWindowTitle("System Tray Extensions (STE)")
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            returnValue = msgBox.exec()
+            if not returnValue == QMessageBox.Yes:
+                return
         self.core_event_queue.put({"name": "exit"})
-
-    def exit_app_ask_confirmation(self):
-        msgBox = QMessageBox()
-        msgBox.setIcon(QMessageBox.Question)
-        msgBox.setText("Are you sure to exit?")
-        msgBox.setWindowTitle("System Tray Extensions (STE)")
-        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        returnValue = msgBox.exec()
-        if returnValue == QMessageBox.Yes:
-            self.exit_app()
 
     def restart_app(self):
         raise NotImplementedError # todo
@@ -64,6 +67,18 @@ class Core():
 
     def get_application(self):
         return self.app
+
+    def save_state(self, module_name, state):
+        cur_state = self.state_manager.load_state()
+        cur_state[module_name] = state
+        self.state_manager.save_state(cur_state)
+
+    def load_state(self, module_name):
+        cur_state = self.state_manager.load_state()
+        if module_name in cur_state:
+            return cur_state[module_name]
+        else:
+            return None
 
     ###########################################################################
 
@@ -79,7 +94,7 @@ class Core():
     def _keep_main_thread(self):
         try:
             self._quit_action = QAction("Quit")
-            self._quit_action.triggered.connect(self.exit_app_ask_confirmation)
+            self._quit_action.triggered.connect(lambda: self.exit_app(ask_confirmation=True))
             self.menu.addAction(self._quit_action)
             self.app.exec_()
         except KeyboardInterrupt:
