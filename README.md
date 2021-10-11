@@ -146,13 +146,13 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 **ToDo List:**
 
 - [ ] Core: Check hibernate/wakeup if it works.
-- [ ] RgbKeyboard: Report brightness in the menu and modify brightness.
+- [x] RgbKeyboard: Report brightness in the menu and modify brightness.
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] RgbKeyboard: low battery alert
 - [ ] RgbKeyboard: Run screen mimic when screensaver starts on ac mode.
 - [ ] Core: Add callback in an anonymous way
-- [ ] *: Manage settings and module states.
-- [ ] CheckUpdates: Show QtAction if update is available. Check every 6 hrs.
+- [x] *: Manage settings and module states.
+- [x] CheckUpdates: Show QtAction if update is available. Check every 6 hrs. (kinda ok.)
 - [x] App: Add on boot entry for start.sh
 - [x] App: Add desktop entry for start.sh
 - [x] App: We need an ICON.

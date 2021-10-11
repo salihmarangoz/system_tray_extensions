@@ -212,14 +212,16 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         if self.state is None:
             self.state = self.get_default_state()
 
-        # init rgb kb driver and load state
+        # init rgb kb driver
         self.ite = ite8291r3.get()
-        self.reload_state()
 
         # init qt gui
         menu = core.get_tray_menu()
         app = core.get_application()
         self.init_gui(menu, app)
+
+        # reload state
+        self.reload_state()
 
         # register callbacks
         self.core.add_event_callback(MODULE_NAME, "resume",       self.on_resume)
@@ -254,7 +256,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.update_state({"toggle": False}, save_state=False)
 
     def init_gui(self, menu, app):
-        self.br = QMenu("Set Brightness")
+        self.br = QMenu("Brightness")
         self.br0 = QAction("Turn Off");    self.br0.triggered.connect(lambda: self.update_state({"toggle": False}, save_state=True));    self.br.addAction(self.br0)
         self.br1 = QAction("10%");         self.br1.triggered.connect(lambda: self.update_state( {"brightness": 0.1} ));    self.br.addAction(self.br1)
         self.br2 = QAction("20%");         self.br2.triggered.connect(lambda: self.update_state( {"brightness": 0.2} ));    self.br.addAction(self.br2)
@@ -292,16 +294,21 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
 
     def reload_state(self):
+        # todo read from file
         print("Reloading state:", self.state)
         time.sleep(1)
         self.update_state(new_state=self.state)
 
     def update_state(self, new_state={}, save_state=True):
+
         if "brightness" in new_state and not "mode" in new_state:
             self.state.update(new_state)
             if self.state["mode"] == "effect":
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
             if self.state["mode"] == "mono":
+                self.state["toggle"] = True
+                self.update_state(self.state, save_state)
+            if self.state["mode"] == "custom" and os.path.splitext(self.state["value"])[1].lower() == ".png":
                 self.update_state(self.state, save_state)
 
         if "mode" in new_state:
@@ -334,10 +341,16 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
 
         if "toggle" in new_state:
             if new_state["toggle"] == False:
+                self.br.setTitle("Brightness (Turned Off)")
                 self.stop_animation_threads()
                 self.ite.turn_off()
                 # self.ite.set_brightness(0) # turn_off is better...
                 # self.ite.freeze() # NEVER USE THIS COMMAND
+
+        if "brightness" in new_state:
+                self.br.setTitle("Brightness ({}%)".format(int(new_state["brightness"]*100)))
+        elif "brightness" in self.state:
+                self.br.setTitle("Brightness ({}%)".format(int(self.state["brightness"]*100)))
 
         if save_state:
             self.state.update(new_state)
