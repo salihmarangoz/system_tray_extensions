@@ -57,6 +57,7 @@ $ pip3 install --upgrade pip
 $ pip3 install wheel
 
 # 3. Install dependencies
+$ cd "$INSTALL_DIR"
 $ xargs sudo apt-get install -y < requirements_apt.txt
 $ source ste_env/bin/activate
 $ pip3 install -r requirements_pip.txt
