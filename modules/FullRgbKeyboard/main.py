@@ -325,12 +325,14 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
 
             if new_state["mode"] == "screen":
                 self.stop_animation_threads()
+                self.ite.set_brightness(50)
                 self.start_screen_thread()
 
             if new_state["mode"] == "custom":
                 if len(new_state["value"]) == 0:
                     return # cancel update_state
                 self.stop_animation_threads()
+                self.ite.set_brightness(50)
                 if os.path.splitext(new_state["value"])[1].lower() == ".png":
                     layout = self.open_layout(new_state["value"])
                     colormap = self.layout_to_colormap(layout)
@@ -342,7 +344,7 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
             if new_state["toggle"] == False:
                 self.stop_animation_threads()
                 self.ite.turn_off()
-                # self.ite.set_brightness(0) # turn_off is better...
+                #self.ite.set_brightness(0)
                 # self.ite.freeze() # NEVER USE THIS COMMAND
 
         if "brightness" in new_state:
