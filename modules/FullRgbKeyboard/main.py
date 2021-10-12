@@ -36,7 +36,7 @@ class FullRgbKeyboardBase:
     def __init__(self, core):
         self.core = core
         self.layouts_path = os.path.join(self.core.project_path, 'rgb_kb_custom')
-        self.gamma = (0.6, 0.5, 0.5)
+        self.gamma = (0.55, 0.48, 0.43)
         self.screen_thread_enable = False
         self.video_thread_enable = False
 
