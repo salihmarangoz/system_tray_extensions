@@ -14,7 +14,7 @@ Here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
 # [STE] System Tray Extensions
 
-todo: description
+System tray toolbox for Linux desktop systems. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future.
 
 
 
@@ -30,10 +30,10 @@ todo: description
 
 | Ready?            | Name (click for readme)                          | Description                                                  |
 | ----------------- | ------------------------------------------------ | ------------------------------------------------------------ |
-| Mostly            | [Core](modules/Core/README.md)                   | todo                                                         |
-| Partially         | [UpdateManager](modules/UpdateManager/README.md) | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. |
-| Mostly            | [FullRgbKeyboard](modules/RgbKeyboard/README.md) | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
-| Only for LightBar | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Also includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
+| Mostly            | [Core](modules/Core/README.md)                   | Handles process signals, dbus events, state & configuration files, GUI, etc. |
+| Partially         | [UpdateManager](modules/UpdateManager/README.md) | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. **Feedback is needed** |
+| Mostly            | [Ite8291r3](modules/Ite8291r3/README.md)         | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can be extended for new devices if there is a driver exists for it. |
+| Only for LightBar | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Currently includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
 |                   | Script Manager                                   | todo                                                         |
 
 
@@ -95,27 +95,29 @@ $ cp system_tray_extensions.desktop $HOME/.config/autostart/
 
 ## Enable Write Permissions for `/sys/class/leds/`
 
-Create a new udev rule:
+For controlling Tuxedo Keyboards it is needed to enable write permissions. 
+
+- Create a new udev rule:
 
 ```bash
 $ sudo nano /etc/udev/rules.d/99-ste-tuxedokeyboard.rules
 ```
 
-Copy and paste everything here:
+- Copy and paste everything here:
 
 ```
 SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 ```
 
-Create `leds` group and add current user to it. 
+- Create `leds` group and add current user to it. 
 
 ```bash
 $ sudo groupadd leds
 $ sudo usermod -a -G leds $USER
 ```
 
-Logout and login again.
+- Logout and login again. (or reboot the system)
 
 
 
@@ -126,7 +128,7 @@ Backup your installation before updating if you modified existing files. If you 
 ```bash
 $ cd $HOME/.system_tray_extensions
 $ git pull
-# Repeat installation steps 0, 3, 4, 5, 6
+# Repeat installation steps 0, 3, 4
 ```
 
 
@@ -156,7 +158,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] RgbKeyboard: low battery alert
 - [ ] RgbKeyboard: Run screen mimic when screensaver starts on ac mode.
-- [ ] Core: Add callback in an anonymous way
+- [x] Core: Add callback in an anonymous way
 - [x] *: Manage settings and module states.
 - [x] CheckUpdates: Show QtAction if update is available. Check every 6 hrs. (kinda ok.)
 - [x] App: Add on boot entry for start.sh
