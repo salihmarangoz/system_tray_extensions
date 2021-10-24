@@ -24,6 +24,12 @@ System tray toolbox for Linux desktop systems. Currently includes tools for cont
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
+Also here are some other videos for RGB keyboard good for demonstration. Enable `Screen Reflect` effect and watch the video in full-screen:
+
+- https://www.youtube.com/watch?v=2VsZTW6UjcA
+- https://www.youtube.com/watch?v=jeQFX9fE7Xc
+- https://www.youtube.com/watch?v=5gT3migqxNI
+
 
 
 ## Modules
@@ -135,7 +141,7 @@ $ git pull
 
 ## Running
 
-App will start on boot by default. You can start it just after the installation with this command:
+You can start the app via launcher. Also, the app will start on boot by default. If you want to start via terminal then run this command:
 
 ```bash
 $ bash start.sh
@@ -178,6 +184,7 @@ Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxa
 
 - [Youtube: Aurora Borealis Inspired Ambient Animation Video Backdrop Loop (60 min/No sound) - Free Footage](https://www.youtube.com/watch?v=X6PLRiil2F4)
 - [Youtube: Rotating Colorful Waves - Rainbow Lines - Motion Graphics Video Background](https://www.youtube.com/watch?v=sTsO_NMjb3o)
+- [Youtube: Blurred Lines Spaghetti Ambient Mood Light Video Loop (2 Hours/No Sound)](https://www.youtube.com/watch?v=Nw9vgfbPf90)
 
 Credit goes to [MrPacMan36](https://www.youtube.com/channel/UC7GfgbTJuA6_gi2XEaBcNRw) for the video used in the RGB Keyboard demo video:
 

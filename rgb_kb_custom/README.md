@@ -32,4 +32,5 @@ Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxa
 
 - `Aurora.mp4` -> https://www.youtube.com/watch?v=X6PLRiil2F4
 - `Rainbow.mp4` -> https://www.youtube.com/watch?v=sTsO_NMjb3o
+- `Spaghetti.mp4` -> https://www.youtube.com/watch?v=Nw9vgfbPf90
 
