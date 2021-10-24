@@ -16,15 +16,13 @@ import threading
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-MODULE_NAME = "FullRgbKeyboard"
-
 class FullRgbKeyboard:
     """RgbKeyboard Submodule Loader"""
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, node):
+        self.node = node
         self.driver_name = "Ite8291r3Ctl" # todo: read from config file
         self.driver_class = getattr(sys.modules[__name__], self.driver_name)
-        self.driver_obj = self.driver_class(self.core)
+        self.driver_obj = self.driver_class(self.node)
 
 ############################################################################################
 
@@ -33,9 +31,9 @@ class FullRgbKeyboardBase:
     [png file] -> layout (0-255) -> colormap (0-1) x brightness (0-1) -> voltmap (0-1) -> [keyboard driver]
     """
 
-    def __init__(self, core):
-        self.core = core
-        self.layouts_path = os.path.join(self.core.project_path, 'rgb_kb_custom')
+    def __init__(self, node):
+        self.node = node
+        self.layouts_path = os.path.join(self.node.get_project_path(), 'rgb_kb_custom')
         self.gamma = (0.55, 0.48, 0.43)
         self.screen_thread_enable = False
         self.video_thread_enable = False
@@ -47,10 +45,10 @@ class FullRgbKeyboardBase:
         return list(layouts)
 
     def save_state(self, state):
-        self.core.save_state(MODULE_NAME, state)
+        self.node.save_state(state)
 
     def load_state(self):
-        return self.core.load_state(MODULE_NAME)
+        return self.node.load_state()
 
     def color_to_voltage(self, color):
         return np.power(color, 1./np.array(self.gamma))
@@ -205,8 +203,8 @@ class FullRgbKeyboardBase:
 ############################################################################################
 
 class Ite8291r3Ctl(FullRgbKeyboardBase):
-    def __init__(self, core):
-        super().__init__(core)
+    def __init__(self, node):
+        super().__init__(node)
         # get saved state
         self.state = self.load_state()
         if self.state is None:
@@ -216,21 +214,21 @@ class Ite8291r3Ctl(FullRgbKeyboardBase):
         self.ite = ite8291r3.get()
 
         # init qt gui
-        menu = core.get_tray_menu()
-        app = core.get_application()
+        menu = node.get_tray_menu()
+        app = node.get_application()
         self.init_gui(menu, app)
 
         # reload state
         self.reload_state()
 
         # register callbacks
-        self.core.add_event_callback(MODULE_NAME, "resume",       self.on_resume)
-        self.core.add_event_callback(MODULE_NAME, "suspend",      self.on_suspend)
-        self.core.add_event_callback(MODULE_NAME, "lid_opened",   self.on_lid_opened)
-        self.core.add_event_callback(MODULE_NAME, "lid_closed",   self.on_lid_closed)
-        self.core.add_event_callback(MODULE_NAME, "on_ac",        self.on_ac)
-        self.core.add_event_callback(MODULE_NAME, "on_battery",   self.on_battery)
-        self.core.add_event_callback(MODULE_NAME, "exit",         self.on_exit)
+        self.node.add_event_callback("resume",       self.on_resume)
+        self.node.add_event_callback("suspend",      self.on_suspend)
+        self.node.add_event_callback("lid_opened",   self.on_lid_opened)
+        self.node.add_event_callback("lid_closed",   self.on_lid_closed)
+        self.node.add_event_callback("on_ac",        self.on_ac)
+        self.node.add_event_callback("on_battery",   self.on_battery)
+        self.node.add_event_callback("exit",         self.on_exit)
 
     def on_resume(self, event):
         self.ite = ite8291r3.get() # take the control over the device

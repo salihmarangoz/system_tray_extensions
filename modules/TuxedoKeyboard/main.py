@@ -4,25 +4,23 @@ import numpy as np
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-MODULE_NAME = "TuxedoKeyboard"
-
 class TuxedoKeyboard:
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, node):
+        self.node = node
         self.gamma = (0.55, 0.48, 0.43)
 
         # init qt gui
-        menu = core.get_tray_menu()
-        app = core.get_application()
+        menu = node.get_tray_menu()
+        app = node.get_application()
         self.init_gui(menu, app)
 
         # register callbacks
-        self.core.add_event_callback(MODULE_NAME, "resume",       self.on_resume)
-        self.core.add_event_callback(MODULE_NAME, "suspend",      self.on_suspend)
-        self.core.add_event_callback(MODULE_NAME, "lid_opened",   self.on_lid_opened)
-        self.core.add_event_callback(MODULE_NAME, "lid_closed",   self.on_lid_closed)
-        self.core.add_event_callback(MODULE_NAME, "on_ac",        self.on_ac)
-        self.core.add_event_callback(MODULE_NAME, "on_battery",   self.on_battery)
+        self.node.add_event_callback("resume",       self.on_resume)
+        self.node.add_event_callback("suspend",      self.on_suspend)
+        self.node.add_event_callback("lid_opened",   self.on_lid_opened)
+        self.node.add_event_callback("lid_closed",   self.on_lid_closed)
+        self.node.add_event_callback("on_ac",        self.on_ac)
+        self.node.add_event_callback("on_battery",   self.on_battery)
 
     def on_resume(self, event):
         pass
