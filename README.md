@@ -16,11 +16,11 @@ Here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
 System tray toolbox for Linux desktop systems. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future.
 
+**Screenshot of the system tray application:**
 
+![screenshot](screenshot.png)
 
-## Demos
-
-### RGB Keyboard Driver
+**RGB Keyboard Demo:**
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
