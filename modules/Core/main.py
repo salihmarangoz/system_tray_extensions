@@ -6,28 +6,178 @@ import signal
 import sys
 import time
 import os
+import json
+import copy
+from threading import Lock
+import subprocess
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from .events import Events
-from .states import States
+
+class Node():
+    """Node class; assigned to each module for accessing events, states, GUI and special application functions
+    """
+    def __init__(self, module_name, core, state_manager):
+        self.core = core
+        self.module_name = module_name
+        self.state_manager = state_manager
+
+    """Adds event callbacks. Uses the assigned thread for the module.
+    Args:
+        event_name: Event name as string. Can be "exit", "on_battery", etc. See README.md for more details.
+        callback_function: Calls this function when the given event occured. Passes a dictionary which looks like this {name: "<event_name>", ...}
+    """
+    def add_event_callback(self, event_name, callback_function):
+        self.core.add_event_callback(self.module_name, event_name, callback_function)
+
+
+    """Sends "exit" event to all modules and tries to terminate the app.
+    Args:
+        ask_confirmation: Opens a message box asking whether user wants to exit or not. Set to True for asking, default value is False.
+    Returns:
+        Returns False if user chooses not to exit. 
+    """
+    def exit_app(self, ask_confirmation=False):
+        return self.core.exit_app(ask_confirmation)
+
+    # todo
+    def restart_app(self, ask_confirmation=False):
+        self.core.restart_app(self, ask_confirmation=False)
+
+
+    """Saves module state to the state json file.
+    Args:
+        state: Dictionary including related state values to be saved.
+        module_name: Updates assigned module's state if None. If a module name is given, updates the given module state.
+    """
+    def save_state(self, state, module_name=None):
+        if module_name is None:
+            module_name = self.module_name
+        cur_state = self.state_manager.load_state()
+        cur_state[module_name] = state
+        self.state_manager.save_state(cur_state)
+
+
+    """Loads module state from the state json file.
+    Args:
+        module_name: Loads assigned module's state if None. If a module name is given, loads the given module state.
+    Returns:
+        Dictionary as how it is saved with using save_state function.
+    """
+    def load_state(self, module_name=None):
+        if module_name is None:
+            module_name = self.module_name
+        cur_state = self.state_manager.load_state()
+        if module_name in cur_state:
+            return cur_state[module_name]
+        else:
+            return None
+
+
+    """See: https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QMenu.html
+    Returns:
+        QMenu object
+    """
+    def get_tray_menu(self):
+        return self.core.menu
+
+
+    """See: https://doc.qt.io/qtforpython-5/PySide2/QtWidgets/QApplication.html
+    Returns:
+        QApplication object
+    """
+    def get_application(self):
+        return self.core.app
+
+
+    """Returns project root path.
+    Returns:
+        Folder path as string.
+    """
+    def get_project_path(self):
+        return self.core.project_path
+
+
+#####################################################################################################################
+# CLASSES BELOW THIS LINE HANDLES INTERNAL STUFF AND CAN BE CHANGED ANY TIME. USE "Node" CLASS FOR DEVELOPING MODUES
+#####################################################################################################################
+
+
+class StateManager:
+    def __init__(self, filename):
+        self.filename = filename
+        self.mutex = Lock()
+
+    def load_state(self):
+        self.mutex.acquire()
+        try:
+            if os.path.isfile(self.filename):
+                print("State file is found:", self.filename)
+                with open(self.filename) as json_file:
+                    state = json.load(json_file)
+            else:
+                print("State file is NOT found:", self.filename)
+                state = {}
+        finally:
+            self.mutex.release()
+        return state
+
+    def save_state(self, state):
+        self.mutex.acquire()
+        try:
+            print("State file saved:", self.filename)
+            with open(self.filename, 'w') as outfile:
+                #json.dump(state, outfile)
+                json.dump(state, outfile, indent=4)
+        finally:
+            self.mutex.release()
+
+
+class EventManager:
+    def __init__(self, node):
+        self.node = node
+        self.process_events = True
+
+        # init dbus handler
+        self.node.add_event_callback("exit", self._exit_event)
+        dbus_script_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dbus_handler.py')
+        self.proc = subprocess.Popen(['python', dbus_script_path],stdout=subprocess.PIPE)
+        self.stdin_event_thread = threading.Thread(target=self._dbus_handler, daemon=True).start()
+
+    def _exit_event(self, event):
+        self.process_events = False
+        self.proc.kill()
+
+    def _dbus_handler(self):
+        for line in iter(self.proc.stdout.readline, ''):
+            if not self.process_events:
+                break
+            if len(line) == 0:
+                print("dbus_handler.py streamed empty line. exiting...")
+                break
+            event = line.decode("utf-8").strip()
+            print("New event:", event)
+            self.node.core.core_event_queue.put({"name": event})
+            if event == "exit":
+                break
 
 class Core():
     def __init__(self):
         self.project_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..')
+        self.nodes = {}
         self.modules = {}
         self.threads = {}
         self.queues = {}
         self.event_connections = {}
 
         # init state manager
-        self.state_manager = States(filename=self.project_path + "/state.json")
+        self.state_manager = StateManager(filename=self.project_path + "/state.json")
 
-        # init event handlers
+        # init event manager and extras
         self.core_event_queue = queue.Queue()
         self.core_event_thread = threading.Thread(target=self._core_thread_function, daemon=True).start()
-        self._init_module(Events, "Events") # this includes sigint signal exceptionally
+        self._init_module(EventManager, "EventManager") # this module handles the process signals
 
         # init gui
         self.app = QApplication([])
@@ -56,31 +206,11 @@ class Core():
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             returnValue = msgBox.exec()
             if not returnValue == QMessageBox.Yes:
-                return
+                return False
         self.core_event_queue.put({"name": "exit"})
 
-    def restart_app(self):
+    def restart_app(self, ask_confirmation=False):
         raise NotImplementedError # todo
-
-    def get_tray_menu(self):
-        return self.menu
-
-    def get_application(self):
-        return self.app
-
-    def save_state(self, module_name, state):
-        cur_state = self.state_manager.load_state()
-        cur_state[module_name] = state
-        self.state_manager.save_state(cur_state)
-
-    def load_state(self, module_name):
-        cur_state = self.state_manager.load_state()
-        if module_name in cur_state:
-            return cur_state[module_name]
-        else:
-            return None
-
-    ###########################################################################
 
     def _init_module(self, module_class, module_name):
         if module_name in self.modules:
@@ -89,7 +219,9 @@ class Core():
         self.event_connections[module_name] = {}
         self.queues[module_name] = queue.Queue()
         self.threads[module_name] = threading.Thread(target=self._module_thread_function, daemon=True, args=(module_name,)).start()
-        self.modules[module_name] = module_class(self)
+        self.nodes[module_name] = Node(module_name, self, self.state_manager)
+
+        self.modules[module_name] = module_class(self.nodes[module_name])
 
     def _keep_main_thread(self):
         try:
@@ -110,7 +242,7 @@ class Core():
                     self.event_connections[module_name][event["name"]](event)
                 except Exception as e:
                     print(traceback.print_exc())
-            self.queues[module_name].task_done() # this may not be needed
+            self.queues[module_name].task_done()
 
     # Main event threading (may not be the main thread)
     def _core_thread_function(self):
