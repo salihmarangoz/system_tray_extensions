@@ -22,7 +22,34 @@ class TuxedoKeyboard:
         self.node.add_event_callback("lid_closed",   self.on_lid_closed)
         self.node.add_event_callback("on_ac",        self.on_ac)
         self.node.add_event_callback("on_battery",   self.on_battery)
+        self.node.add_event_callback("exit",         self.on_exit)
 
+        self.reload_state()
+
+    def on_resume(self, event):
+        self.reload_state()
+
+    def on_suspend(self, event):
+        self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
+
+    def on_lid_opened(self, event):
+        pass
+        #self.reload_state()
+
+    def on_lid_closed(self, event):
+        pass
+        #self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
+
+    def on_ac(self, event):
+        pass
+
+    def on_battery(self, event):
+        pass
+
+    def on_exit(self, event):
+        self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
+
+    def reload_state(self):
         if self.state is not None and "mode" in self.state:
             if self.state["mode"] == "mono":
                 self.apply_lightbar_color(self.state["value"])
@@ -31,25 +58,6 @@ class TuxedoKeyboard:
         else:
             # default:
             self.apply_lightbar_animation()
-
-
-    def on_resume(self, event):
-        pass
-
-    def on_suspend(self, event):
-        pass
-
-    def on_lid_opened(self, event):
-        pass
-
-    def on_lid_closed(self, event):
-        pass
-
-    def on_ac(self, event):
-        pass
-
-    def on_battery(self, event):
-        pass
 
     def init_gui(self, menu, app):
         self.lb = QMenu("LightBar")
@@ -69,7 +77,7 @@ class TuxedoKeyboard:
         color = QColorDialog.getColor().getRgb()
         return (color[0]/255, color[1]/255, color[2]/255)
 
-    def apply_lightbar_color(self, color):
+    def apply_lightbar_color(self, color, save_state=True):
         voltage = self.color_to_voltage(color)
         with open('/sys/class/leds/lightbar_rgb:1:status/brightness', 'w') as f:
             f.write(str(int(voltage[0]*36)))
@@ -78,11 +86,14 @@ class TuxedoKeyboard:
         with open('/sys/class/leds/lightbar_rgb:3:status/brightness', 'w') as f:
             f.write(str(int(voltage[2]*36)))
 
-        self.state = {"mode": "mono", "value": color}
-        self.node.save_state(self.state)
+        if save_state:
+            self.state = {"mode": "mono", "value": color}
+            self.node.save_state(self.state)
 
-    def apply_lightbar_animation(self, value=1):
+    def apply_lightbar_animation(self, value=1, save_state=True):
         with open('/sys/class/leds/lightbar_animation::status/brightness', 'w') as f:
             f.write(str(int(value)))
-        self.state = {"mode": "animation", "value": value}
-        self.node.save_state(self.state)
+
+        if save_state:
+            self.state = {"mode": "animation", "value": value}
+            self.node.save_state(self.state)

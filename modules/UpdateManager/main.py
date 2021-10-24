@@ -10,12 +10,12 @@ from PyQt5.QtWidgets import *
 import git
 
 class UpdateManager:
-    def __init__(self, core):
-        self.core = core
+    def __init__(self, node):
+        self.node = node
 
         # init qt gui
-        menu = core.get_tray_menu()
-        app = core.get_application()
+        menu = node.get_tray_menu()
+        app = node.get_application()
         self.init_gui(menu, app)
         self.check_updates()
 
@@ -25,7 +25,7 @@ class UpdateManager:
         self.update_check_thread = threading.Thread(target=self.check_updates_thread, daemon=True).start()
 
     def check_updates_thread(self):
-        repo = git.Repo(self.core.project_path)
+        repo = git.Repo(self.node.get_project_path())
         for remote in repo.remotes:
             remote.fetch()
         output = repo.git.status("-sb")

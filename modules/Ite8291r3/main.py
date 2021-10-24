@@ -41,7 +41,9 @@ class Ite8291r3:
         # init qt gui
         menu = node.get_tray_menu()
         app = node.get_application()
-        self.init_gui(menu, app)
+        self.submenu = QMenu("RGB Keyboard")
+        self.init_gui(self.submenu, app)
+        menu.addMenu(self.submenu)
 
         # reload state
         self.reload_state()
