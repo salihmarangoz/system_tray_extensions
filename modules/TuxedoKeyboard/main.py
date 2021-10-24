@@ -50,10 +50,10 @@ class TuxedoKeyboard:
         self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
 
     def reload_state(self):
-        if self.state is not None and "mode" in self.state:
-            if self.state["mode"] == "mono":
+        if self.state is not None and "lb_mode" in self.state:
+            if self.state["lb_mode"] == "mono":
                 self.apply_lightbar_color(self.state["value"])
-            elif self.state["mode"] == "animation":
+            elif self.state["lb_mode"] == "animation":
                 self.apply_lightbar_animation(self.state["value"])
         else:
             # default:
@@ -87,7 +87,7 @@ class TuxedoKeyboard:
             f.write(str(int(voltage[2]*36)))
 
         if save_state:
-            self.state = {"mode": "mono", "value": color}
+            self.state = {"lb_mode": "mono", "value": color}
             self.node.save_state(self.state)
 
     def apply_lightbar_animation(self, value=1, save_state=True):
@@ -95,5 +95,5 @@ class TuxedoKeyboard:
             f.write(str(int(value)))
 
         if save_state:
-            self.state = {"mode": "animation", "value": value}
+            self.state = {"lb_mode": "animation", "value": value}
             self.node.save_state(self.state)

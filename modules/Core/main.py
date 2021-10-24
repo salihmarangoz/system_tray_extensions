@@ -128,7 +128,8 @@ class StateManager:
         try:
             print("State file saved:", self.filename)
             with open(self.filename, 'w') as outfile:
-                json.dump(state, outfile)
+                #json.dump(state, outfile)
+                json.dump(state, outfile, indent=4)
         finally:
             self.mutex.release()
 
