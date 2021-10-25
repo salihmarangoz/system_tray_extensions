@@ -24,6 +24,12 @@ System tray toolbox for Linux desktop systems. Currently includes tools for cont
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
+Also here are some other videos for RGB keyboard good for demonstration. Enable `Screen Reflect` effect and watch the video in full-screen:
+
+- https://www.youtube.com/watch?v=2VsZTW6UjcA
+- https://www.youtube.com/watch?v=jeQFX9fE7Xc
+- https://www.youtube.com/watch?v=5gT3migqxNI
+
 
 
 ## Modules
@@ -52,43 +58,9 @@ $ git clone https://github.com/salihmarangoz/system_tray_extensions.git "$INSTAL
 # OR
 $ git clone git@github.com:salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
 
-# 2. Create new virtual environment
-# Note: I recommend using virtual environment to keep your pip installations clean
-$ sudo apt install python3.8-venv
-$ cd "$INSTALL_DIR"
-$ python3 -m venv ste_env
-$ echo "*" >> ste_env/.gitignore
-$ source ste_env/bin/activate
-$ pip3 install --upgrade pip
-$ pip3 install wheel
-
-# 3. Install dependencies
-$ cd "$INSTALL_DIR"
-$ xargs sudo apt-get install -y < requirements_apt.txt
-$ source ste_env/bin/activate
-$ pip3 install -r requirements_pip.txt
-
-# 4. Create desktop entry
-# COPY THIS SECTION AND PASTE INTO TERMINAL
-tee system_tray_extensions.desktop << END
-[Desktop Entry]
-Type=Application
-Exec=$(which bash) $INSTALL_DIR/start.sh
-Icon=$INSTALL_DIR/icon.png
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name=System Tray Extensions
-GenericName=STE
-END
-# UNTIL HERE
-
-# 5. Add desktop entry to the Application Menu
-$ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the desktop entry to the apps menu
-
-# 6. Enable application to run on Boot
-$ mkdir -p $HOME/.config/autostart/
-$ cp system_tray_extensions.desktop $HOME/.config/autostart/
+# Next steps are included in the script:
+$ cd $INSTALL_DIR
+$ bash install.sh
 ```
 
 
@@ -126,16 +98,17 @@ $ sudo usermod -a -G leds $USER
 Backup your installation before updating if you modified existing files. If you added new files it is OK. But, for example, if you modified some files (e.g. presets inside rgb_kb_custom) create a file named `.gitignore` and write `*` and place into that folder.
 
 ```bash
-$ cd $HOME/.system_tray_extensions
+$ INSTALL_DIR="$HOME/.system_tray_extensions"
+$ cd $INSTALL_DIR
 $ git pull
-# Repeat installation steps 0, 3, 4
+$ bash install.sh
 ```
 
 
 
 ## Running
 
-App will start on boot by default. You can start it just after the installation with this command:
+You can start the app via launcher. Also, the app will start on boot by default. If you want to start via terminal then run this command:
 
 ```bash
 $ bash start.sh
@@ -178,6 +151,7 @@ Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxa
 
 - [Youtube: Aurora Borealis Inspired Ambient Animation Video Backdrop Loop (60 min/No sound) - Free Footage](https://www.youtube.com/watch?v=X6PLRiil2F4)
 - [Youtube: Rotating Colorful Waves - Rainbow Lines - Motion Graphics Video Background](https://www.youtube.com/watch?v=sTsO_NMjb3o)
+- [Youtube: Blurred Lines Spaghetti Ambient Mood Light Video Loop (2 Hours/No Sound)](https://www.youtube.com/watch?v=Nw9vgfbPf90)
 
 Credit goes to [MrPacMan36](https://www.youtube.com/channel/UC7GfgbTJuA6_gi2XEaBcNRw) for the video used in the RGB Keyboard demo video:
 
