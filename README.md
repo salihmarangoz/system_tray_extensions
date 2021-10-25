@@ -98,9 +98,10 @@ $ sudo usermod -a -G leds $USER
 Backup your installation before updating if you modified existing files. If you added new files it is OK. But, for example, if you modified some files (e.g. presets inside rgb_kb_custom) create a file named `.gitignore` and write `*` and place into that folder.
 
 ```bash
-$ cd $HOME/.system_tray_extensions
+$ INSTALL_DIR="$HOME/.system_tray_extensions"
+$ cd $INSTALL_DIR
 $ git pull
-# Repeat installation steps 0, 3, 4
+$ bash install.sh
 ```
 
 
