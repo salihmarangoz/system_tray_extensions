@@ -58,43 +58,9 @@ $ git clone https://github.com/salihmarangoz/system_tray_extensions.git "$INSTAL
 # OR
 $ git clone git@github.com:salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
 
-# 2. Create new virtual environment
-# Note: I recommend using virtual environment to keep your pip installations clean
-$ sudo apt install python3.8-venv
-$ cd "$INSTALL_DIR"
-$ python3 -m venv ste_env
-$ echo "*" >> ste_env/.gitignore
-$ source ste_env/bin/activate
-$ pip3 install --upgrade pip
-$ pip3 install wheel
-
-# 3. Install dependencies
-$ cd "$INSTALL_DIR"
-$ xargs sudo apt-get install -y < requirements_apt.txt
-$ source ste_env/bin/activate
-$ pip3 install -r requirements_pip.txt
-
-# 4. Create desktop entry
-# COPY THIS SECTION AND PASTE INTO TERMINAL
-tee system_tray_extensions.desktop << END
-[Desktop Entry]
-Type=Application
-Exec=$(which bash) $INSTALL_DIR/start.sh
-Icon=$INSTALL_DIR/icon.png
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name=System Tray Extensions
-GenericName=STE
-END
-# UNTIL HERE
-
-# 5. Add desktop entry to the Application Menu
-$ xdg-desktop-menu install --novendor system_tray_extensions.desktop # Add the desktop entry to the apps menu
-
-# 6. Enable application to run on Boot
-$ mkdir -p $HOME/.config/autostart/
-$ cp system_tray_extensions.desktop $HOME/.config/autostart/
+# Next steps are included in the script:
+$ cd $INSTALL_DIR
+$ bash install.sh
 ```
 
 
