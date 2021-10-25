@@ -41,9 +41,14 @@ class Node():
     def exit_app(self, ask_confirmation=False):
         return self.core.exit_app(ask_confirmation)
 
-    # todo
+    """Sends "exit" event to all modules and tries to terminate the app. Returns value 42 and "start.sh" restarts the app afterwards.
+    Args:
+        ask_confirmation: Opens a message box asking whether user wants to restarts or not. Set to True for asking, default value is False.
+    Returns:
+        Returns False if user chooses not to restart.
+    """
     def restart_app(self, ask_confirmation=False):
-        self.core.restart_app(self, ask_confirmation=False)
+        return self.core.restart_app(ask_confirmation)
 
 
     """Saves module state to the state json file.
@@ -170,6 +175,7 @@ class Core():
         self.threads = {}
         self.queues = {}
         self.event_connections = {}
+        self.exit_code = 0
 
         # init state manager
         self.state_manager = StateManager(filename=self.project_path + "/state.json")
@@ -197,11 +203,11 @@ class Core():
     def add_event_callback(self, module_name, event_name, function):
         self.event_connections[module_name][event_name] = function
 
-    def exit_app(self, ask_confirmation=False):
+    def exit_app(self, ask_confirmation=False, text="Are you sure to exit?"):
         if ask_confirmation:
             msgBox = QMessageBox()
             msgBox.setIcon(QMessageBox.Question)
-            msgBox.setText("Are you sure to exit?")
+            msgBox.setText(text)
             msgBox.setWindowTitle("System Tray Extensions (STE)")
             msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             returnValue = msgBox.exec()
@@ -210,7 +216,11 @@ class Core():
         self.core_event_queue.put({"name": "exit"})
 
     def restart_app(self, ask_confirmation=False):
-        raise NotImplementedError # todo
+        self.exit_code = 42
+        retval = self.exit_app(ask_confirmation, text="Are you sure to restart?")
+        if retval == False:
+            self.exit_code = 0
+        return retval
 
     def _init_module(self, module_class, module_name):
         if module_name in self.modules:
@@ -225,13 +235,18 @@ class Core():
 
     def _keep_main_thread(self):
         try:
+            self._restart_action = QAction("Restart")
+            self._restart_action.triggered.connect(lambda: self.restart_app(ask_confirmation=True))
+            self.menu.addAction(self._restart_action)
+
             self._quit_action = QAction("Quit")
             self._quit_action.triggered.connect(lambda: self.exit_app(ask_confirmation=True))
             self.menu.addAction(self._quit_action)
+
             self.app.exec_()
         except KeyboardInterrupt:
             print("Qt interrupted by SIGINT")
-            sys.exit(0)
+            sys.exit(self.exit_code)
 
     # Module event threading
     def _module_thread_function(self, module_name):
@@ -263,5 +278,10 @@ class Core():
             print("Waiting for {}".format(module_name))
             queue.join() # todo: timeout
         print("Waiting for Qt")
-        self.app.exit()
-        sys.exit(0)
+        self.app.exit(self.exit_code)
+
+        # somehow sys.exit doesnt work well... 
+        if self.exit_code == 42:
+            os._exit(self.exit_code)
+
+        sys.exit(self.exit_code)

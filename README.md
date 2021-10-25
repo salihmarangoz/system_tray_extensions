@@ -122,7 +122,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 **Contributors:**
 
-- None
+- No one.
 
 **ToDo List:**
 
