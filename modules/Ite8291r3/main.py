@@ -7,6 +7,7 @@ from PIL import Image
 from ite8291r3_ctl import ite8291r3
 from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
 import usb
+import importlib
 
 import cv2
 import mss
@@ -29,6 +30,7 @@ class Ite8291r3:
         self.gamma = (0.55, 0.48, 0.43)
         self.screen_thread_enable = False
         self.video_thread_enable = False
+        self.py_script_thread_enable = False
 
         # get saved state
         self.state = self.load_state()
@@ -164,6 +166,8 @@ class Ite8291r3:
                     self.apply_colormap(colormap)
                 if os.path.splitext(new_state["value"])[1].lower() == ".mp4":
                     self.start_video_thread(new_state["value"])
+                if os.path.splitext(new_state["value"])[1].lower() == ".py":
+                    self.start_py_script_thread(new_state["value"])
 
         if "toggle" in new_state:
             if new_state["toggle"] == False:
@@ -262,7 +266,7 @@ class Ite8291r3:
         color = QColorDialog.getColor().getRgb()
         return (color[0]/255, color[1]/255, color[2]/255)
 
-    def custom_file_picker(self, extfilter="Custom effect files (*.mp4 *.png)"):
+    def custom_file_picker(self, extfilter="Custom effect files (*.mp4 *.png *.py)"):
         dlg = QFileDialog()
         dlg.setDirectory(self.layouts_path)
         dlg.setFileMode(QFileDialog.ExistingFile)
@@ -287,6 +291,9 @@ class Ite8291r3:
         if self.video_thread_enable:
             self.video_thread_enable = False
             self.video_thread.join()
+        if self.py_script_thread_enable:
+            self.py_script_thread_enable = False
+            self.py_script_thread.join()
 
     def start_screen_thread(self):
         self.screen_thread_enable = True
@@ -368,3 +375,34 @@ class Ite8291r3:
                 time.sleep(1/fps) # todo: count delays
 
         print("exiting video_function")
+
+    def start_py_script_thread(self, py_script_path):
+        self.py_script_thread_enable = True
+        self.py_script_file = py_script_path
+        self.py_script_thread = threading.Thread(target=self.py_script_function, daemon=True)
+        self.py_script_thread.start()
+
+    def py_script_function(self):
+        print("starting py_script_function")
+
+        spec = importlib.util.spec_from_file_location("module.name", self.py_script_file)
+        selected_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(selected_module)
+
+        arr = self.create_default_colormap()
+        custom_effect = selected_module.CustomEffect(arr)
+
+        while custom_effect.is_enabled() and self.py_script_thread_enable:
+            arr = custom_effect.update()
+
+            if arr is None:
+                pass
+            else:
+                voltmap = self.color_to_voltage(arr) * self.state["brightness"] 
+                self.apply_voltmap(voltmap)
+
+            time.sleep(1/custom_effect.get_fps()) # todo: count delays
+
+        self.py_script_thread_enable = False
+        custom_effect.on_exit()
+        print("exiting py_script_function")
