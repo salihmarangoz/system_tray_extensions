@@ -122,7 +122,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 **Contributors:**
 
-- None
+- No one.
 
 **ToDo List:**
 
@@ -142,6 +142,12 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] DgpuPowerstateMonitor
 - [ ] BatteryPowerDrawMonitor
 - [ ] TogglePulseaudioSuspend
+
+
+
+## Known Issues
+
+- `tdp` package is causing rgb keyboard video playing or screen reflect features to stop.
 
 
 
