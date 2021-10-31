@@ -8,3 +8,5 @@ gobject
 dbus-python
 PyGObject
 gitpython
+psutil
+matplotlib
