@@ -145,6 +145,12 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 
 
+## Known Issues
+
+- `tdp` package is causing rgb keyboard video playing or screen reflect features to stop.
+
+
+
 ## Credits
 
 Credit goes to [Ambiefix](https://www.youtube.com/channel/UCnwLT9GEwbzfjPusVKtxacA) for preset videos used in the RGB Keyboard module:
