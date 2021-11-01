@@ -8,7 +8,10 @@ import matplotlib
 class CustomEffect:
     def __init__(self, arr):
         self.arr = arr * 0
+
+        # parameters:
         self.cm = plt.get_cmap('jet')
+        self.is_bar_plot = True
 
     def update(self):
 
@@ -23,9 +26,15 @@ class CustomEffect:
         new_column = np.zeros((self.arr.shape[0], 1))
         full_keys = int(cpu_usage * len(new_column))
         last_key_val = cpu_usage * len(new_column) - full_keys
-        new_column[len(new_column)-full_keys:] = 1.0
-        if full_keys < len(new_column):
-            new_column[len(new_column)-full_keys-1] = last_key_val
+        if self.is_bar_plot:
+            new_column[len(new_column)-full_keys:] = 1.0
+            if full_keys < len(new_column):
+                new_column[len(new_column)-full_keys-1] = last_key_val
+        else:
+            if full_keys < len(new_column):
+                new_column[len(new_column)-full_keys-1] = 1.0
+            else:
+                new_column[len(new_column)-full_keys] = 1.0
 
         # construct hsv img
         hue = np.ones(new_column.shape) * 360 * cpu_usage_hue[0]
