@@ -256,6 +256,7 @@ class Core():
                 try:
                     self.event_connections[module_name][event["name"]](event)
                 except Exception as e:
+                    print("module_name:", module_name)
                     print(traceback.print_exc())
             self.queues[module_name].task_done()
 
