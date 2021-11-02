@@ -5,11 +5,12 @@ from gi.repository import Gtk, AppIndicator3, GLib
 import signal
 import time
 import threading
+import os
 
 class Indicator():
     def __init__(self):
         self.app = 'battery_power_use'
-        iconpath = "flashlight.png" # todo
+        iconpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'flashlight.png')
         self.indicator = AppIndicator3.Indicator.new(self.app, iconpath, AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_menu(self.create_menu())
         self.update = threading.Thread(target=self.show_indicator)
