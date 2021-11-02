@@ -28,7 +28,7 @@ class DgpuPowerstateMonitor(QObject):
         self.show_signal.connect(self.tray.show)
         self.start_thread()
 
-    def on_exit(self):
+    def on_exit(self, event):
         self.enable_power_state_check = False
         self.power_state_check_thread.join()
 
