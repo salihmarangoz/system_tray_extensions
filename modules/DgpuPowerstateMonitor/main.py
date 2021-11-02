@@ -54,6 +54,15 @@ class DgpuPowerstateMonitor(QObject):
                 out = f.readlines()
                 gpu_power_state = out[0].lower().strip()
 
+            with open('/sys/class/power_supply/BAT0/status', 'r', encoding='utf-8') as f:
+                out = f.readlines()
+                status = out[0].lower().strip()
+
+            if status != "discharging":
+                self.hide_signal.emit()
+                time.sleep(3) # todo
+                continue
+
             if self.old_gpu_power_state is None:
                 self.old_gpu_power_state = gpu_power_state
 
@@ -63,7 +72,7 @@ class DgpuPowerstateMonitor(QObject):
             else:
                 #self.tray.setVisible(True)
                 self.show_signal.emit()
-            time.sleep(3.0) # todo
+            time.sleep(3) # todo
         print("exit power_state_check_function")
 
 
