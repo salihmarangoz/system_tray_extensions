@@ -24,11 +24,25 @@ System tray toolbox for Linux desktop systems. Currently includes tools for cont
 
 ![custom_py_script_ani](.etc/custom_py_script_ani.gif)
 
+**RGB Keyboard running a Custom Python Script  While Compiling a Project (`rgb_kb_custom/cpu_usage.py`)**
+
+![custom_py_script.ani2](.etc/custom_py_script.ani2.gif)
+
 Also here are some other videos for RGB keyboard good for demonstration. Enable `Screen Reflect` effect and watch the video in full-screen:
 
 - https://www.youtube.com/watch?v=2VsZTW6UjcA
 - https://www.youtube.com/watch?v=jeQFX9fE7Xc
 - https://www.youtube.com/watch?v=5gT3migqxNI
+
+
+
+## Supported Systems
+
+I have tested this project on Tuxedo Stellaris 15 Gen 3 using Ubuntu 20.04. If there are modifications needed and woud like to share please write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
+
+**Laptop/OS:**
+
+- Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
 
 
 
@@ -130,26 +144,14 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 - [ ] Core: Check hibernate/wakeup if it works.
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
-- [x] DgpuPowerstateMonitor
-- [x] BatteryPowerDrawMonitor
 - [ ] TogglePulseaudioSuspend
 - [ ] App: Logging has some problems. Not working?!
-- [x] RgbKeyboard: Report brightness in the menu and modify brightness.
-- [x] RgbKeyboard: low battery alert (gave up)
-- [x] RgbKeyboard: Run screen mimic when screensaver starts on ac mode. (gave up... may use a lot of resources for nothing)
-- [x] Core: Add callback in an anonymous way
-- [x] *: Manage settings and module states.
-- [x] CheckUpdates: Show QtAction if update is available. Check every 6 hrs. (kinda ok.)
-- [x] App: Add on boot entry for start.sh
-- [x] App: Add desktop entry for start.sh
-- [x] App: We need an ICON.
-- [x] Import RgbKeyboard modules only when needed. (if another drivers are added) (gave up. make the project as much as simple, make users install all deps)
 
 
 
 ## Known Issues
 
-- `tdp` package is causing rgb keyboard video playing or screen reflect features to stop.
+- `tdp` package is causing rgb keyboard animations to stop.
 
 
 
