@@ -1,4 +1,9 @@
-import soundcard as sc # https://soundcard.readthedocs.io/en/latest/
+
+# ref:
+# - https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
+# - https://soundcard.readthedocs.io/en/latest/
+
+import soundcard as sc
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -20,7 +25,7 @@ class CustomEffect:
         ########################################
         ######### TODO #########################
         ########################################
-        # Return arr with shape (n_bins,) with values between 0 and 1
+        # Process audio data and return an array with shape (n_bins,) with values between 0 and 1
         arr = np.linspace(0, 1, n_bins)
         return arr
 
@@ -46,10 +51,10 @@ class CustomEffect:
         return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB).squeeze(1)
 
     def update(self):
-        # https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
         for m in self.mics:
             if m.isloopback:
-                with m.recorder(samplerate=44100, channels=[-1]) as mic: # On Linux, channel -1 is the mono mix of all channels. 
+                # On Linux, channel -1 is the mono mix of all channels. Remove channel entry for stereo
+                with m.recorder(samplerate=44100, channels=[-1]) as mic: 
                     while self.is_enabled() and self.driver.py_script_thread_enable:
                         data = mic.record(numframes=2048)
                         n_rows = self.arr.shape[0]
