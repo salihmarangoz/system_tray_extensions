@@ -10,3 +10,5 @@ PyGObject
 gitpython
 psutil
 matplotlib
+soundcard
+scipy
