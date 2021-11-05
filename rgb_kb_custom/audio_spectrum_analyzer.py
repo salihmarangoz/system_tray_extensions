@@ -5,7 +5,7 @@ import matplotlib
 from scipy import signal
 import math
 import cv2
-
+import time
 
 class CustomEffect:
     def __init__(self, arr, driver):
@@ -15,13 +15,35 @@ class CustomEffect:
 
         # parameters:
         self.cm = plt.get_cmap('jet')
-        self.is_bar_plot = True
-        self.gain = 10
 
-        self.high = 2000
-        self.low = 100
-        self.delta_f = (self.high - self.low) / (self.arr.shape[1] - 1)
-        
+    def process_audio(self, data, n_bins=18):
+        ########################################
+        ######### TODO #########################
+        ########################################
+        # Return arr with shape (n_bins,) with values between 0 and 1
+        arr = np.linspace(0, 1, n_bins)
+        return arr
+
+    def compute_column(self, val, n_rows=6):
+        magnitude_hue = matplotlib.colors.rgb_to_hsv(self.cm(val)[:-1])
+
+        new_column = np.zeros((self.arr.shape[0], 1))
+        full_keys = int(val * len(new_column))
+        last_key_val = val * len(new_column) - full_keys
+        new_column[len(new_column)-full_keys:] = 1.0
+        if full_keys < len(new_column):
+            new_column[len(new_column)-full_keys-1] = last_key_val
+
+        # construct hsv img
+        hue = np.ones(new_column.shape) * 360 * magnitude_hue[0]
+        saturation = np.ones(new_column.shape) * magnitude_hue[1]
+        value = new_column
+
+        # hsv to rgb
+        hsv = np.moveaxis(np.stack([hue, saturation, value]), 0, 2)
+        hsv = np.asarray(hsv, dtype=np.float32)
+        #return matplotlib.colors.hsv_to_rgb(hsv).squeeze(1)
+        return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB).squeeze(1)
 
     def update(self):
         # https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
@@ -30,37 +52,15 @@ class CustomEffect:
                 with m.recorder(samplerate=44100, channels=[-1]) as mic: # On Linux, channel -1 is the mono mix of all channels. 
                     while self.is_enabled() and self.driver.py_script_thread_enable:
                         data = mic.record(numframes=2048)
-                        fftsize = (self.arr.shape[1] - 1) * 2
+                        n_rows = self.arr.shape[0]
+                        n_cols = self.arr.shape[1]
+                        magnitude = self.process_audio(data, n_cols)
 
-                        low_bin = math.floor(self.low / self.delta_f)
-
-                        gradient = np.linspace(0, 1, 100)
-
-                        magnitude = np.abs(np.fft.rfft(data[:, 0], n=fftsize))
-                        magnitude *= 10 / fftsize
-                        line = (gradient[int(np.clip(x, 0, 1) * (len(gradient) - 1))]
-                                for x in magnitude[low_bin:low_bin + 18])
-                        line = np.array(list(line))
-                        print(line.shape)
-
-                        print(self.cm(line)[:, :-1].shape)
-                        line_hue = matplotlib.colors.rgb_to_hsv(self.cm(line)[:, :-1])
-
-                        print(line_hue.shape)
-
-                        hue = np.ones(18) * 360 * line_hue[:,0]
-                        saturation = np.ones(18) * line_hue[:,1]
-                        value = line
-
-                        print(hue.shape, saturation.shape, value.shape)
-
-                        hsv = np.moveaxis(np.stack([hue, saturation, value]), 0, 1)
-                        hsv = np.asarray(hsv, dtype=np.float32)
-                        self.arr[0, :, :] = matplotlib.colors.hsv_to_rgb(hsv)
+                        for c in range(18):
+                            self.arr[:,c,:] = self.compute_column(magnitude[c], n_rows)
 
                         self.driver.apply_colormap(self.arr)
-
-
+                        time.sleep(1/self.get_fps())
 
         return self.arr
 
