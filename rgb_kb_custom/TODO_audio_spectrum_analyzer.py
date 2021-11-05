@@ -77,9 +77,3 @@ class CustomEffect:
 
     def on_exit(self):
         pass
-
-
-keep_running = True
-
-
-
