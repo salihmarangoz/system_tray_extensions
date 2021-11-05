@@ -40,9 +40,10 @@ Also here are some other videos for RGB keyboard good for demonstration. Enable 
 
 I have tested this project on Tuxedo Stellaris 15 Gen 3 using Ubuntu 20.04. If there are modifications needed and woud like to share please write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
 
-**Laptop/OS:**
+**Laptop/OS/Reporter:**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
+- XMG Fusion 15 - ???
 
 
 
@@ -146,6 +147,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] TogglePulseaudioSuspend
 - [ ] App: Logging has some problems. Not working?!
+- [ ] `TODO_audio_spectrum_analyzer.py` needs some work to do
 
 
 
