@@ -390,7 +390,7 @@ class Ite8291r3:
         spec.loader.exec_module(selected_module)
 
         arr = self.create_default_colormap()
-        custom_effect = selected_module.CustomEffect(arr)
+        custom_effect = selected_module.CustomEffect(arr, self)
 
         while custom_effect.is_enabled() and self.py_script_thread_enable:
             arr = custom_effect.update()

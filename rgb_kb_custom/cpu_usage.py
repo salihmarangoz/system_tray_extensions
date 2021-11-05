@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 class CustomEffect:
-    def __init__(self, arr):
+    def __init__(self, arr, driver):
         self.arr = arr * 0
+        self.driver = driver
 
         # parameters:
         self.cm = plt.get_cmap('jet')
