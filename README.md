@@ -10,7 +10,7 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 # [STE] System Tray Extensions
 
-System tray toolbox for Linux desktop systems. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
+System tray toolbox for Linux laptops. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
 **Screenshot of the system tray application:**
 
@@ -40,7 +40,7 @@ Also here are some other videos for RGB keyboard good for demonstration. Enable 
 
 I have tested this project on Tuxedo Stellaris 15 Gen 3 using Ubuntu 20.04. If there are modifications needed and woud like to share please write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
 
-**Laptop/OS/Reporter:**
+**Laptop/OS:**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
 - XMG Fusion 15 - ???
