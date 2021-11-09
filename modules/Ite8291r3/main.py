@@ -260,7 +260,7 @@ class Ite8291r3:
         img_.save(path, "PNG")
 
     def open_layout(self, path):
-        return np.array( Image.open(path) )
+        return np.array( Image.open(path) )[:,:,:3]
 
     def mono_color_picker(self):
         color = QColorDialog.getColor().getRgb()
