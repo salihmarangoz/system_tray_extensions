@@ -12,3 +12,4 @@ psutil
 matplotlib
 soundcard
 scipy
+wheel
