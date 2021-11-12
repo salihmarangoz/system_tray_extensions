@@ -38,11 +38,12 @@ Also here are some other videos for RGB keyboard good for demonstration. Enable 
 
 ## Supported Systems
 
-I have tested this project on Tuxedo Stellaris 15 Gen 3 using Ubuntu 20.04. If there are modifications needed and woud like to share please write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
+If there are modifications needed and woud like to share please send a pull request or write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
 
 **Laptop/OS:**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
+- Tuxedo Stellaris 15 Gen 3 - Manjaro 21.1.6
 - XMG Fusion 15 - ???
 
 
@@ -70,43 +71,37 @@ Start a new terminal session and use it for all commands above. If you want to r
 $ INSTALL_DIR="$HOME/.system_tray_extensions"
 
 # 1. Download the project
-$ sudo apt install git
+# Install git via apt or pacman before running the command below
 $ git clone https://github.com/salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
-# OR
-$ git clone git@github.com:salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
 
-# Next steps are included in the script:
+# Next steps are included in the script (excluding permissions):
 $ cd $INSTALL_DIR
-$ bash install.sh
+# ONLY RUN ONE OF THESE ACCORDING TO YOUR LINUX DISTRIBUTION:
+$ bash install_debian.sh # For Debian based distributions; Ubuntu, Pop OS, etc.
+$ bash install_arch.sh # For Arch based distributions; Manjaro, etc. 
 ```
 
-
-
-## Enable Write Permissions for `/sys/class/leds/`
-
-For controlling Tuxedo Keyboard it is needed to enable write permissions. 
-
-- Create a new udev rule:
+- Create a file `/etc/udev/rules.d/99-ste.rules` for device permissions and copy/paste the following:
 
 ```bash
-$ sudo nano /etc/udev/rules.d/99-ste-tuxedokeyboard.rules
-```
+# RGB Keyboard
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="6004", MODE:="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="ce00", MODE:="0666"
 
-- Copy and paste everything here:
-
-```
+# Tuxedo Keyboard
 SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 ```
 
-- Create `leds` group and add current user to it. 
+- after creating the file run:
 
 ```bash
+# Create `leds` group and add current user to it. 
 $ sudo groupadd leds
 $ sudo usermod -a -G leds $USER
 ```
 
-- Logout and login again. (or reboot the system)
+- and lastly reboot the system. If you don't want to reboot; logout and login, then run `sudo udevadm control --reload`, then run `sudo udevadm trigger`. 
 
 
 
@@ -119,6 +114,7 @@ $ INSTALL_DIR="$HOME/.system_tray_extensions"
 $ cd $INSTALL_DIR
 $ git pull
 $ bash install.sh
+# Sometimes new devices can be added. Check the installation part if you waiting for a new device support!
 ```
 
 
@@ -139,7 +135,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 **Contributors:**
 
-- No one.
+- [Invertisment](https://github.com/Invertisment)
 
 **ToDo List:**
 
@@ -154,6 +150,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 ## Known Issues
 
 - `tdp` package is causing rgb keyboard animations to stop.
+- Other icons are not shown properly in XFCE. (If someone knows how please send a pull request)
 
 
 
