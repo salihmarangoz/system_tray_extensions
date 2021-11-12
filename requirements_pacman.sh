@@ -5,4 +5,5 @@ sudo pacman -S \
   gobject-introspection \
   pkgconf \
   gtk3 \
-  pkg-config
+  pkg-config \
+  base-devel

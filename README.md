@@ -43,7 +43,7 @@ If there are modifications needed and woud like to share please send a pull requ
 **Laptop/OS:**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
-- Tuxedo Stellaris 15 Gen 3 - Manjaro XFCE 21.1.6
+- Tuxedo Stellaris 15 Gen 3 - Manjaro 21.1.6
 - XMG Fusion 15 - ???
 
 
@@ -150,6 +150,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 ## Known Issues
 
 - `tdp` package is causing rgb keyboard animations to stop.
+- Other icons are not shown properly in XFCE. (If someone knows how please send a pull request)
 
 
 
