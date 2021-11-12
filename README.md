@@ -113,7 +113,11 @@ Backup your installation before updating if you modified existing files. If you 
 $ INSTALL_DIR="$HOME/.system_tray_extensions"
 $ cd $INSTALL_DIR
 $ git pull
-$ bash install.sh
+
+# ONLY RUN ONE OF THESE ACCORDING TO YOUR LINUX DISTRIBUTION:
+$ bash install_debian.sh # For Debian based distributions; Ubuntu, Pop OS, etc.
+$ bash install_arch.sh # For Arch based distributions; Manjaro, etc. 
+
 # Sometimes new devices can be added. Check the installation part if you waiting for a new device support!
 ```
 
@@ -150,7 +154,12 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 ## Known Issues
 
 - `tdp` package is causing rgb keyboard animations to stop.
+  - Solution: Uninstall `tdp`. If you know how to prevent tdp from modifying USB power I welcome pull  requests.
+
 - Other icons are not shown properly in XFCE. (If someone knows how please send a pull request)
+- Pacman fails with 404:
+  - Solution: https://github.com/salihmarangoz/system_tray_extensions/pull/39#pullrequestreview-803832786
+
 
 
 
