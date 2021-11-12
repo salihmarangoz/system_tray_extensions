@@ -21,7 +21,6 @@ pip3 install wheel
 ####################################################
 echo "3. Install dependencies"
 cd "$INSTALL_DIR"
-#xargs sudo apt-get install -y < requirements_apt.txt
 bash requirements_pacman.sh
 source ste_env/bin/activate
 pip3 install -r requirements_pip.txt

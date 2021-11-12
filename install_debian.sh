@@ -10,7 +10,7 @@ INSTALL_DIR=$(pwd)
 
 ####################################################
 echo "2. Create new virtual environment"
-sudo apt install python3.8-venv
+sudo apt install python3-venv
 cd "$INSTALL_DIR"
 python3 -m venv ste_env
 echo "*" >> ste_env/.gitignore
@@ -21,7 +21,7 @@ pip3 install wheel
 ####################################################
 echo "3. Install dependencies"
 cd "$INSTALL_DIR"
-xargs sudo apt-get install -y < requirements_apt.txt
+bash requirements_apt.sh
 source ste_env/bin/activate
 pip3 install -r requirements_pip.txt
 
