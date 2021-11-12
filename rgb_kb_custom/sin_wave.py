@@ -11,7 +11,7 @@ class CustomEffect:
         print(self.phase, self.hue)
 
         # parameters
-        self.is_psychedelic = np.random.uniform() < 0.1 # easter egg :)
+        self.is_psychedelic = np.random.uniform() < 0.02 # easter egg :)
         self.wave_tickness = np.e # 2 for tick and increase value to decrease tickness
         self.wave_width = np.pi*2
         self.phase_increment = 0.3
