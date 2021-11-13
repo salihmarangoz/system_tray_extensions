@@ -1,12 +1,20 @@
 name: build-checks-debian
 
-on: [pull_request]
+on: [pull_request, push]
 
 jobs:
-  build-debian:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v2
-      - name: setup STE
-        run: bash install_debian.sh
+#  build-debian:
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: checkout repo
+#        uses: actions/checkout@v2
+#      - name: setup STE
+#        run: bash install_debian.sh
+  build-arch:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux/latest
+    steps:  
+    - uses: actions/checkout@v2
+    - name: What OS is running
+      run: uname -a
