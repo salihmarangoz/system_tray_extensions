@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install Archlinux
-        run: curl -L https://github.com/zaoqi/github-actions-archlinux/raw/master/install.sh | sh
+        run: curl -L https://raw.githubusercontent.com/sickcodes/github-actions-archlinux/patch-1/install.sh | sh
       - name: setup STE
         run: bash install_arch.sh
 
