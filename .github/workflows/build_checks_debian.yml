@@ -20,6 +20,6 @@ jobs:
       - name: Update pacman
         run: pacman -Sy
       - name: Install sudo
-        run: pacman -S sudo
+        run: pacman -S sudo --noconfirm
       - name: Setup STE
         run: bash install_arch.sh
