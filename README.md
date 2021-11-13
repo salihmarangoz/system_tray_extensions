@@ -1,6 +1,6 @@
 # For ite8291r3-gui check the other branch
 
-**This section fir ite8291r3 will be removed after 01-Oct-2022. Other branch will not be deleted**
+**This section for ite8291r3 will be removed after 01-Oct-2022. The old branch will not be deleted**
 
 Old package is here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
 
