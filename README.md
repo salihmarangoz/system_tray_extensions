@@ -1,6 +1,6 @@
 # For ite8291r3-gui check the other branch
 
-**This section fir ite8291r3 will be removed after 01-Oct-2022. Other branch will not be deleted**
+**This section for ite8291r3 will be removed after 01-Oct-2022. The old branch will not be deleted**
 
 Old package is here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
 
@@ -10,8 +10,21 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 # [STE] System Tray Extensions
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Supported Systems](#supported-systems)
+- [Modules](#modules)
+- [Installation](#installation)
+- [Update](#update)
+- [Running](#running)
+- [Contributing](#contributing)
+- [Known Issues & Solutions](#known-issues--solutions)
+- [Credits](#credits)
+- [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 System tray toolbox for Linux laptops. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
@@ -159,7 +172,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 
 
-## Known Issues
+## Known Issues & Solutions
 
 - `tdp` package is causing rgb keyboard animations to stop.
   - Solution: Uninstall `tdp`. If you know how to prevent tdp from modifying USB power I welcome pull  requests.
