@@ -22,4 +22,4 @@ jobs:
       - name: Install sudo
         run: pacman -S sudo --noconfirm
       - name: Setup STE
-        run: bash install_arch.sh
+        run: PACMAN_ARGS="--noconfirm" bash install_arch.sh
