@@ -40,7 +40,12 @@ Also here are some other videos for RGB keyboard good for demonstration. Enable 
 
 If there are modifications needed and woud like to share please send a pull request or write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
 
-**Laptop/OS:**
+**Supported Distributions:**
+
+- Debian: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml)
+- Arch: `build-checks-arch is not available. I welcome pull requests for this!`
+
+**Tested Systems (Laptop/OS):**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
 - Tuxedo Stellaris 15 Gen 3 - Manjaro 21.1.6
