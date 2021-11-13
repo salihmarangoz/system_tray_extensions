@@ -6,18 +6,20 @@ jobs:
 #  build-debian:
 #    runs-on: ubuntu-20.04
 #    steps:
-#      - name: checkout repo
+#      - name: Checkout repo
 #        uses: actions/checkout@v2
-#      - name: setup STE
+#      - name: Setup STE
 #        run: bash install_debian.sh
   build-arch:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Update pacman
+        run: pacman -Sy
       - name: Install sudo
         run: pacman -S sudo
-      - name: setup STE
+      - name: Setup STE
         run: bash install_arch.sh
