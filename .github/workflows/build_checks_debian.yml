@@ -17,5 +17,7 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v2
+      - name: Install sudo
+        run: pacman -S sudo
       - name: setup STE
         run: bash install_arch.sh
