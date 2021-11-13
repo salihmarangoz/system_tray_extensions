@@ -12,8 +12,10 @@ jobs:
 #        run: bash install_debian.sh
   build-arch:
     runs-on: ubuntu-latest
-    #container:
-    #  image: archlinux:latest
-    steps:  
-    - name: testing
-      run: pacman -Syy
+    container:
+      image: archlinux:latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: setup STE
+        run: bash install_arch.sh
