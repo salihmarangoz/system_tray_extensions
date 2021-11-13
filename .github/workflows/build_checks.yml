@@ -1,4 +1,4 @@
-name: build-checks
+name: build-checks-ubuntu
 
 on: [pull_request]
 
