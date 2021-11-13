@@ -6,4 +6,5 @@ sudo pacman -S $PACMAN_EXTRA_ARGS \
   pkgconf \
   gtk3 \
   pkg-config \
-  base-devel
+  base-devel \
+  xdg-utils
