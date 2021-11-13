@@ -10,7 +10,7 @@ INSTALL_DIR=$(pwd)
 
 ####################################################
 echo "2. Create new virtual environment"
-sudo pacman -S python-virtualenv
+sudo pacman -S python-virtualenv $PACMAN_EXTRA_ARGS
 cd "$INSTALL_DIR"
 python3 -m venv ste_env
 echo "*" >> ste_env/.gitignore

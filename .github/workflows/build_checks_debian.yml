@@ -6,7 +6,7 @@ jobs:
   build-debian:
     runs-on: ubuntu-20.04
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v2
-      - name: setup STE
+      - name: Setup STE
         run: bash install_debian.sh
