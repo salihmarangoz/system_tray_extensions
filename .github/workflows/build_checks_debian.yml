@@ -15,6 +15,5 @@ jobs:
     container:
       image: archlinux:latest
     steps:  
-    - uses: actions/checkout@v2
-    - name: What OS is running
-      run: uname -a
+    - name: testing
+      run: pacman -Syy
