@@ -172,7 +172,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 
 
-## Known Issues
+## Known Issues & Solutions
 
 - `tdp` package is causing rgb keyboard animations to stop.
   - Solution: Uninstall `tdp`. If you know how to prevent tdp from modifying USB power I welcome pull  requests.
