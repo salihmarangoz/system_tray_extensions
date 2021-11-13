@@ -1,0 +1,12 @@
+name: build-checks-debian
+
+on: [pull_request]
+
+jobs:
+  build-debian:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: setup STE
+        run: bash install_debian.sh
