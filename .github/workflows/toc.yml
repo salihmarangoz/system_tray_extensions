@@ -1,9 +1,8 @@
-on: pull_request:
+on: push #pull_request
 name: TOC Generator
 jobs:
   generateTOC:
     name: TOC Generator
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: technote-space/toc-generator@v4
