@@ -10,8 +10,21 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 # [STE] System Tray Extensions
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Supported Systems](#supported-systems)
+- [Modules](#modules)
+- [Installation](#installation)
+- [Update](#update)
+- [Running](#running)
+- [Contributing](#contributing)
+- [Known Issues](#known-issues)
+- [Credits](#credits)
+- [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 System tray toolbox for Linux laptops. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
