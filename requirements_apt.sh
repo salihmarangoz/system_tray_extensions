@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo add-apt-repository universe
+
 sudo apt-get install -y \
   libgirepository1.0-dev \
   libcairo2-dev \
