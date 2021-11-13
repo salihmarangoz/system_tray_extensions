@@ -16,17 +16,6 @@ jobs:
 #      - name: setup STE
 #        run: bash install_debian.sh
   build-arch:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install Archlinux
-        run: curl -L https://raw.githubusercontent.com/sickcodes/github-actions-archlinux/patch-1/install.sh | sh
-      - name: setup STE
-        run: bash install_arch.sh
-
-
-#    - name: Docker hello-world
-#      run: |
-#        sudo pacman --noconfirm -Syu docker
-#        sudo systemctl start docker
-#        docker run --rm hello-world
+    runs:
+      using: 'docker'
+      image: '.github/Arch_Dockerfile'
