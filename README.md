@@ -43,7 +43,7 @@ If there are modifications needed and woud like to share please send a pull requ
 **Supported Distributions:**
 
 - Debian: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml)
-- Arch: `build-checks-arch is not available. I welcome pull requests for this!`
+- Arch:
 
 **Tested Systems (Laptop/OS):**
 

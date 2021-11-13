@@ -3,23 +3,10 @@ name: build-checks-debian
 on: [pull_request, push]
 
 jobs:
-#  build-debian:
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: Checkout repo
-#        uses: actions/checkout@v2
-#      - name: Setup STE
-#        run: bash install_debian.sh
-  build-arch:
-    runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
+  build-debian:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Update pacman
-        run: pacman -Sy
-      - name: Install sudo
-        run: pacman -S sudo --noconfirm
       - name: Setup STE
-        run: PACMAN_EXTRA_ARGS="--noconfirm" bash install_arch.sh
+        run: bash install_debian.sh
