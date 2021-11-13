@@ -13,7 +13,7 @@ jobs:
   build-arch:
     runs-on: ubuntu-latest
     container:
-      image: archlinux/latest
+      image: archlinux:latest
     steps:  
     - uses: actions/checkout@v2
     - name: What OS is running
