@@ -11,5 +11,3 @@ jobs:
       - uses: technote-space/toc-generator@v4
         with:
           TARGET_BRANCH_PREFIX: main
-          TARGET_PATHS: "README.md"
-          TOC_TITLE: ""
