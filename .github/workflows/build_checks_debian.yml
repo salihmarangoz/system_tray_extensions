@@ -12,8 +12,8 @@ jobs:
 #        run: bash install_debian.sh
   build-arch:
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
+    #container:
+    #  image: archlinux:latest
     steps:  
     - name: testing
       run: pacman -Syy
