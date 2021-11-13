@@ -1,21 +1,15 @@
 name: build-checks
 
-on:
-  push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
-
+on: [pull_request]
 
 jobs:
-#  build-debian:
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: checkout repo
-#        uses: actions/checkout@v2
-#      - name: setup STE
-#        run: bash install_debian.sh
-  build-arch:
-    runs:
-      using: 'docker'
-      image: '.github/Arch_Dockerfile'
+  build-debian:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: setup STE
+        run: bash install_debian.sh
+
+# todo: arch builder
+# - https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
