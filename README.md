@@ -20,7 +20,7 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 - [Update](#update)
 - [Running](#running)
 - [Contributing](#contributing)
-- [Known Issues](#known-issues)
+- [Known Issues & Solutions](#known-issues--solutions)
 - [Credits](#credits)
 - [References](#references)
 
