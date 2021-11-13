@@ -1,0 +1,15 @@
+on:
+  pull_request:
+    types: [ closed ]
+name: TOC Generator
+jobs:
+  generateTOC:
+    name: TOC Generator
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/toc-generator@v4
+        with:
+          TARGET_BRANCH_PREFIX: main
+          TARGET_PATHS: "README.md"
+          TOC_TITLE: ""

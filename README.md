@@ -10,6 +10,9 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 
 # [STE] System Tray Extensions
 
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 System tray toolbox for Linux laptops. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
 
 **Screenshot of the system tray application:**
@@ -165,7 +168,8 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - Pacman fails with 404:
   - Solution: https://github.com/salihmarangoz/system_tray_extensions/pull/39#pullrequestreview-803832786
 
-
+- Can't install on Arch:
+  - Solution `pacman -Sy` and then `pacman -S sudo` . Didn't work? Open an issue please.
 
 
 ## Credits
