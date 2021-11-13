@@ -1,0 +1,32 @@
+name: build-checks
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+
+jobs:
+#  build-debian:
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: checkout repo
+#        uses: actions/checkout@v2
+#      - name: setup STE
+#        run: bash install_debian.sh
+  build-arch:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Archlinux
+        run: curl -L https://github.com/zaoqi/github-actions-archlinux/raw/master/install.sh | sh
+      - name: setup STE
+        run: bash install_arch.sh
+
+
+#    - name: Docker hello-world
+#      run: |
+#        sudo pacman --noconfirm -Syu docker
+#        sudo systemctl start docker
+#        docker run --rm hello-world
