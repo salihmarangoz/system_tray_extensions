@@ -1,6 +1,4 @@
 
-
-
 import numpy as np
 import cv2
 import psutil
@@ -15,13 +13,19 @@ class CustomEffect:
         self.driver = driver
         self.mouse = Controller()
         self.old_pos = (0,0)
+        self.max_update_fps = 25
+        self.iter = 0
 
         # parameters:
         self.cm = plt.get_cmap('hsv')
         self.is_bar_plot = True
 
     def update(self):
-        return self.updatev2()
+        self.iter += 1
+        self.arr = self.updatev2()
+        if self.iter % (self.get_fps() // self.max_update_fps) == 0:
+            return self.arr
+        return
 
     def updatev1(self):
         self.arr *= 0.9
@@ -32,11 +36,10 @@ class CustomEffect:
         return self.arr
 
     def updatev2(self):
-        decay_rate = 0.1
+        decay_rate = 0.05 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
         color_phase = 5
 
         self.arr = (1-decay_rate)*self.arr
-        color = np.array([1.0, 1.0, 1.0])
         sigma = 1
 
         x, y = self.get_scaled_mouse_pos()
@@ -70,7 +73,7 @@ class CustomEffect:
         return mouse_x, mouse_y
 
     def get_fps(self):
-        return 40
+        return 60
 
     def is_enabled(self):
         return True
