@@ -1,9 +1,7 @@
 
 import numpy as np
 import cv2
-import psutil
 import matplotlib.pyplot as plt
-import matplotlib
 from pynput.mouse import Controller
 
 class CustomEffect:
@@ -15,10 +13,10 @@ class CustomEffect:
         self.old_pos = (0,0)
         self.max_update_fps = 25
         self.iter = 0
+        self.color_phase = np.random.random() * np.pi * 2
 
         # parameters:
         self.cm = plt.get_cmap('hsv')
-        self.is_bar_plot = True
 
     def update(self):
         self.iter += 1
@@ -36,8 +34,8 @@ class CustomEffect:
         return self.arr
 
     def updatev2(self):
-        decay_rate = 0.05 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
-        color_phase = 5
+        decay_rate = 0.04 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
+        self.color_phase += 0.005
 
         self.arr = (1-decay_rate)*self.arr
         sigma = 1
@@ -46,7 +44,7 @@ class CustomEffect:
         y = y * (self.arr.shape[0]-1)
         x = x * (self.arr.shape[1]-1)
         movement_angle = np.arctan2(self.old_pos[1] - y, self.old_pos[0] - x) + np.pi # 0 to 2*pi
-        movement_angle = (movement_angle+color_phase) % (np.pi*2)
+        movement_angle = (movement_angle+self.color_phase) % (np.pi*2)
         if self.old_pos[0] == x and self.old_pos[1] == y:
             return self.arr
 
