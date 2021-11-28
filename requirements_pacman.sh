@@ -7,4 +7,5 @@ sudo pacman -S $PACMAN_EXTRA_ARGS \
   gtk3 \
   pkg-config \
   base-devel \
-  xdg-utils
+  xdg-utils \
+  libappindicator-gtk3

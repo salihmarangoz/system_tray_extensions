@@ -9,4 +9,5 @@ sudo apt-get install -y \
   python3-dev \
   build-essential \
   libdbus-1-dev \
-  libxcb-xinerama0
+  libxcb-xinerama0 \
+  gir1.2-appindicator3-0.1
