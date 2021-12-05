@@ -33,18 +33,16 @@ class TuxedoKeyboard:
         self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
 
     def on_lid_opened(self, event):
-        pass
-        #self.reload_state()
+        self.reload_state()
 
     def on_lid_closed(self, event):
-        pass
-        #self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
+        self.reload_state()
 
     def on_ac(self, event):
-        pass
+        self.reload_state()
 
     def on_battery(self, event):
-        pass
+        self.reload_state()
 
     def on_exit(self, event):
         self.apply_lightbar_color( (0.0,  0.0,  0.0), save_state=False)
