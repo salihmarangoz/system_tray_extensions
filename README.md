@@ -156,11 +156,12 @@ $ bash start.sh
 
 ## Contributing
 
-Contributions of any kind are welcome. See **ToDo List** for current problems/ideas. Also see [CONTRIBUTING.md](CONTRIBUTING.md)
+Contributions of any kind are welcome. See **ToDo List** for current problems/ideas.
 
 **Contributors:**
 
-- [Invertisment](https://github.com/Invertisment)
+- **[Invertisment](https://github.com/Invertisment)**
+- **[augustoicaro](https://github.com/augustoicaro)**
 
 **ToDo List:**
 
@@ -168,7 +169,7 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] TogglePulseaudioSuspend
 - [ ] App: Logging has some problems. Not working?!
-- [ ] `TODO_audio_spectrum_analyzer.py` needs some work to do
+- [ ] `TODO_audio_spectrum_analyzer.py` needs some work to do!
 
 
 
@@ -176,13 +177,14 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 
 - `tdp` package is causing rgb keyboard animations to stop.
   - Solution: Uninstall `tdp`. If you know how to prevent tdp from modifying USB power I welcome pull  requests.
-
 - Other icons are not shown properly in XFCE. (If someone knows how please send a pull request)
 - Pacman fails with 404:
   - Solution: https://github.com/salihmarangoz/system_tray_extensions/pull/39#pullrequestreview-803832786
-
 - Can't install on Arch:
   - Solution `pacman -Sy` and then `pacman -S sudo` . Didn't work? Open an issue please.
+- System tray submenus don't work on elementaryOS 6: (Solution by **[augustoicaro](https://github.com/augustoicaro)**):
+  - https://elementaryos.stackexchange.com/questions/17452/how-to-display-system-tray-icons-in-elementary-os-juno#comment28965_17453
+
 
 
 ## Credits
