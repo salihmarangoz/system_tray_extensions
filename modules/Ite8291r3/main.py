@@ -201,11 +201,15 @@ class Ite8291r3:
             arr[:, ROW_GREEN_OFFSET:ROW_GREEN_OFFSET+voltmap.shape[1]] = voltmap_u8[:,:,1]
             arr[:, ROW_BLUE_OFFSET:ROW_BLUE_OFFSET+voltmap.shape[1]] = voltmap_u8[:,:,2]
 
-            self.ite.enable_user_mode()
-
-            for row in range(NUM_ROWS):
-                self.ite._ite8291r3__set_row_index(row)
-                self.ite._ite8291r3__send_data(bytearray(arr[NUM_ROWS-row-1]))
+            try:
+                self.ite.enable_user_mode()
+                for row in range(NUM_ROWS):
+                    self.ite._ite8291r3__set_row_index(row)
+                    self.ite._ite8291r3__send_data(bytearray(arr[NUM_ROWS-row-1]))
+            except usb.core.USBTimeoutError as e:
+                print("usb.core.USBTimeoutError occured but trying to recover!")
+                usb.util.dispose_resources(self.ite.channel.dev)
+                self.ite = ite8291r3.get()
         else:
             itemap = {}
             for i in range(voltmap.shape[0]):
