@@ -169,7 +169,6 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] TogglePulseaudioSuspend
 - [ ] App: Logging has some problems. Not working?!
-- [ ] `TODO_audio_spectrum_analyzer.py` needs some work to do!
 
 
 
