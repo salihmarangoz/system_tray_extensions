@@ -22,7 +22,7 @@ class CustomEffect:
         self.chunk_history = None
 
         self.samplerate = 44100
-        self.numframes = self.samplerate//15
+        self.numframes = self.samplerate//self.get_fps()
 
         # parameters:
         self.cm = plt.get_cmap('jet')
@@ -42,27 +42,33 @@ class CustomEffect:
             self.chunk_history = self.chunk_history[:2]
             chunk = np.stack(self.chunk_history)
 
+        # compute magnitutes using FFT
         chunk = chunk.flatten()
-        chunk_fft = np.fft.rfft(chunk)
+        chunk_fft = np.fft.rfft(chunk)[1:]
+        chunk_fft_abs = np.log10( np.absolute(chunk_fft) + 0.00001 ) #* np.linspace(1, 10, len(chunk_fft))
 
-        chunk_fft_abs = np.absolute(chunk_fft)
-        diff = chunk_fft_abs[0]
-        chunk_fft_abs = chunk_fft_abs[1:n_bins*10+1]
+        # split into bars via exponential indexing
+        idx = np.geomspace(20, len(chunk_fft_abs), num=n_bins).astype(np.int32)
+        idx = np.insert(idx, 0, 0)
+        bars = []
+        for i in range(len(idx)-1):
+            bars.append( np.mean(chunk_fft_abs[idx[i]:idx[i+1]]) )
 
-        chunk_fft_abs = np.median(chunk_fft_abs.reshape(n_bins, 10), axis=1)
-        out = (chunk_fft_abs/150)*6
-        #out = np.log10(chunk_fft_abs+10)-1
+        # bars scale
+        bars_base = 2
+        bars_scale = 0.5
+        bars = np.array(bars) * np.logspace(0, 1, len(bars), base=bars_base)*bars_scale  #* np.linspace(1, 10, len(bars))
 
-        out = np.clip(out, 0, 6)
+        debug=False
+        if debug:
+            plt.cla()
+            plt.ylim(0, 2.0)
+            #plt.plot(chunk_fft_abs, linewidth=0.2)
+            plt.bar(range(n_bins), bars, width=.9)
+            plt.pause(0.001)
 
-        #plt.cla()
-        #plt.ylim(0, 200.0)
-        #plt.plot(chunk_fft_abs, linewidth=1)
-        #plt.bar(range(n_bins), chunk_fft_abs, width=.9)
-        #plt.pause(0.001)
-
-        #arr = np.linspace(0, 1, n_bins)
-        return out
+        bars = np.clip(bars, 0, 1)
+        return bars
 
     def compute_column(self, val, n_rows=6):
         magnitude_hue = []
@@ -88,6 +94,9 @@ class CustomEffect:
         return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB).squeeze(1)
 
     def update(self):
+        process_a_sample_out_of_N = 1 # make this 2 on slower computers
+        counter = 0
+
         for m in self.mics:
             if m.isloopback:
                 print("Found loopback:", m.name)
@@ -97,23 +106,38 @@ class CustomEffect:
                     with m.recorder(samplerate=self.samplerate, channels=[-1]) as mic:
                         while self.is_enabled() and self.driver.py_script_thread_enable:
                             data = mic.record(numframes=self.numframes)
-                            n_rows = self.arr.shape[0]
-                            n_cols = self.arr.shape[1]
-                            magnitude = self.process_audio(data, n_cols)
 
-                            for c in range(18):
-                                self.arr[:,c,:] = self.compute_column(magnitude[c], n_rows)
+                            if counter >= process_a_sample_out_of_N-1:
+                                n_rows = self.arr.shape[0]
+                                n_cols = self.arr.shape[1]
+                                magnitude = self.process_audio(data, n_cols)
 
-                            self.driver.apply_colormap(self.arr)
-                            #time.sleep(1/self.get_fps())
+                                for c in range(18):
+                                    self.arr[:,c,:] = self.compute_column(magnitude[c], n_rows)
+
+                                self.driver.apply_colormap(self.arr)
+                                counter = 0
+                            else:
+                                counter+=1
 
         return self.arr
 
     def get_fps(self):
-        return 25
+        return 15
 
     def is_enabled(self):
         return True
 
     def on_exit(self):
         pass
+
+"""
+ce = CustomEffect(0, None)
+for m in ce.mics:
+    if m.isloopback:
+        if sc.default_speaker().name in m.name:
+            with m.recorder(samplerate=ce.samplerate, channels=[-1]) as mic:
+                while True:
+                    data = mic.record(numframes=ce.numframes)
+                    ce.process_audio(data, 18)
+"""
