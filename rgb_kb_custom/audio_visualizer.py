@@ -18,9 +18,7 @@ class CustomEffect:
         self.arr = arr * 0
         self.driver = driver
         self.mics = sc.all_microphones(include_loopback=True)
-
         self.chunk_history = None
-
         self.samplerate = 44100
         self.numframes = self.samplerate//self.get_fps()
 
@@ -35,16 +33,29 @@ class CustomEffect:
 
         #freqs = np.fft.fftfreq(len(chunk_fft), d=1./self.samplerate)[1:] / self.samplerate
 
+        # Keep history method-1
+        keep_history = 2
         if self.chunk_history is None:
             self.chunk_history = [chunk]
         else:
             self.chunk_history.insert(0, chunk)
-            self.chunk_history = self.chunk_history[:2]
+            self.chunk_history = self.chunk_history[:keep_history]
             chunk = np.stack(self.chunk_history)
+        
 
-        # compute magnitutes using FFT
+        # Compute FFT
         chunk = chunk.flatten()
         chunk_fft = np.fft.rfft(chunk)[1:]
+
+        # Keep history method-2
+        """
+        if self.chunk_history is not None:
+            alpha = 0.33
+            chunk_fft = self.chunk_history*alpha + chunk_fft*(1-alpha)
+        self.chunk_history = chunk_fft
+        """
+
+        # Compute magnitute
         chunk_fft_abs = np.log10( np.absolute(chunk_fft) + 0.00001 ) #* np.linspace(1, 10, len(chunk_fft))
 
         # split into bars via exponential indexing
@@ -96,6 +107,7 @@ class CustomEffect:
     def update(self):
         process_a_sample_out_of_N = 1 # make this 2 on slower computers
         counter = 0
+        no_data = False
 
         for m in self.mics:
             if m.isloopback:
@@ -106,6 +118,16 @@ class CustomEffect:
                     with m.recorder(samplerate=self.samplerate, channels=[-1]) as mic:
                         while self.is_enabled() and self.driver.py_script_thread_enable:
                             data = mic.record(numframes=self.numframes)
+
+                            # don't process if no audio
+                            if np.any(data) == False:
+                                if no_data:
+                                    continue
+                                no_data = True
+                                self.chunk_history = None
+                            else:
+                                no_data = False
+
 
                             if counter >= process_a_sample_out_of_N-1:
                                 n_rows = self.arr.shape[0]
