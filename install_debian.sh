@@ -31,7 +31,7 @@ tee system_tray_extensions.desktop << END
 [Desktop Entry]
 Type=Application
 Exec=$(which bash) $INSTALL_DIR/start.sh
-Icon=$INSTALL_DIR/icon.png
+Icon=$INSTALL_DIR/icon_full.png
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
