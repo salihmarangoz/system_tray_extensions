@@ -6,6 +6,9 @@ import numpy as np
 from PIL import Image
 from ite8291r3_ctl import ite8291r3
 from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
+from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors
+from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f
+from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs
 import usb
 import importlib
 
@@ -18,6 +21,29 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 ############################################################################################
+
+
+ite8291r3_effects["ripple_reactive"] = ite8291r3_effect_f(0x06, {
+        "speed":      (ite8291r3_effect_attrs.SPEED, 0),
+        "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
+        "reactive":   (ite8291r3_effect_attrs.REACTIVE, 1),
+        "save":       (ite8291r3_effect_attrs.SAVE, 0),
+    })
+
+ite8291r3_effects["fireworks_reactive"] = ite8291r3_effect_f(0x11, {
+        "speed":      (ite8291r3_effect_attrs.SPEED, 2),
+        "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
+        "reactive":   (ite8291r3_effect_attrs.REACTIVE, 1),
+        "save":       (ite8291r3_effect_attrs.SAVE, 0),
+    })
+
+ite8291r3_effects["random_reactive"] = ite8291r3_effect_f(0x04, {
+        "speed":      (ite8291r3_effect_attrs.SPEED, 5),
+        "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
+        "reactive":   (ite8291r3_effect_attrs.REACTIVE, 1),
+        "save":       (ite8291r3_effect_attrs.SAVE, 0),
+    })
+
 
 class Ite8291r3:
     """Ite8291r3 Base Class
@@ -109,12 +135,15 @@ class Ite8291r3:
         self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
         self.ef_ac2 = QAction("Wave");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave"} ));        self.ef.addAction(self.ef_ac2)
         self.ef_ac3 = QAction("Random");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac3)
+        self.ef_ac3 = QAction("Random (Reactive)");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random_reactive"} ));      self.ef.addAction(self.ef_ac3)
         self.ef_ac4 = QAction("Rainbow");   self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac4)
         self.ef_ac5 = QAction("Ripple");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac5)
+        self.ef_ac5 = QAction("Ripple (Reactive but buggy)");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple_reactive"} ));      self.ef.addAction(self.ef_ac5)
         self.ef_ac6 = QAction("Marquee");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac6)
         self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
         self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
         self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
+        self.ef_ac9 = QAction("Fireworks (Reactive)"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks_reactive"} ));   self.ef.addAction(self.ef_ac9)
         self.ef_ac10 = QAction("Reflect Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
         menu.addMenu(self.ef)
 
