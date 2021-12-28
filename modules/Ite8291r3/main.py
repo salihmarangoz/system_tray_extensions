@@ -45,14 +45,14 @@ ite8291r3_effects["random_reactive"] = ite8291r3_effect_f(0x04, {
         "save":       (ite8291r3_effect_attrs.SAVE, 0),
     })
 
-ite8291r3_effects["rainbow_horizontal"] = ite8291r3_effect_f(0x03, {
+ite8291r3_effects["wave_horizontal"] = ite8291r3_effect_f(0x03, {
         "speed":      (ite8291r3_effect_attrs.SPEED, 3),
         "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
         "save":       (ite8291r3_effect_attrs.SAVE, 0),
         "direction":  (ite8291r3_effect_attrs.DIRECTION, ite8291r3_directions.get("right")),
     })
 
-ite8291r3_effects["rainbow_vertical"] = ite8291r3_effect_f(0x03, {
+ite8291r3_effects["wave_vertical"] = ite8291r3_effect_f(0x03, {
         "speed":      (ite8291r3_effect_attrs.SPEED, 3),
         "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
         "save":       (ite8291r3_effect_attrs.SAVE, 0),
@@ -148,11 +148,11 @@ class Ite8291r3:
 
         self.ef = QMenu("Effects")
         self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
-        self.ef_ac2 = QAction("Wave");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave"} ));        self.ef.addAction(self.ef_ac2)
-        self.ef_ac3 = QAction("Random");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac3)
-        self.ef_ac4 = QAction("Random (Reactive)");    self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random_reactive"} ));      self.ef.addAction(self.ef_ac4)
-        self.ef_ac5 = QAction("Rainbow (Vertical)");   self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow_vertical"} ));     self.ef.addAction(self.ef_ac5)
-        self.ef_ac6 = QAction("Rainbow (Horizontal)");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow_horizontal"} ));     self.ef.addAction(self.ef_ac6)
+        self.ef_ac2 = QAction("Wave (Vertical)");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_vertical"} ));        self.ef.addAction(self.ef_ac2)
+        self.ef_ac3 = QAction("Wave (Horizontal)");      self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_horizontal"} ));        self.ef.addAction(self.ef_ac3)
+        self.ef_ac5 = QAction("Random");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac5)
+        self.ef_ac6 = QAction("Random (Reactive)");    self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random_reactive"} ));      self.ef.addAction(self.ef_ac6)
+        self.ef_ac5 = QAction("Rainbow");   self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac5)
         self.ef_ac7 = QAction("Ripple");    self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac7)
         self.ef_ac8 = QAction("Ripple (Reactive but buggy)");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple_reactive"} ));      self.ef.addAction(self.ef_ac8)
         self.ef_ac9 = QAction("Marquee");   self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac9)
