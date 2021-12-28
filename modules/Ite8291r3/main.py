@@ -146,7 +146,7 @@ class Ite8291r3:
         self.mc_ac5 = QAction("Pick a color");  self.mc_ac5.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": self.mono_color_picker()} ));    self.mc.addAction(self.mc_ac5)
         menu.addMenu(self.mc)
 
-        self.ef = QMenu("Effects")
+        self.ef = QMenu("Built-in Effects")
         self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
         self.ef_ac2 = QAction("Wave (Vertical)");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_vertical"} ));        self.ef.addAction(self.ef_ac2)
         self.ef_ac3 = QAction("Wave (Horizontal)");      self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_horizontal"} ));        self.ef.addAction(self.ef_ac3)
@@ -163,7 +163,7 @@ class Ite8291r3:
         self.ef_ac14 = QAction("Reflect Screen (High CPU Usage)");   self.ef_ac14.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac14)
         menu.addMenu(self.ef)
 
-        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
+        self.cu = QAction("Custom Effects");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
 
     def reload_state(self):
         # todo read from file
