@@ -14,7 +14,6 @@ import usb
 import importlib
 
 import cv2
-import mss
 import time
 import threading
 
@@ -69,7 +68,6 @@ class Ite8291r3:
         self.node = node
         self.layouts_path = os.path.join(self.node.get_project_path(), 'rgb_kb_custom')
         self.gamma = (0.55, 0.48, 0.43)
-        self.screen_thread_enable = False
         self.video_thread_enable = False
         self.py_script_thread_enable = False
 
@@ -160,7 +158,6 @@ class Ite8291r3:
         #self.ef_ac11 = QAction("Aurora");    self.ef_ac11.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac11)
         self.ef_ac12 = QAction("Fireworks"); self.ef_ac12.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac12)
         self.ef_ac13 = QAction("Fireworks (Reactive)"); self.ef_ac13.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks_reactive"} ));   self.ef.addAction(self.ef_ac13)
-        self.ef_ac14 = QAction("Reflect Screen (High CPU Usage)");   self.ef_ac14.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac14)
         menu.addMenu(self.ef)
 
         self.cu = QAction("Custom Effects");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
@@ -194,11 +191,6 @@ class Ite8291r3:
                 self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
                 #print(int(self.state["brightness"] * 50))
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
-
-            if new_state["mode"] == "screen":
-                self.stop_animation_threads()
-                self.ite.set_brightness(50)
-                self.start_screen_thread()
 
             if new_state["mode"] == "custom":
                 if len(new_state["value"]) == 0:
@@ -334,47 +326,12 @@ class Ite8291r3:
                 "toggle": True}
 
     def stop_animation_threads(self):
-        if self.screen_thread_enable:
-            self.screen_thread_enable = False
-            self.screen_thread.join()
         if self.video_thread_enable:
             self.video_thread_enable = False
             self.video_thread.join()
         if self.py_script_thread_enable:
             self.py_script_thread_enable = False
             self.py_script_thread.join()
-
-    def start_screen_thread(self):
-        self.screen_thread_enable = True
-        self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
-        self.screen_thread.start()
-
-    def screen_function(self):
-        fps = 30
-        top_crop=0.0
-        sct = mss.mss()
-        monitor = sct.monitors[1]
-        left = monitor["left"] + int(monitor["width"]*0.01)
-        top = int(monitor["height"]*top_crop)
-        right = monitor["width"] - int(monitor["width"]*0.01)
-        lower = monitor["height"]
-        bbox = (left, top, right, lower)
-        dim = (18, 6) # (width, height)
-
-        while self.screen_thread_enable:
-            img = cv2.cvtColor(np.asarray(sct.grab(bbox)), cv2.COLOR_BGRA2RGB)
-            img = cv2.flip(img, 0)
-            img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
-            colormap = img / 255.0 # normalize after cv2 operations
-            voltmap = self.color_to_voltage(colormap) * self.state["brightness"] 
-            self.apply_voltmap(voltmap)
-            time.sleep(1/fps) # todo: count delays
-
-    def start_video_thread(self, video_path):
-        self.video_thread_enable = True
-        self.video_file = video_path
-        self.video_thread = threading.Thread(target=self.video_function, daemon=True)
-        self.video_thread.start()
 
     def video_function(self):
         is_video_loop = False # todo
