@@ -32,7 +32,7 @@ System tray toolbox for Linux laptops. Currently includes tools for contolling k
 
 ![screenshot](.etc/screenshot.png)
 
-**RGB Keyboard Demo:**
+**RGB Keyboard running a Custom Python Script (`rgb_kb_custom/reflect_screen.py`):**
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 

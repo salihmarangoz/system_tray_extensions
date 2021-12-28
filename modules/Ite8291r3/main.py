@@ -8,12 +8,12 @@ from ite8291r3_ctl import ite8291r3
 from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
 from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors
 from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f
+from ite8291r3_ctl.ite8291r3 import directions as ite8291r3_directions
 from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs
 import usb
 import importlib
 
 import cv2
-import mss
 import time
 import threading
 
@@ -44,6 +44,20 @@ ite8291r3_effects["random_reactive"] = ite8291r3_effect_f(0x04, {
         "save":       (ite8291r3_effect_attrs.SAVE, 0),
     })
 
+ite8291r3_effects["wave_horizontal"] = ite8291r3_effect_f(0x03, {
+        "speed":      (ite8291r3_effect_attrs.SPEED, 3),
+        "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
+        "save":       (ite8291r3_effect_attrs.SAVE, 0),
+        "direction":  (ite8291r3_effect_attrs.DIRECTION, ite8291r3_directions.get("right")),
+    })
+
+ite8291r3_effects["wave_vertical"] = ite8291r3_effect_f(0x03, {
+        "speed":      (ite8291r3_effect_attrs.SPEED, 3),
+        "color":      (ite8291r3_effect_attrs.COLOR, ite8291r3_colors.get("random")),
+        "save":       (ite8291r3_effect_attrs.SAVE, 0),
+        "direction":  (ite8291r3_effect_attrs.DIRECTION, ite8291r3_directions.get("down")),
+    })
+
 
 class Ite8291r3:
     """Ite8291r3 Base Class
@@ -54,7 +68,6 @@ class Ite8291r3:
         self.node = node
         self.layouts_path = os.path.join(self.node.get_project_path(), 'rgb_kb_custom')
         self.gamma = (0.55, 0.48, 0.43)
-        self.screen_thread_enable = False
         self.video_thread_enable = False
         self.py_script_thread_enable = False
 
@@ -131,23 +144,23 @@ class Ite8291r3:
         self.mc_ac5 = QAction("Pick a color");  self.mc_ac5.triggered.connect(lambda: self.update_state( {"mode": "mono", "value": self.mono_color_picker()} ));    self.mc.addAction(self.mc_ac5)
         menu.addMenu(self.mc)
 
-        self.ef = QMenu("Effects")
+        self.ef = QMenu("Built-in Effects")
         self.ef_ac1 = QAction("Breathing"); self.ef_ac1.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "breathing"} ));   self.ef.addAction(self.ef_ac1)
-        self.ef_ac2 = QAction("Wave");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave"} ));        self.ef.addAction(self.ef_ac2)
-        self.ef_ac3 = QAction("Random");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac3)
-        self.ef_ac3 = QAction("Random (Reactive)");    self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random_reactive"} ));      self.ef.addAction(self.ef_ac3)
-        self.ef_ac4 = QAction("Rainbow");   self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac4)
-        self.ef_ac5 = QAction("Ripple");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac5)
-        self.ef_ac5 = QAction("Ripple (Reactive but buggy)");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple_reactive"} ));      self.ef.addAction(self.ef_ac5)
-        self.ef_ac6 = QAction("Marquee");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac6)
-        self.ef_ac7 = QAction("Raindrop");  self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac7)
-        self.ef_ac8 = QAction("Aurora");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac8)
-        self.ef_ac9 = QAction("Fireworks"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac9)
-        self.ef_ac9 = QAction("Fireworks (Reactive)"); self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks_reactive"} ));   self.ef.addAction(self.ef_ac9)
-        self.ef_ac10 = QAction("Reflect Screen (High CPU Usage)");   self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "screen"} ));   self.ef.addAction(self.ef_ac10)
+        self.ef_ac2 = QAction("Wave (Vertical)");      self.ef_ac2.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_vertical"} ));        self.ef.addAction(self.ef_ac2)
+        self.ef_ac3 = QAction("Wave (Horizontal)");      self.ef_ac3.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "wave_horizontal"} ));        self.ef.addAction(self.ef_ac3)
+        self.ef_ac4 = QAction("Random");    self.ef_ac4.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random"} ));      self.ef.addAction(self.ef_ac4)
+        self.ef_ac5 = QAction("Random (Reactive)");    self.ef_ac5.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "random_reactive"} ));      self.ef.addAction(self.ef_ac5)
+        self.ef_ac6 = QAction("Rainbow");   self.ef_ac6.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "rainbow"} ));     self.ef.addAction(self.ef_ac6)
+        self.ef_ac7 = QAction("Ripple");    self.ef_ac7.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple"} ));      self.ef.addAction(self.ef_ac7)
+        self.ef_ac8 = QAction("Ripple (Reactive but buggy)");    self.ef_ac8.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "ripple_reactive"} ));      self.ef.addAction(self.ef_ac8)
+        self.ef_ac9 = QAction("Marquee");   self.ef_ac9.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "marquee"} ));     self.ef.addAction(self.ef_ac9)
+        self.ef_ac10 = QAction("Raindrop");  self.ef_ac10.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "raindrop"} ));    self.ef.addAction(self.ef_ac10)
+        #self.ef_ac11 = QAction("Aurora");    self.ef_ac11.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "aurora"} ));      self.ef.addAction(self.ef_ac11)
+        self.ef_ac12 = QAction("Fireworks"); self.ef_ac12.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks"} ));   self.ef.addAction(self.ef_ac12)
+        self.ef_ac13 = QAction("Fireworks (Reactive)"); self.ef_ac13.triggered.connect(lambda: self.update_state( {"mode": "effect", "value": "fireworks_reactive"} ));   self.ef.addAction(self.ef_ac13)
         menu.addMenu(self.ef)
 
-        self.cu = QAction("Custom Visual");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
+        self.cu = QAction("Custom Effects");   self.cu.triggered.connect(lambda: self.update_state( {"mode": "custom", "value": self.custom_file_picker()} )); menu.addAction(self.cu)
 
     def reload_state(self):
         # todo read from file
@@ -176,13 +189,8 @@ class Ite8291r3:
             if new_state["mode"] == "effect":
                 self.stop_animation_threads()
                 self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
-                print(int(self.state["brightness"] * 50))
+                #print(int(self.state["brightness"] * 50))
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
-
-            if new_state["mode"] == "screen":
-                self.stop_animation_threads()
-                self.ite.set_brightness(50)
-                self.start_screen_thread()
 
             if new_state["mode"] == "custom":
                 if len(new_state["value"]) == 0:
@@ -318,47 +326,12 @@ class Ite8291r3:
                 "toggle": True}
 
     def stop_animation_threads(self):
-        if self.screen_thread_enable:
-            self.screen_thread_enable = False
-            self.screen_thread.join()
         if self.video_thread_enable:
             self.video_thread_enable = False
             self.video_thread.join()
         if self.py_script_thread_enable:
             self.py_script_thread_enable = False
             self.py_script_thread.join()
-
-    def start_screen_thread(self):
-        self.screen_thread_enable = True
-        self.screen_thread = threading.Thread(target=self.screen_function, daemon=True)
-        self.screen_thread.start()
-
-    def screen_function(self):
-        fps = 30
-        top_crop=0.0
-        sct = mss.mss()
-        monitor = sct.monitors[1]
-        left = monitor["left"] + int(monitor["width"]*0.01)
-        top = int(monitor["height"]*top_crop)
-        right = monitor["width"] - int(monitor["width"]*0.01)
-        lower = monitor["height"]
-        bbox = (left, top, right, lower)
-        dim = (18, 6) # (width, height)
-
-        while self.screen_thread_enable:
-            img = cv2.cvtColor(np.asarray(sct.grab(bbox)), cv2.COLOR_BGRA2RGB)
-            img = cv2.flip(img, 0)
-            img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
-            colormap = img / 255.0 # normalize after cv2 operations
-            voltmap = self.color_to_voltage(colormap) * self.state["brightness"] 
-            self.apply_voltmap(voltmap)
-            time.sleep(1/fps) # todo: count delays
-
-    def start_video_thread(self, video_path):
-        self.video_thread_enable = True
-        self.video_file = video_path
-        self.video_thread = threading.Thread(target=self.video_function, daemon=True)
-        self.video_thread.start()
 
     def video_function(self):
         is_video_loop = False # todo
