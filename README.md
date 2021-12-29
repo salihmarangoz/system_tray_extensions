@@ -10,7 +10,8 @@
 - [Update](#update)
 - [Running](#running)
 - [Contributing](#contributing)
-- [Known Issues & Solutions](#known-issues--solutions)
+- [FAQ](#faq)
+- [Known Issues and Solutions](#known-issues-and-solutions)
 - [Credits](#credits)
 - [References](#references)
 
