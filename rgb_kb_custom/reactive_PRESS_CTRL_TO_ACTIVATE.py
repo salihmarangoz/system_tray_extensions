@@ -36,7 +36,7 @@ class Ripple:
         return output
 
     def is_visible(self):
-        return self.current_r < 20
+        return self.current_r < 20 # magic number :S
 
 
 class CustomEffect:
@@ -54,7 +54,7 @@ class CustomEffect:
 
     def update(self):
         self.arr = self.arr * 0
-        print("ripple_list size:", len(self.ripple_list))
+        #print("ripple_list size:", len(self.ripple_list))
 
         output = None
         for ripple in self.ripple_list:
