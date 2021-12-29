@@ -1,36 +1,75 @@
 
 import numpy as np
+from collections import deque
 
 # todo: some quick tricks to see if keyboard effects work properly and a small demonstration of the effect. currently doesnt support multiple ripple waves
+
+# event with 200 ripples cpu usage is pretty low
+class Ripple:
+    ii = None
+    jj = None
+
+    def __init__(self, pos_i, pos_j, arr_shape):
+        self.pos_i = pos_i
+        self.pos_j = pos_j
+        self.current_r = 0.00001
+        self.arr_shape = arr_shape
+
+        # precompute for all ripples
+        if Ripple.ii is None and Ripple.jj is None:
+            Ripple.ii, Ripple.jj = np.meshgrid(range(self.arr_shape[0]), range(self.arr_shape[1]), indexing='ij')
+
+        # precompute for this ripple
+        self.ii = Ripple.ii - self.pos_i
+        self.jj = Ripple.jj - self.pos_j
+        self.sumii2jj2 = self.ii**2 + self.jj**2
+
+    def step(self):
+        scale = self.current_r * 1.5 # ripple wave length
+        output = np.exp( -np.abs(self.sumii2jj2 - self.current_r**2) / scale )
+        #output *= 1 / self.current_r # decrease wave magnitute over time v1
+        #output *= 1 / np.sqrt(self.current_r) # decrease wave magnitute over time v2
+        output *= 1 / self.current_r**0.8 # decrease wave magnitute over time v3
+        
+        output = output.reshape((self.arr_shape[0], self.arr_shape[1], 1))
+        self.current_r += 0.7 # speed
+        return output
+
+    def is_visible(self):
+        return self.current_r < 20
+
 
 class CustomEffect:
     def __init__(self, arr, driver):
         self.arr = arr * 0
         self.driver = driver
         self.keyboard_mapper = KeyboardMapper(self.keyboard_cb)
-
-        self.r = -1
-        self.i = 0
-        self.j = 0
+        self.ripple_list = deque()
 
     def keyboard_cb(self, code, state, position):
-        if position is not None:
+        # state=0 (press), state=1 (release), state=2 (hold)
+        if position is not None and state == 0:
             i, j = position
-            self.i = i
-            self.j = j
-            self.r = 0
+            self.ripple_list.append( Ripple(i, j, self.arr.shape) )
 
     def update(self):
         self.arr = self.arr * 0
-        if self.r >= 0:
-            self.r += 0.4
-            ii, jj = np.meshgrid(range(self.arr.shape[0]), range(self.arr.shape[1]), indexing='ij')
-            ii = ii - self.i
-            jj = jj - self.j
-            scale = self.r * 3 # ripple wave length
-            output = np.exp( -np.abs(ii**2 + jj**2 - self.r**2) / scale )
-            #output *= 1 / self.r # decrease wave magnitute over time
-            output = output.reshape((self.arr.shape[0], self.arr.shape[1], 1))
+        print("ripple_list size:", len(self.ripple_list))
+
+        output = None
+        for ripple in self.ripple_list:
+            if ripple.is_visible():
+                if output is None:
+                    output = ripple.step()
+                else:
+                    output += ripple.step()
+
+        if len(self.ripple_list) > 0:
+            if not self.ripple_list[0].is_visible():
+                self.ripple_list.popleft()
+
+        if output is not None:
+            output = np.clip(output, 0.0, 1.0)
             self.arr[:,:,:] = output
 
         return self.arr
