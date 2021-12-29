@@ -1,4 +1,34 @@
-# pip3 install inputs
+
+import numpy as np
+
+class CustomEffect:
+    def __init__(self, arr, driver):
+        self.arr = arr * 0
+        self.driver = driver
+        self.keyboard_mapper = KeyboardMapper(self.keyboard_cb)
+
+    def keyboard_cb(self, code, state, position):
+        if position is not None:
+            i, j = position
+            self.arr[i, j] = np.array([1.0, 1.0, 1.0])
+
+    def update(self):
+        return self.arr
+
+    def get_fps(self):
+        return 20
+
+    def is_enabled(self):
+        return True
+
+    def on_exit(self):
+        pass
+
+
+
+#################################################################################################################
+
+
 
 import inputs
 import threading
@@ -19,7 +49,7 @@ class KeyboardMapper:
                            ["TAB"      , None   , "Q"    , "W"       , "E"      , "R"    , "T"    , "Y"    , "U"    , "I"    , "O"       , "P"        , "LEFTBRACE" , "RIGHTBRACE" , "ENTER"     , "KP7"    , "KP8"    , "KP9"       ], # 2
                            ["CAPSLOCK" , None   , "A"    , "S"       , "D"      , "F"    , "G"    , "H"    , "J"    , "K"    , "L"       , "SEMICOLON", "APOSTROPHE", "BACKSLASH"  , NOKEY       , "KP4"    , "KP5"    , "KP6"       ], # 3
                            ["LEFTSHIFT", NOKEY  , "102ND", "Z"       , "X"      , "C"    , "V"    , "B"    , "N"    , "M"    , "COMMA"   , "DOT"      , "SLASH"     , "RIGHTSHIFT" , "UP"        , "KP1"    , "KP2"    , "KP3"       ], # 4
-                           ["LEFTCTRL" , None   , None   , "LEFTMETA", "LEFTALT", None   , None   , "Space", None   , None   , "RIGHTALT", "COMPOSE"  , "RIGHTCTRL" , "LEFT"       , "DOWN"      , "RIGHT"  , "KP0"    , "KPDOT"     ]  # 5
+                           ["LEFTCTRL" , None   , None   , "LEFTMETA", "LEFTALT", None   , None   , "SPACE", None   , None   , "RIGHTALT", "COMPOSE"  , "RIGHTCTRL" , "LEFT"       , "DOWN"      , "RIGHT"  , "KP0"    , "KPDOT"     ]  # 5
                          ]
         self.default_map_inv = {}
         self.process_map()
@@ -73,10 +103,14 @@ class KeyboardMapper:
     def exit(self):
         self.is_enabled = False
 
-def event_cb(code, state, position):
-    print(code, state, position)
+#def event_cb(code, state, position):
+#    print(code, state, position)
+#keyboard_mapper = KeyboardMapper(event_cb)
 
-keyboard_mapper = KeyboardMapper(event_cb)
+
+
+#################################################################################################################
+
 
 
 """
