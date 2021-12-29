@@ -1,18 +1,38 @@
 
 import numpy as np
 
+# todo: some quick tricks to see if keyboard effects work properly and a small demonstration of the effect. currently doesnt support multiple ripple waves
+
 class CustomEffect:
     def __init__(self, arr, driver):
         self.arr = arr * 0
         self.driver = driver
         self.keyboard_mapper = KeyboardMapper(self.keyboard_cb)
 
+        self.r = -1
+        self.i = 0
+        self.j = 0
+
     def keyboard_cb(self, code, state, position):
         if position is not None:
             i, j = position
-            self.arr[i, j] = np.array([1.0, 1.0, 1.0])
+            self.i = i
+            self.j = j
+            self.r = 0
 
     def update(self):
+        self.arr = self.arr * 0
+        if self.r >= 0:
+            self.r += 0.4
+            ii, jj = np.meshgrid(range(self.arr.shape[0]), range(self.arr.shape[1]), indexing='ij')
+            ii = ii - self.i
+            jj = jj - self.j
+            scale = self.r * 3 # ripple wave length
+            output = np.exp( -np.abs(ii**2 + jj**2 - self.r**2) / scale )
+            #output *= 1 / self.r # decrease wave magnitute over time
+            output = output.reshape((self.arr.shape[0], self.arr.shape[1], 1))
+            self.arr[:,:,:] = output
+
         return self.arr
 
     def get_fps(self):
