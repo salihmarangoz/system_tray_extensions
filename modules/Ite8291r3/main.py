@@ -333,6 +333,12 @@ class Ite8291r3:
             self.py_script_thread_enable = False
             self.py_script_thread.join()
 
+    def start_video_thread(self, video_path):
+        self.video_thread_enable = True
+        self.video_file = video_path
+        self.video_thread = threading.Thread(target=self.video_function, daemon=True)
+        self.video_thread.start()
+
     def video_function(self):
         is_video_loop = False # todo
 
