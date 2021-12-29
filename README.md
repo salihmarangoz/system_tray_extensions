@@ -1,13 +1,3 @@
-# For ite8291r3-gui check the other branch
-
-**This section for ite8291r3 will be removed after 01-Oct-2022. The old branch will not be deleted**
-
-Old package is here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
-
-The new app (STE) will include ite8291r3 as an extension with many features. Also, lightbar control, custom scripts, and many things will be available. Custom modules will be able to to access useful events (lid opened, lid closed, before suspend, after suspend, ac adapter plugged in, battery mode, etc.) without effort.
-
-
-
 # [STE] System Tray Extensions
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -20,7 +10,8 @@ The new app (STE) will include ite8291r3 as an extension with many features. Als
 - [Update](#update)
 - [Running](#running)
 - [Contributing](#contributing)
-- [Known Issues & Solutions](#known-issues--solutions)
+- [FAQ](#faq)
+- [Known Issues and Solutions](#known-issues-and-solutions)
 - [Credits](#credits)
 - [References](#references)
 
@@ -32,25 +23,19 @@ System tray toolbox for Linux laptops. Currently includes tools for contolling k
 
 ![screenshot](.etc/screenshot.png)
 
-**RGB Keyboard running a Custom Python Script (`rgb_kb_custom/reflect_screen.py`):**
+**YOUTUBE: RGB Keyboard running `rgb_kb_custom/reflect_screen.py`:**
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
-**RGB Keyboard running a Custom Python Script (`rgb_kb_custom/sin_wave.py`):**
+**GIF: RGB Keyboard running `rgb_kb_custom/sin_wave.py`:**
 
 ![custom_py_script_ani](.etc/custom_py_script_ani.gif)
 
-**RGB Keyboard running a Custom Python Script  While Compiling a Project (`rgb_kb_custom/cpu_usage.py`)**
+**GIF: RGB Keyboard running `rgb_kb_custom/cpu_usage.py` While Compiling a Project**
 
 ![custom_py_script.ani2](.etc/custom_py_script.ani2.gif)
 
-Also here are some other videos for RGB keyboard good for demonstration. Enable `Screen Reflect` effect and watch the video in full-screen:
-
-- https://www.youtube.com/watch?v=2VsZTW6UjcA
-- https://www.youtube.com/watch?v=jeQFX9fE7Xc
-- https://www.youtube.com/watch?v=5gT3migqxNI
-
-
+Also here are some other videos for RGB keyboard good for demonstration. Enable `rgb_kb_custom/reflect_screen.py` effect and watch the video in full-screen: [[1]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[2]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[3]](https://www.youtube.com/watch?v=5gT3migqxNI)
 
 ## Supported Systems
 
@@ -169,10 +154,19 @@ Contributions of any kind are welcome. See **ToDo List** for current problems/id
 - [ ] RgbKeyboard: Keyboard shortcuts for effects? "Save this state to shortcut: xyz"?
 - [ ] TogglePulseaudioSuspend
 - [ ] App: Logging has some problems. Not working?!
+- [ ] Add a check if battery path exists!
+- [ ] Add a check if lightbar path exists!
 
 
 
-## Known Issues & Solutions
+## FAQ
+
+- There are tons of dependencies, GTK, system tray thing but I don't want them.
+  - Solution: Check this lightweight fork: https://gitlab.com/Ranguna/tuxedo-rgb-keyboard-daemon
+- What happened to `ite8291r3-gui` ? 
+  - It was only for ite8291r3 so I refactored the whole project. If you want then get it here: https://github.com/salihmarangoz/ite8291r3-gui/tree/ite8291r3-gui
+
+## Known Issues and Solutions
 
 - `tdp` package is causing rgb keyboard animations to stop.
   - Solution: Uninstall `tdp`. If you know how to prevent tdp from modifying USB power I welcome pull  requests.

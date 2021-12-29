@@ -8,7 +8,7 @@ class CustomEffect:
         self.driver = driver
         self.phase = np.random.uniform()*np.pi*2
         self.hue = np.random.uniform()*360
-        print(self.phase, self.hue)
+        #print(self.phase, self.hue)
 
         # parameters
         self.is_psychedelic = np.random.uniform() < 0.02 # easter egg :)
