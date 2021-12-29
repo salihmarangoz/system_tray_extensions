@@ -29,7 +29,8 @@ class Ripple:
         output = np.exp( -np.abs(self.sumii2jj2 - self.current_r**2) / scale )
         #output *= 1 / self.current_r # decrease wave magnitute over time v1
         #output *= 1 / np.sqrt(self.current_r) # decrease wave magnitute over time v2
-        output *= 1 / self.current_r**0.8 # decrease wave magnitute over time v3
+        #output *= 1 / self.current_r**0.8 # decrease wave magnitute over time v3
+        output *= 3 / self.current_r**0.8 # decrease wave magnitute over time v4
         
         output = output.reshape((self.arr_shape[0], self.arr_shape[1], 1))
         self.current_r += 0.7 # speed
