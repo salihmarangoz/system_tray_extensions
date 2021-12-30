@@ -34,30 +34,36 @@ class CustomEffect:
         return self.arr
 
     def updatev2(self):
-        decay_rate = 0.04 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
+        sigma = 0.75
+
+        # exponential weight decay
+        decay_rate = 0.09 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
+        self.arr = (1-decay_rate)*self.arr
+
+        # shift color phase
         self.color_phase += 0.005
 
-        self.arr = (1-decay_rate)*self.arr
-        sigma = 1
-
         x, y = self.get_scaled_mouse_pos()
+
+        # dont compute if mouse didnt move
+        if self.old_pos[0] == x and self.old_pos[1] == y:
+            return self.arr
+        self.old_pos = (x, y)
+
         y = y * (self.arr.shape[0]-1)
         x = x * (self.arr.shape[1]-1)
         movement_angle = np.arctan2(self.old_pos[1] - y, self.old_pos[0] - x) + np.pi # 0 to 2*pi
         movement_angle = (movement_angle+self.color_phase) % (np.pi*2)
-        if self.old_pos[0] == x and self.old_pos[1] == y:
-            return self.arr
-
-        self.old_pos = (x, y)
 
         color = np.array(self.cm(movement_angle/(2*np.pi))[:-1])
         gaussian_d = np.exp(-0.5 * ((self.idx[0] - y)**2 + (self.idx[1] - x)**2) / sigma**2)
-        gaussian_d = gaussian_d / np.max(gaussian_d)
-        #gaussian_d = np.clip(0, 1, gaussian_d*1.0)
+        gaussian_d = 2 * gaussian_d / np.max(gaussian_d)
+        gaussian_d = np.clip(0, 1, gaussian_d*1.0)
         
         new_arr = np.expand_dims(gaussian_d, axis=2) * color.reshape(1, 1, -1)
         self.arr += decay_rate * new_arr
         self.arr = np.max(np.stack([self.arr, new_arr]), axis=0)
+        
         return self.arr
 
     def get_scaled_mouse_pos(self):
