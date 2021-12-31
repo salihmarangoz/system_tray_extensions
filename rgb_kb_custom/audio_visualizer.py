@@ -5,14 +5,12 @@
 
 import soundcard as sc
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib
-from scipy import signal
 import math
 import cv2
 import time
-import struct
 import logging
+import matplotlib.pyplot as plt
+import matplotlib
 
 class CustomEffect:
     def __init__(self, arr, driver):
