@@ -38,7 +38,9 @@ def main():
     core._keep_main_thread() # pass the main thread to the core
 
 def setup_logging():
-    logging.basicConfig(filename='app.log', level=logging.DEBUG)
+    project_path = os.path.dirname(os.path.realpath(__file__))
+    logfile_path = os.path.join(project_path, 'app.log')
+    logging.basicConfig(filename=logfile_path, level=logging.DEBUG)
     logging.getLogger().addHandler(logging.StreamHandler())
 
 def import_module(module_name):
