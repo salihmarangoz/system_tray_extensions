@@ -1,6 +1,7 @@
 
 import numpy as np
 import cv2
+import logging
 
 class CustomEffect:
     def __init__(self, arr, driver):
@@ -8,7 +9,6 @@ class CustomEffect:
         self.driver = driver
         self.phase = np.random.uniform()*np.pi*2
         self.hue = np.random.uniform()*360
-        #print(self.phase, self.hue)
 
         # parameters
         self.is_psychedelic = np.random.uniform() < 0.02 # easter egg :)

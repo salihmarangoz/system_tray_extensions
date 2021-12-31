@@ -5,6 +5,7 @@ from gi.repository import GLib
 from dbus.mainloop.glib import DBusGMainLoop
 import signal
 import sys
+#import logging # DONT USE LOGGING HERE
 
 def handle_suspend_callback(mode):
     if mode == 0:

@@ -10,6 +10,7 @@ import json
 import copy
 from threading import Lock
 import subprocess
+import logging
 
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -118,11 +119,11 @@ class StateManager:
         self.mutex.acquire()
         try:
             if os.path.isfile(self.filename):
-                print("State file is found:", self.filename)
+                logging.info("State file is found: %s", self.filename)
                 with open(self.filename) as json_file:
                     state = json.load(json_file)
             else:
-                print("State file is NOT found:", self.filename)
+                logging.warn("State file is NOT found: %s", self.filename)
                 state = {}
         finally:
             self.mutex.release()
@@ -131,7 +132,7 @@ class StateManager:
     def save_state(self, state):
         self.mutex.acquire()
         try:
-            print("State file saved:", self.filename)
+            logging.info("State file saved: %s", self.filename)
             with open(self.filename, 'w') as outfile:
                 #json.dump(state, outfile)
                 json.dump(state, outfile, indent=4)
@@ -159,10 +160,10 @@ class EventManager:
             if not self.process_events:
                 break
             if len(line) == 0:
-                print("dbus_handler.py streamed empty line. exiting...")
+                logging.error("dbus_handler.py streamed empty line. exiting...")
                 break
             event = line.decode("utf-8").strip()
-            print("New event:", event)
+            logging.info("New event: %s", event)
             self.node.core.core_event_queue.put({"name": event})
             if event == "exit":
                 break
@@ -245,7 +246,7 @@ class Core():
 
             self.app.exec_()
         except KeyboardInterrupt:
-            print("Qt interrupted by SIGINT")
+            logging.warn("Qt interrupted by SIGINT")
             sys.exit(self.exit_code)
 
     # Module event threading
@@ -256,8 +257,8 @@ class Core():
                 try:
                     self.event_connections[module_name][event["name"]](event)
                 except Exception as e:
-                    print("module_name:", module_name)
-                    print(traceback.print_exc())
+                    logging.error("module_name: %s", module_name)
+                    logging.error(traceback.print_exc())
             self.queues[module_name].task_done()
 
     # Main event threading (may not be the main thread)
@@ -276,9 +277,9 @@ class Core():
     def _exit_handler(self):
         self.core_event_queue.join()
         for module_name, queue in self.queues.items():
-            print("Waiting for {}".format(module_name))
+            logging.info("Waiting for %s", module_name)
             queue.join() # todo: timeout
-        print("Waiting for Qt")
+        logging.info("Waiting for Qt")
         self.app.exit(self.exit_code)
 
         # somehow sys.exit doesnt work well... 

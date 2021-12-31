@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, QObject
 import time
 import threading
+import logging
 
 class DgpuPowerstateMonitor(QObject):
 
@@ -48,7 +49,7 @@ class DgpuPowerstateMonitor(QObject):
         self.tray.setVisible(False)
 
     def power_state_check_function(self):
-        print("enter power_state_check_function")
+        logging.info("enter power_state_check_function")
         while self.enable_power_state_check:
             with open('/sys/module/nvidia/drivers/pci:nvidia/0000:01:00.0/power_state', 'r', encoding='utf-8') as f: # todo
                 out = f.readlines()
@@ -73,7 +74,7 @@ class DgpuPowerstateMonitor(QObject):
                 #self.tray.setVisible(True)
                 self.show_signal.emit()
             time.sleep(3) # todo
-        print("exit power_state_check_function")
+        logging.info("exit power_state_check_function")
 
 
 

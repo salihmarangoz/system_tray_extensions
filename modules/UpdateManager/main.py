@@ -8,6 +8,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import git
+import logging
 
 class UpdateManager:
     def __init__(self, node):
@@ -30,7 +31,7 @@ class UpdateManager:
             remote.fetch()
         output = repo.git.status("-sb")
 
-        print("UpdateManager fetch and status:", output)
+        logging.info("UpdateManager fetch and status: %s", output)
         if "behind" in output:
             self.update_action.setText("New update available!")
             self.update_action.setEnabled(True)

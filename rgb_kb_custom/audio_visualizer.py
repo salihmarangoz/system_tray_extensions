@@ -12,6 +12,7 @@ import math
 import cv2
 import time
 import struct
+import logging
 
 class CustomEffect:
     def __init__(self, arr, driver):
@@ -111,9 +112,9 @@ class CustomEffect:
 
         for m in self.mics:
             if m.isloopback:
-                print("Found loopback:", m.name)
+                logging.info("Found loopback: %s", m.name)
                 if sc.default_speaker().name in m.name:
-                    print("soundcard connected to ", m.name)
+                    logging.info("soundcard connected to: %s", m.name)
                     # On Linux, channel -1 is the mono mix of all channels. Remove channel entry for stereo
                     with m.recorder(samplerate=self.samplerate, channels=[-1]) as mic:
                         while self.is_enabled() and self.driver.py_script_thread_enable:
