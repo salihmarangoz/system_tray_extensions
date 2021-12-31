@@ -1,6 +1,6 @@
 
-import os
-import subprocess
+import os #check_import
+import subprocess #check_import
 
 class BatteryPowerDrawMonitor():
 

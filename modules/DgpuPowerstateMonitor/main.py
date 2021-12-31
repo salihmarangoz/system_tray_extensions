@@ -1,10 +1,10 @@
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import pyqtSignal, QObject
-import time
-import threading
-import logging
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
+from PyQt5.QtCore import pyqtSignal, QObject #check_import
+import time #check_import
+import threading #check_import
+import logging #check_import
 
 class DgpuPowerstateMonitor(QObject):
 

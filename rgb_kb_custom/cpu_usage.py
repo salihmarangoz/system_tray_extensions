@@ -1,9 +1,9 @@
 
-import numpy as np
-import cv2
-import psutil
-import matplotlib.pyplot as plt
-import matplotlib
+import numpy as np #check_import
+import cv2 #check_import
+import psutil #check_import
+import matplotlib.pyplot as plt #check_import
+import matplotlib #check_import
 
 class CustomEffect:
     def __init__(self, arr, driver):

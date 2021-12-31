@@ -1,8 +1,8 @@
 
-import numpy as np
+import numpy as np #check_import
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
 
 class TuxedoKeyboard:
     def __init__(self, node):

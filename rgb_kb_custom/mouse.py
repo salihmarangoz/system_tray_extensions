@@ -1,8 +1,8 @@
 
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
-from pynput.mouse import Controller
+import numpy as np #check_import
+import cv2 #check_import
+import matplotlib.pyplot as plt #check_import
+from pynput.mouse import Controller #check_import
 
 class CustomEffect:
     def __init__(self, arr, driver):

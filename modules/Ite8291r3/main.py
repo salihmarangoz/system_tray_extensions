@@ -1,25 +1,25 @@
 
-import sys
-import glob
-import os
-import numpy as np
-from PIL import Image
-from ite8291r3_ctl import ite8291r3
-from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
-from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors
-from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f
-from ite8291r3_ctl.ite8291r3 import directions as ite8291r3_directions
-from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs
-import usb
-import importlib
-import logging
+import sys #check_import
+import glob #check_import
+import os #check_import
+import numpy as np #check_import
+from PIL import Image #check_import
+from ite8291r3_ctl import ite8291r3 #check_import
+from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects #check_import
+from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors #check_import
+from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f #check_import
+from ite8291r3_ctl.ite8291r3 import directions as ite8291r3_directions #check_import
+from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs #check_import
+import usb #check_import
+import importlib #check_import
+import logging #check_import
 
-import cv2
-import time
-import threading
+import cv2 #check_import
+import time #check_import
+import threading #check_import
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
 
 ############################################################################################
 

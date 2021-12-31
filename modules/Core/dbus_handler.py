@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import dbus
-from gi.repository import GLib
-from dbus.mainloop.glib import DBusGMainLoop
-import signal
-import sys
+import dbus #check_import
+from gi.repository import GLib #check_import
+from dbus.mainloop.glib import DBusGMainLoop #check_import
+import signal #check_import
+import sys #check_import
 #import logging # DONT USE LOGGING HERE
 
 def handle_suspend_callback(mode):

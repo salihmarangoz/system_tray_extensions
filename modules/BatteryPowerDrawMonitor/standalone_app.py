@@ -1,11 +1,11 @@
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
-from gi.repository import Gtk, AppIndicator3, GLib
-import signal
-import time
-import threading
-import os
+import gi #check_import
+gi.require_version('Gtk', '3.0') #check_import
+gi.require_version('AppIndicator3', '0.1') #check_import
+from gi.repository import Gtk, AppIndicator3, GLib #check_import
+import signal #check_import
+import time #check_import
+import threading #check_import
+import os #check_import
 
 class Indicator():
     def __init__(self):

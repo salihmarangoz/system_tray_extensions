@@ -1,7 +1,7 @@
 
-import numpy as np
-from collections import deque
-import logging
+import numpy as np #check_import
+from collections import deque #check_import
+import logging #check_import
 
 # todo: some quick tricks to see if keyboard effects work properly and a small demonstration of the effect. currently doesnt support multiple ripple waves
 
@@ -90,9 +90,9 @@ class CustomEffect:
 
 
 
-import inputs
-import threading
-import logging
+import inputs #check_import
+import threading #check_import
+import logging #check_import
 class KeyboardMapper:
     def __init__(self, callback):
         self.selected_device = None

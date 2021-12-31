@@ -3,14 +3,14 @@
 # - https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
 # - https://soundcard.readthedocs.io/en/latest/
 
-import soundcard as sc
-import numpy as np
-import math
-import cv2
-import time
-import logging
-import matplotlib.pyplot as plt
-import matplotlib
+import soundcard as sc #check_import
+import numpy as np #check_import
+import math #check_import
+import cv2 #check_import
+import time #check_import
+import logging #check_import
+import matplotlib.pyplot as plt #check_import
+import matplotlib #check_import
 
 class CustomEffect:
     def __init__(self, arr, driver):

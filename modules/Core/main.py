@@ -1,19 +1,19 @@
 
-import threading
-import queue
-import traceback
-import signal
-import sys
-import time
-import os
-import json
-import copy
-from threading import Lock
-import subprocess
-import logging
+import threading #check_import
+import queue #check_import
+import traceback #check_import
+import signal #check_import
+import sys #check_import
+import time #check_import
+import os #check_import
+import json #check_import
+import copy #check_import
+from threading import Lock #check_import
+import subprocess #check_import
+import logging #check_import
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
 
 
 class Node():
@@ -198,7 +198,7 @@ class Core():
         # todo: for some quick tests
         self.test_thread = threading.Thread(target=self.test_handler, daemon=True).start()
     def test_handler(self):
-        import time
+        import time # todo: why here???
         time.sleep(5)
 
     def add_event_callback(self, module_name, event_name, function):
