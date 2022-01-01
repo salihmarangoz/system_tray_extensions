@@ -82,8 +82,7 @@ class CustomEffect:
         return True
 
     def on_exit(self):
-        pass
-
+        self.keyboard_mapper.exit()
 
 
 #################################################################################################################

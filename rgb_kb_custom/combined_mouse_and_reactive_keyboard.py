@@ -35,4 +35,5 @@ class CustomEffect:
         return True
 
     def on_exit(self):
-        pass
+        self.mouse_effect.on_exit()
+        self.keyboard_effect.on_exit()
