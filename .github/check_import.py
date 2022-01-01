@@ -15,8 +15,9 @@ def test_imports(path):
             l_ = l.strip()
             try:
                 exec(l_)
-            except:
+            except Exception as e:
                 print("IMPORT ERROR:", l_)
+                print(e)
                 is_correct = False
     return is_correct
 

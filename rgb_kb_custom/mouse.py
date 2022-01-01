@@ -2,6 +2,7 @@
 import numpy as np #check_import
 import cv2 #check_import
 import matplotlib.pyplot as plt #check_import
+import pynput #check_import
 from pynput.mouse import Controller #check_import
 
 class CustomEffect:
