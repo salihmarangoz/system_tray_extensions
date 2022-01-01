@@ -3,15 +3,14 @@
 # - https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
 # - https://soundcard.readthedocs.io/en/latest/
 
-import soundcard as sc
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib
-from scipy import signal
-import math
-import cv2
-import time
-import struct
+import soundcard as sc #DISABLED_check_import
+import numpy as np #check_import
+import math #check_import
+import cv2 #check_import
+import time #check_import
+import logging #check_import
+import matplotlib.pyplot as plt #check_import
+import matplotlib #check_import
 
 class CustomEffect:
     def __init__(self, arr, driver):
@@ -111,9 +110,9 @@ class CustomEffect:
 
         for m in self.mics:
             if m.isloopback:
-                print("Found loopback:", m.name)
+                logging.info("Found loopback: %s", m.name)
                 if sc.default_speaker().name in m.name:
-                    print("soundcard connected to ", m.name)
+                    logging.info("soundcard connected to: %s", m.name)
                     # On Linux, channel -1 is the mono mix of all channels. Remove channel entry for stereo
                     with m.recorder(samplerate=self.samplerate, channels=[-1]) as mic:
                         while self.is_enabled() and self.driver.py_script_thread_enable:

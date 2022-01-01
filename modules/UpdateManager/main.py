@@ -1,13 +1,15 @@
 
-import sys
-import os
-import time
-import threading
+import sys #check_import
+import os #check_import
+import time #check_import
+import threading #check_import
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
 
-import git
+import git #DISABLED_check_import
+import logging #check_import
+import webbrowser #check_import
 
 class UpdateManager:
     def __init__(self, node):
@@ -30,7 +32,7 @@ class UpdateManager:
             remote.fetch()
         output = repo.git.status("-sb")
 
-        print("UpdateManager fetch and status:", output)
+        logging.info("UpdateManager fetch and status: %s", output)
         if "behind" in output:
             self.update_action.setText("New update available!")
             self.update_action.setEnabled(True)
@@ -46,5 +48,4 @@ class UpdateManager:
         menu.addAction(self.update_action)
 
     def on_update_triggered(self):
-        import webbrowser
         webbrowser.open("https://github.com/salihmarangoz/system_tray_extensions#update")

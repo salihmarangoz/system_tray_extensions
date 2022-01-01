@@ -1,8 +1,10 @@
 
-import importlib
-import configparser
-import os
-import traceback
+import importlib #check_import
+import configparser #check_import
+import os #check_import
+import traceback #check_import
+import logging #check_import
+
 
 def main():
     settings = read_settings()
@@ -28,12 +30,18 @@ def main():
         try:
             module_class = getattr(import_module(module_name), module_name)
             core._init_module(module_class, module_name)
-            print("Initialized {}".format(module_name))
+            logging.info("Initialized %s", module_name)
         except Exception as e:
-            print(traceback.print_exc()) # todo debug mode
-            print("Error initializing module {}".format(module_name))
+            logging.info(traceback.print_exc()) # todo debug mode
+            logging.info("Error initializing module %s", module_name)
 
     core._keep_main_thread() # pass the main thread to the core
+
+def setup_logging():
+    project_path = os.path.dirname(os.path.realpath(__file__))
+    logfile_path = os.path.join(project_path, 'app.log')
+    logging.basicConfig(filename=logfile_path, level=logging.DEBUG)
+    logging.getLogger().addHandler(logging.StreamHandler())
 
 def import_module(module_name):
     return importlib.import_module("modules." + module_name.strip() + ".main")
@@ -44,4 +52,6 @@ def read_settings(path="settings.ini"):
     return settings
 
 if __name__ == "__main__":
+    setup_logging()
+    logging.info("=== APP STARTED ===")
     main()

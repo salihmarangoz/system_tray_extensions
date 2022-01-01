@@ -1,24 +1,25 @@
 
-import sys
-import glob
-import os
-import numpy as np
-from PIL import Image
-from ite8291r3_ctl import ite8291r3
-from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects
-from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors
-from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f
-from ite8291r3_ctl.ite8291r3 import directions as ite8291r3_directions
-from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs
-import usb
-import importlib
+import sys #check_import
+import glob #check_import
+import os #check_import
+import numpy as np #check_import
+from PIL import Image #check_import
+from ite8291r3_ctl import ite8291r3 #check_import
+from ite8291r3_ctl.ite8291r3 import effects as ite8291r3_effects #check_import
+from ite8291r3_ctl.ite8291r3 import colors as ite8291r3_colors #check_import
+from ite8291r3_ctl.ite8291r3 import effect as ite8291r3_effect_f #check_import
+from ite8291r3_ctl.ite8291r3 import directions as ite8291r3_directions #check_import
+from ite8291r3_ctl.ite8291r3 import effect_attrs as ite8291r3_effect_attrs #check_import
+import usb #check_import
+import importlib #check_import
+import logging #check_import
 
-import cv2
-import time
-import threading
+import cv2 #check_import
+import time #check_import
+import threading #check_import
 
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import * #check_import
+from PyQt5.QtWidgets import * #check_import
 
 ############################################################################################
 
@@ -164,7 +165,7 @@ class Ite8291r3:
 
     def reload_state(self):
         # todo read from file
-        print("Reloading state:", self.state)
+        logging.info("Reloading state: %s", self.state)
         time.sleep(1)
         self.update_state(new_state=self.state)
 
@@ -189,7 +190,6 @@ class Ite8291r3:
             if new_state["mode"] == "effect":
                 self.stop_animation_threads()
                 self.ite.set_effect( ite8291r3_effects[new_state["value"]]() )
-                #print(int(self.state["brightness"] * 50))
                 self.ite.set_brightness( int(self.state["brightness"] * 50) )
 
             if new_state["mode"] == "custom":
@@ -244,7 +244,7 @@ class Ite8291r3:
                     self.ite._ite8291r3__set_row_index(row)
                     self.ite._ite8291r3__send_data(bytearray(arr[NUM_ROWS-row-1]))
             except usb.core.USBTimeoutError as e:
-                print("usb.core.USBTimeoutError occured but trying to recover!")
+                logging.error("usb.core.USBTimeoutError occured but trying to recover!")
                 usb.util.dispose_resources(self.ite.channel.dev)
                 self.ite = ite8291r3.get()
         else:
@@ -342,18 +342,18 @@ class Ite8291r3:
     def video_function(self):
         is_video_loop = False # todo
 
-        print("starting video_function")
+        logging.info("starting video_function")
         while self.video_thread_enable:
             cap = cv2.VideoCapture(self.video_file)
             # todo: warn user if tries to open a big file
 
             dim = (18, 6) # (width, height)
             if not cap.isOpened():
-                print("Video not found!")
+                logging.info("Video not found!")
                 break
 
             fps = cap.get(cv2.CAP_PROP_FPS)
-            print("Loaded video with fps:", fps)
+            logging.info("Loaded video with fps: %f", fps)
             enter_animation = True
             self._video_brightness = 0.0
 
@@ -386,7 +386,7 @@ class Ite8291r3:
                 self.apply_voltmap(voltmap)
                 time.sleep(1/fps) # todo: count delays
 
-        print("exiting video_function")
+        logging.info("exiting video_function")
 
     def start_py_script_thread(self, py_script_path):
         self.py_script_thread_enable = True
@@ -395,7 +395,7 @@ class Ite8291r3:
         self.py_script_thread.start()
 
     def py_script_function(self):
-        print("starting py_script_function")
+        logging.info("starting py_script_function")
 
         spec = importlib.util.spec_from_file_location("module.name", self.py_script_file)
         selected_module = importlib.util.module_from_spec(spec)
@@ -417,4 +417,4 @@ class Ite8291r3:
 
         self.py_script_thread_enable = False
         custom_effect.on_exit()
-        print("exiting py_script_function")
+        logging.info("exiting py_script_function")

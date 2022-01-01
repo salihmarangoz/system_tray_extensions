@@ -1,6 +1,7 @@
 
-import numpy as np
-from collections import deque
+import numpy as np #check_import
+from collections import deque #check_import
+import logging #check_import
 
 # todo: some quick tricks to see if keyboard effects work properly and a small demonstration of the effect. currently doesnt support multiple ripple waves
 
@@ -55,7 +56,6 @@ class CustomEffect:
 
     def update(self):
         self.arr = self.arr * 0
-        #print("ripple_list size:", len(self.ripple_list))
 
         output = None
         for ripple in self.ripple_list:
@@ -90,8 +90,9 @@ class CustomEffect:
 
 
 
-import inputs
-import threading
+import inputs #check_import
+import threading #check_import
+import logging #check_import
 class KeyboardMapper:
     def __init__(self, callback):
         self.selected_device = None
@@ -135,13 +136,13 @@ class KeyboardMapper:
                 thread.start()
 
     def listen_for_magic_key_entrypoint_(self, device):
-        print("Listening magic key from device:", device, )
+        logging.info("Listening magic key from device: %s", device, )
         while self.selected_device is None:
             events = device.read()
             if events:
                 for event in events:
                     if self.selected_device is None and (event.code == "KEY_LEFTCTRL" or event.code == "KEY_RIGHTCTRL"):
-                        print("Magic key ({}) detected from device: {}".format(event.code, device.name))
+                        logging.info("Magic key (%s) detected from device: %s", event.code, device.name)
                         self.selected_device = device
                         self.spinner = threading.Thread(target=self.spinner_entrypoint_, args=(self.selected_device,))
                         self.spinner.start()

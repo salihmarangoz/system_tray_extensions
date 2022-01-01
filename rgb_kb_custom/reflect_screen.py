@@ -1,7 +1,7 @@
 
-import numpy as np
-import cv2
-import mss
+import numpy as np #check_import
+import cv2 #check_import
+import mss #check_import
 
 class CustomEffect:
     def __init__(self, arr, driver):
