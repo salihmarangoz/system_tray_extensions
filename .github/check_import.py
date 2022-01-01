@@ -10,13 +10,15 @@ def test_imports(path):
     with open(path) as f:
         lines = f.readlines()
 
-    for l in lines:
+    for i, l in enumerate(lines):
         if "#check_import" in l or "# check_import" in l:
             l_ = l.strip()
             try:
                 exec(l_)
-            except Exception as e:
-                print("IMPORT ERROR:", l_)
+            except Exception as e: # DisplayNameError
+                if "DisplayNameError" in e.__class__.__name__:
+                    print("Got DisplayNameError! Ignoring import error...")
+                print("IMPORT ERROR ON LINE", i, ":", l_)
                 print(e)
                 is_correct = False
     return is_correct
