@@ -16,7 +16,7 @@ def test_imports(path):
             try:
                 exec(l_)
             except:
-                print("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print("IMPORT ERROR:", l_)
                 is_correct = False
     return is_correct
 
