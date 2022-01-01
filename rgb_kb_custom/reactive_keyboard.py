@@ -82,8 +82,7 @@ class CustomEffect:
         return True
 
     def on_exit(self):
-        pass
-
+        self.keyboard_mapper.exit()
 
 
 #################################################################################################################
@@ -115,8 +114,11 @@ class KeyboardMapper:
         self.default_map_inv = {}
         self.process_map()
 
-        self.listen_for_magic_key()
         self.register_callback(callback)
+
+        #self.listen_for_magic_key()  # METHOD-1: LISTEN FOR A SPECIFIC KEYBOARD
+        self.listen_all_keyboards()   # METHOD-2: LISTEN ALL KEYBOARDS
+
 
     def process_map(self):
         rows = len(self.default_map)
@@ -126,6 +128,14 @@ class KeyboardMapper:
                 keycode = self.default_map[i][j]
                 if keycode is not None:
                     self.default_map_inv["KEY_" + keycode] = (i,j)
+
+    def listen_all_keyboards(self):
+        for device in inputs.devices:
+            if device.device_type == "kbd":
+                logging.info("Listening keyboard device: %s", device.name)
+                thread = threading.Thread(target=self.spinner_entrypoint_, args=(device,))
+                self.thread_list.append(thread)
+                thread.start()
 
     # Listens all input devices, sets selected_device to which gets left or right ctrl stroke first
     def listen_for_magic_key(self):
