@@ -3,7 +3,7 @@
 # - https://python-sounddevice.readthedocs.io/en/0.4.3/examples.html#real-time-text-mode-spectrogram
 # - https://soundcard.readthedocs.io/en/latest/
 
-import soundcard as sc #check_import
+import soundcard as sc #DISABLED_check_import
 import numpy as np #check_import
 import math #check_import
 import cv2 #check_import

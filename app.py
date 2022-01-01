@@ -4,7 +4,6 @@ import configparser #check_import
 import os #check_import
 import traceback #check_import
 import logging #check_import
-import find_me_if_you_can #check_import
 
 
 def main():

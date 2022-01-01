@@ -7,7 +7,7 @@ import threading #check_import
 from PyQt5.QtGui import * #check_import
 from PyQt5.QtWidgets import * #check_import
 
-import git #check_import
+import git #DISABLED_check_import
 import logging #check_import
 import webbrowser #check_import
 

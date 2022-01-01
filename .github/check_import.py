@@ -16,8 +16,6 @@ def test_imports(path):
             try:
                 exec(l_)
             except Exception as e: # DisplayNameError
-                if "DisplayNameError" in e.__class__.__name__:
-                    print("Got DisplayNameError! Ignoring import error...")
                 print("IMPORT ERROR ({}) ON LINE {}: {}".format(e.__class__.__name__, i, l_))
                 print(e)
                 is_correct = False
