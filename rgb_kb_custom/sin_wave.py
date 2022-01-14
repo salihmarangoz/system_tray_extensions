@@ -14,8 +14,8 @@ class CustomEffect:
         self.is_psychedelic = np.random.uniform() < 0.02 # easter egg :)
         self.wave_tickness = np.e # 2 for tick and increase value to decrease tickness
         self.wave_width = np.pi*2
-        self.phase_increment = 0.3
-        self.hue_increment = 2
+        self.phase_increment = 0.2
+        self.hue_increment = 1
 
     def update(self):
         self.arr = self.arr * 0
@@ -51,7 +51,7 @@ class CustomEffect:
         return self.arr
 
     def get_fps(self):
-        return 20
+        return 15
 
     def is_enabled(self):
         return True

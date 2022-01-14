@@ -352,12 +352,14 @@ class Ite8291r3:
                 logging.info("Video not found!")
                 break
 
-            fps = cap.get(cv2.CAP_PROP_FPS)
+            fps = 15 # cap.get(cv2.CAP_PROP_FPS)
             logging.info("Loaded video with fps: %f", fps)
             enter_animation = True
             self._video_brightness = 0.0
 
             while self.video_thread_enable:
+                timestamp = time.time()
+
                 ret, frame = cap.read()
                 if ret == False:
                     break
@@ -377,7 +379,10 @@ class Ite8291r3:
                 colormap = img / 255.0 # normalize after cv2 operations
                 voltmap = self.color_to_voltage(colormap) * self._video_brightness 
                 self.apply_voltmap(voltmap)
-                time.sleep(1/fps) # todo: count delays
+
+                time_diff = 1/fps - (time.time() - timestamp)
+                if time_diff > 0:
+                    time.sleep(time_diff)
 
             # exit animation
             while self._video_brightness > 0 and not is_video_loop and self.video_thread_enable:
@@ -405,6 +410,7 @@ class Ite8291r3:
         custom_effect = selected_module.CustomEffect(arr, self)
 
         while custom_effect.is_enabled() and self.py_script_thread_enable:
+            timestamp = time.time()
             arr = custom_effect.update()
 
             if arr is None:
@@ -413,7 +419,9 @@ class Ite8291r3:
                 voltmap = self.color_to_voltage(arr) * self.state["brightness"] 
                 self.apply_voltmap(voltmap)
 
-            time.sleep(1/custom_effect.get_fps()) # todo: count delays
+            time_diff = 1/custom_effect.get_fps() - (time.time() - timestamp)
+            if time_diff > 0:
+                time.sleep(time_diff)
 
         self.py_script_thread_enable = False
         custom_effect.on_exit()
