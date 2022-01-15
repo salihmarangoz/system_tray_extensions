@@ -1,3 +1,9 @@
+# Announcement
+
+Adding multiple functionality to this project was a bad idea. So I will crop functionalities other than RGB keyboard. And I will make this project be able to run in CLI. I haven't decided on a new name yet but I think it will be `ste-rgb-keyboard`. Other parts such as  `DgpuPowerstateMonitor` and `BatteryPowerDrawMonitor` will be published as a new small projects. Sorry for the inconvenience!
+
+And I am thinking about publishing this project as a Flatpak, Snap and/or AppImage. So, installation and update will be easier.
+
 # [STE] System Tray Extensions
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
