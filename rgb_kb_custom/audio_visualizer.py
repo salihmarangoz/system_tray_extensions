@@ -12,6 +12,8 @@ import logging #check_import
 import matplotlib.pyplot as plt #check_import
 import matplotlib #check_import
 
+# todo: make for loop without using the driver object
+
 class CustomEffect:
     def __init__(self, arr, driver):
         self.arr = arr * 0

@@ -72,7 +72,7 @@ class CustomEffect:
         return mouse_x, mouse_y
 
     def get_fps(self):
-        return 25
+        return 15
 
     def is_enabled(self):
         return True

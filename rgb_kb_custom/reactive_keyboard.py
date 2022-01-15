@@ -76,7 +76,7 @@ class CustomEffect:
         return self.arr
 
     def get_fps(self):
-        return 20
+        return 15
 
     def is_enabled(self):
         return True

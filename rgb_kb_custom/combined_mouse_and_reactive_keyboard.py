@@ -29,7 +29,7 @@ class CustomEffect:
         return np.clip(arr_mouse + arr_keyboard, 0, 1) # TODO: Blend
 
     def get_fps(self):
-        return 25
+        return 15
 
     def is_enabled(self):
         return True
