@@ -51,12 +51,13 @@ If there are modifications needed and woud like to share please send a pull requ
 
 - Debian: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml)
 - Arch: [![build-checks-arch](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml)
+- Fedora: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml)
 
 **Tested Systems (Laptop/OS):**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
 - Tuxedo Stellaris 15 Gen 3 - Manjaro 21.1.6
-- XMG Fusion 15 - ???
+- XMG Fusion 15 / Eluktronics MAG-15 - PopOS! 20.04, ElementaryOS 6, Nobara 37
 
 
 
@@ -129,6 +130,7 @@ $ git pull
 # ONLY RUN ONE OF THESE ACCORDING TO YOUR LINUX DISTRIBUTION:
 $ bash install_debian.sh # For Debian based distributions; Ubuntu, Pop OS, etc.
 $ bash install_arch.sh # For Arch based distributions; Manjaro, etc. 
+$ bash install_fedora.sh # For Fedora based distributions; Nobara, etc. 
 
 # Sometimes new devices can be added. Check the installation part if you waiting for a new device support!
 ```
