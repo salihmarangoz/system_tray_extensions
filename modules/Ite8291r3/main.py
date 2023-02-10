@@ -285,7 +285,7 @@ class Ite8291r3:
         return img
 
     def create_default_colormap(self, cell_width=18, cell_height=6, cell_value=(1.0,1.0,1.0)):
-        return np.ones((cell_height, cell_width, 3), dtype=np.float) * cell_value
+        return np.ones((cell_height, cell_width, 3), dtype=np.float32) * cell_value
 
     def layout_to_colormap(self, layout, cell_width=18, cell_height=6, cell_width_px=20, cell_height_px=20, grid_width_px=5, grid_height_px=5):
         colormap = self.create_default_colormap(cell_width, cell_height)
