@@ -187,7 +187,7 @@ class Core():
         self._init_module(EventManager, "EventManager") # this module handles the process signals
 
         # init gui
-        self.app = QApplication([])
+        self.app = QApplication(sys.argv)
         self.tray = QSystemTrayIcon()
         self.tray.setIcon(QIcon(self.project_path + "/icon.png"))
         self.tray.setVisible(True)
