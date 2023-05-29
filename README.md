@@ -33,6 +33,10 @@ STE is a RGB keyboard visualizer package for Tuxedo laptops. This package also p
 
 [![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
+**YOUTUBE: RGB Keyboard running various effects:**
+
+[![](https://img.youtube.com/vi/3oub-UnJ8b8/maxresdefault.jpg)](https://youtu.be/3oub-UnJ8b8)
+
 Also here are some other videos for RGB keyboard good for demonstration. Enable `rgb_kb_custom/reflect_screen.py` effect and watch the video in full-screen: [[1]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[2]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[3]](https://www.youtube.com/watch?v=5gT3migqxNI)
 
 ## Supported Systems
