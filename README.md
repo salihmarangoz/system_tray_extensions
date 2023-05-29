@@ -85,6 +85,12 @@ SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/c
 SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 ```
 
+- Optional: Activate the lightbar module if you installed [tuxedo-keyboard module](https://github.com/tuxedocomputers/tuxedo-keyboard) in your kernel
+
+```bash
+$ sed -i '3 s/^#//' modules/loading_order.list
+```
+
 - After creating the file run:
 
 ```bash
