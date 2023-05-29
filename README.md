@@ -1,19 +1,10 @@
-# Announcement
-
-Adding multiple functionality to this project was a bad idea. So I will crop functionalities other than RGB keyboard. And I will make this project be able to run in CLI. I haven't decided on a new name yet but I think it will be `ste-rgb-keyboard`. Other parts such as  `DgpuPowerstateMonitor` and `BatteryPowerDrawMonitor` will be published as a new small projects. Sorry for the inconvenience!
-
-And I am thinking about publishing this project as a Flatpak, Snap and/or AppImage. So, installation and update will be easier.
-
 # [STE] System Tray Extensions
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
+- [Introduction](#introduction)
 - [Supported Systems](#supported-systems)
-- [Modules](#modules)
 - [Installation](#installation)
-- [Update](#update)
 - [Running](#running)
 - [Contributing](#contributing)
 - [FAQ](#faq)
@@ -21,17 +12,14 @@ And I am thinking about publishing this project as a Flatpak, Snap and/or AppIma
 - [Credits](#credits)
 - [References](#references)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## Introduction
 
-System tray toolbox for Linux laptops. Currently includes tools for contolling keyboard and lightbar leds but new functions will be added in the future. Share your review here: https://github.com/salihmarangoz/system_tray_extensions/issues/19
+STE is a RGB keyboard visualizer package for Tuxedo laptops. This package also provides a playground for playing with keyboard lights for tinkerers.
+
 
 **Screenshot of the system tray application:**
 
 ![screenshot](.etc/screenshot.png)
-
-**YOUTUBE: RGB Keyboard running `rgb_kb_custom/reflect_screen.py`:**
-
-[![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
 
 **GIF: RGB Keyboard running `rgb_kb_custom/sin_wave.py`:**
 
@@ -41,57 +29,42 @@ System tray toolbox for Linux laptops. Currently includes tools for contolling k
 
 ![custom_py_script.ani2](.etc/custom_py_script.ani2.gif)
 
+**YOUTUBE: RGB Keyboard running `rgb_kb_custom/reflect_screen.py`:**
+
+[![](https://img.youtube.com/vi/3v0SmxLNwq4/maxresdefault.jpg)](https://youtu.be/3v0SmxLNwq4)
+
 Also here are some other videos for RGB keyboard good for demonstration. Enable `rgb_kb_custom/reflect_screen.py` effect and watch the video in full-screen: [[1]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[2]](https://www.youtube.com/watch?v=2VsZTW6UjcA) [[3]](https://www.youtube.com/watch?v=5gT3migqxNI)
 
 ## Supported Systems
 
-If there are modifications needed and woud like to share please send a pull request or write [HERE](https://github.com/salihmarangoz/system_tray_extensions/issues/19) so I can add them here too.
-
 **Supported Distributions:**
 
-- Debian: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml)
-- Arch: [![build-checks-arch](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml)
-- Fedora: [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml)
+- [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_debian.yml)
+- [![build-checks-arch](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_arch.yml)
+- [![build-checks-debian](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml/badge.svg)](https://github.com/salihmarangoz/system_tray_extensions/actions/workflows/build_checks_fedora.yml)
 
-**Tested Systems (Laptop/OS):**
+**Tested Systems:**
 
 - Tuxedo Stellaris 15 Gen 3 - Ubuntu 20.04
 - Tuxedo Stellaris 15 Gen 3 - Manjaro 21.1.6
 - XMG Fusion 15 / Eluktronics MAG-15 - PopOS! 20.04, ElementaryOS 6, Nobara 37
-
-
-
-## Modules
-
-| Ready?            | Name (click for readme)                          | Description                                                  |
-| ----------------- | ------------------------------------------------ | ------------------------------------------------------------ |
-| Mostly            | [Core](modules/Core/README.md)                   | Handles process signals, dbus events, state & configuration files, GUI, etc. |
-| Partially         | [UpdateManager](modules/UpdateManager/README.md) | Shows an entry in the STE menu (and optionally via notifications) if an update is available. Hidden otherwise. **Feedback is needed** |
-| Mostly            | [Ite8291r3](modules/Ite8291r3/README.md)         | GUI for RGB keyboard led drivers that can control each LED separately. Currently only includes [ite8291r3-ctl](https://github.com/pobrn/ite8291r3-ctl) for `048d:6004` and `048d:ce00`. Can visualize custom .png, .mp4 and .py files. Also this module can be extended for new devices if there is a driver exists for it. |
-| Only for LightBar | TuxedoKeyboard                                   | GUI for controlling [tuxedo-keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard). Currently includes controls for Light-bar. See [this webpage](https://www.tuxedocomputers.com/en/Infos/Help-Support/Instructions/Installation-of-keyboard-drivers-for-TUXEDO-Computers-models-with-RGB-keyboard-.tuxedo) for more information. |
-| Partially         | DgpuPowerstateMonitor                            | Adds an icon to system tray if dGPU is enabled. Only works or Nvidia for now. |
-| Fully             | BatteryPowerDrawMonitor                          | Adds an icon to system tray showing power drawn from the battery. Hides itself on AC. The script can be run standalone. |
-|                   | Script Manager                                   | todo                                                         |
-
-
 
 ## Installation
 
 Start a new terminal session and use it for all commands above. If you want to run these in multiple terminals don't forget to define `INSTALL_DIR`.
 
 ```bash
-# 0. Specify installation directory
+# Specify installation directory
 $ INSTALL_DIR="$HOME/.system_tray_extensions"
 
-# 1. Download the project
-# Install git via apt or pacman before running the command below
+# Download the project
 $ git clone https://github.com/salihmarangoz/system_tray_extensions.git "$INSTALL_DIR"
-
-# Next steps are included in the script (excluding permissions):
 $ cd $INSTALL_DIR
+
 # ONLY RUN ONE OF THESE ACCORDING TO YOUR LINUX DISTRIBUTION:
 $ bash install_debian.sh # For Debian based distributions; Ubuntu, Pop OS, etc.
 $ bash install_arch.sh # For Arch based distributions; Manjaro, etc. 
+$ bash install_fedora.sh # For Fedora based distributions
 ```
 
 - Create a file `/etc/udev/rules.d/99-ste.rules` for device permissions and copy/paste the following:
@@ -101,12 +74,12 @@ $ bash install_arch.sh # For Arch based distributions; Manjaro, etc.
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="6004", MODE:="0666"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="ce00", MODE:="0666"
 
-# Tuxedo Keyboard
+# Lightbar (Tuxedo Keyboard)
 SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 ```
 
-- after creating the file run:
+- After creating the file run:
 
 ```bash
 # Create `leds` group and add current user to it. 
@@ -114,28 +87,7 @@ $ sudo groupadd leds
 $ sudo usermod -a -G leds $USER
 ```
 
-- and lastly reboot the system. If you don't want to reboot; logout and login, then run `sudo udevadm control --reload`, then run `sudo udevadm trigger`. 
-
-
-
-## Update
-
-Backup your installation before updating if you modified existing files. If you added new files it is OK. But, for example, if you modified some files (e.g. presets inside rgb_kb_custom) create a file named `.gitignore` and write `*` and place into that folder.
-
-```bash
-$ INSTALL_DIR="$HOME/.system_tray_extensions"
-$ cd $INSTALL_DIR
-$ git pull
-
-# ONLY RUN ONE OF THESE ACCORDING TO YOUR LINUX DISTRIBUTION:
-$ bash install_debian.sh # For Debian based distributions; Ubuntu, Pop OS, etc.
-$ bash install_arch.sh # For Arch based distributions; Manjaro, etc. 
-$ bash install_fedora.sh # For Fedora based distributions; Nobara, etc. 
-
-# Sometimes new devices can be added. Check the installation part if you waiting for a new device support!
-```
-
-
+- And lastly reboot the system. If you don't want to reboot; logout and login, then run `sudo udevadm control --reload`, then run `sudo udevadm trigger`. 
 
 ## Running
 

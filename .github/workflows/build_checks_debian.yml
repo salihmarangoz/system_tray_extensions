@@ -1,4 +1,4 @@
-name: build-checks-debian
+name: Build Check Ubuntu
 
 on:
   pull_request:

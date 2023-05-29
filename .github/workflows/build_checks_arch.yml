@@ -1,4 +1,4 @@
-name: build-checks-arch
+name: "Build Check: Arch"
 
 on:
   pull_request:

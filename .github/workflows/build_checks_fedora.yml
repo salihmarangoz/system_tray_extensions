@@ -1,4 +1,4 @@
-name: build-checks-fedora
+name: Build Check Fedora
 
 on:
   pull_request:

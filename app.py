@@ -17,13 +17,16 @@ def main():
 
     # Init all modules
 
-    # todo
-    #--------------------------
     #for module_name in os.listdir(project_path + "/modules"):
     f = open(project_path + "/modules/loading_order.list", "r")
     for module_name_ in f.readlines():
-        module_name = module_name_.strip()
-    #--------------------------
+        module_name = module_name_.strip().split("#")
+        if len(module_name) <= 0: continue
+        module_name = module_name[0]
+
+        if len(module_name) <= 0: continue
+
+        if module_name[0] == '#': continue
 
         if core_name == module_name: continue # the core is already initialized!
 
