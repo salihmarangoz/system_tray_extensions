@@ -74,7 +74,9 @@ $ bash install_fedora.sh # For Fedora based distributions
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="6004", MODE:="0666"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="ce00", MODE:="0666"
 
-# Lightbar (Tuxedo Keyboard)
+# Optional: Lightbar (Tuxedo Keyboard)
+# Controlling lightbar using the interface provided by tuxedo-keyboard.
+# Install the required package and uncomment TuxedoKeyboard line in modules/loading_order.list
 SUBSYSTEM=="leds", ACTION=="add", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R leds /sys%p", RUN+="/bin/chmod -R g=u /sys%p"
 ```
@@ -82,6 +84,7 @@ SUBSYSTEM=="leds", ACTION=="change", ENV{TRIGGER}!="none", RUN+="/bin/chgrp -R l
 - After creating the file run:
 
 ```bash
+# Optional: For controlling the Lightbar (Tuxedo Keyboard)
 # Create `leds` group and add current user to it. 
 $ sudo groupadd leds
 $ sudo usermod -a -G leds $USER
@@ -91,7 +94,9 @@ $ sudo usermod -a -G leds $USER
 
 ## Running
 
-You can start the app via launcher. Also, the app will start on boot by default. If you want to start via terminal then run this command:
+You can start the app via launcher. Also, the app will start on boot by default. 
+
+If you want to start via terminal (maybe for debugging) then run this command:
 
 ```bash
 $ bash start.sh
