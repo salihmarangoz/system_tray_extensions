@@ -58,7 +58,7 @@ class CustomEffect:
         self.arr = self.arr * 0
 
         output = None
-        for ripple in self.ripple_list:
+        for ripple in list(self.ripple_list):
             if ripple.is_visible():
                 if output is None:
                     output = ripple.step()
