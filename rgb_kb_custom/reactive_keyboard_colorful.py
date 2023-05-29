@@ -1,7 +1,8 @@
-
+import random
 import numpy as np #check_import
-from collections import deque #check_import
+import cv2 #check_import
 import logging #check_import
+from collections import deque #check_import
 
 # todo: some quick tricks to see if keyboard effects work properly and a small demonstration of the effect. currently doesnt support multiple ripple waves
 
@@ -10,11 +11,14 @@ class Ripple:
     ii = None
     jj = None
 
-    def __init__(self, pos_i, pos_j, arr_shape):
+
+    def __init__(self, pos_i, pos_j, arr_shape, hue, is_psychedelic):
         self.pos_i = pos_i
         self.pos_j = pos_j
         self.current_r = 0.00001
         self.arr_shape = arr_shape
+        self.hue = hue*360
+        self.is_psychedelic = is_psychedelic < 0.05 # easter egg :)
 
         # precompute for all ripples
         if Ripple.ii is None and Ripple.jj is None:
@@ -23,18 +27,32 @@ class Ripple:
         # precompute for this ripple
         self.ii = Ripple.ii - self.pos_i
         self.jj = Ripple.jj - self.pos_j
-        self.sumii2jj2 = self.ii**2 + self.jj**2
+        self.sumii2jj2 = self.ii**2 + self.jj**2 
 
     def step(self):
-        scale = self.current_r * 1.5 # ripple wave length
+        scale = self.current_r * 1.5 # ripple wave length 
         output = np.exp( -np.abs(self.sumii2jj2 - self.current_r**2) / scale )
         #output *= 1 / self.current_r # decrease wave magnitute over time v1
         #output *= 1 / np.sqrt(self.current_r) # decrease wave magnitute over time v2
         #output *= 1 / self.current_r**0.8 # decrease wave magnitute over time v3
         output *= 3 / self.current_r**0.8 # decrease wave magnitute over time v4
-        
-        output = output.reshape((self.arr_shape[0], self.arr_shape[1], 1))
+        output = np.clip(output, 0.0, 1.0)      
+        # output = (output-np.min(output))/(np.max(output)-np.min(output))
+         
         self.current_r += 0.7 # speed
+
+        if(self.is_psychedelic):
+            hue = (output*360 + self.hue) % 360  
+        else:
+            hue = np.ones(output.shape) * self.hue
+        saturation = np.ones(output.shape)
+        value = output
+
+        # hsv to rgb
+        hsv = np.moveaxis(np.stack([hue, saturation, value]), 0, 2)
+        hsv = np.asarray(hsv, dtype=np.float32)
+        output = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
+
         return output
 
     def is_visible(self):
@@ -43,6 +61,7 @@ class Ripple:
 
 class CustomEffect:
     def __init__(self, arr, driver):
+        random.seed(666)
         self.arr = arr * 0
         self.driver = driver
         self.keyboard_mapper = KeyboardMapper(self.keyboard_cb)
@@ -52,7 +71,7 @@ class CustomEffect:
         # state=0 (press), state=1 (release), state=2 (hold)
         if position is not None and state == 0:
             i, j = position
-            self.ripple_list.append( Ripple(i, j, self.arr.shape) )
+            self.ripple_list.append( Ripple(i, j, self.arr.shape, random.random(), random.random()) )
 
     def update(self):
         self.arr = self.arr * 0
@@ -71,7 +90,10 @@ class CustomEffect:
 
         if output is not None:
             output = np.clip(output, 0.0, 1.0)
+            output = np.where(output < 0.1, 0.1, output)
             self.arr[:,:,:] = output
+        else:
+            self.arr = np.where(self.arr < 0.1, 0.1, self.arr)
 
         return self.arr
 
