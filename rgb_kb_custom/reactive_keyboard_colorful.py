@@ -63,9 +63,9 @@ class CustomEffect:
     def __init__(self, arr, driver):
         random.seed(666)
         self.arr = arr * 0
+        self.ripple_list = deque()
         self.driver = driver
         self.keyboard_mapper = KeyboardMapper(self.keyboard_cb)
-        self.ripple_list = deque()
 
     def keyboard_cb(self, code, state, position):
         # state=0 (press), state=1 (release), state=2 (hold)

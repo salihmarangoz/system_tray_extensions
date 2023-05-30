@@ -8,71 +8,68 @@ import matplotlib.pyplot as plt #check_import
 from pynput.mouse import Controller, Listener #DISABLED_check_import
 from collections import deque #check_import
 from reactive_keyboard_colorful import Ripple #DISABLED_check_import
+from mouse_ripple import Circle #DISABLED_check_import
 
-class Circle:
-    sigma = 0.65
-    decay_rate = 0.2 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
-    animation_steps = 0
-    cm = plt.get_cmap('hsv')
-
-    def __init__(self, x, y, old_pos, color_phase, arr_shape):
-        self.x = x
-        self.y = y
-        self.old_pos = old_pos
-        self.color_phase= color_phase
+class Shift:
+    def __init__(self, arr_shape):
         self.arr_shape = arr_shape
-        self.idx = np.indices((self.arr_shape[0], self.arr_shape[1]))
+        self.bc_shape = (self.arr_shape[0]*4, self.arr_shape[1], 3)
+        self.smoothing_amount = 3
+        self.smoothing = 0
+        self.is_updated = False  # background roll speed limiter
 
+        # exponential weight decay
+        self.decay_rate = 0.15 # https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
+        self.current_value = 0.0
 
-        movement_angle = np.arctan2(self.old_pos[1] - self.y, self.old_pos[0] - self.x) + np.pi # 0 to 2*pi
-        movement_angle = (movement_angle+self.color_phase) % (np.pi*2)
+        self.background = np.zeros(self.bc_shape)
+        #np.random.seed(43)
+        for i in range(50):
+            x = np.random.random()*0.5 + 0.5
+            y = np.random.random()*0.5 + 0.5
+            dx = np.random.random()
+            dy = np.random.random()
+            color_phase = np.random.random() * np.pi * 2
+            c = Circle(x+dx, y+dy, (x,y), color_phase, self.bc_shape)
+            self.background += c.step()
+            self.background = np.roll(self.background, shift=1, axis=1)
+            self.background = np.roll(self.background, shift=1, axis=0)
+        self.background = np.clip(self.background, 0.0, 1.0)
 
-        length = np.sqrt( (self.old_pos[0]-self.x)**2 + (self.old_pos[1]-self.y)**2 ) * 20 # set this last constant so that there will be no empty space between gaussian trails
-        diff_x = self.x - self.old_pos[0]
-        diff_y = self.y - self.old_pos[1]
+    def register_movement(self, x, y, dx, dy):
+        if not self.is_updated:
+            return
+        #self.background = np.roll(self.background, shift=dx, axis=1)
+        self.background = np.roll(self.background, shift=-dy, axis=0)
+        self.current_value = (1-self.decay_rate)*self.current_value + self.decay_rate*1.0
+        self.smoothing = min(self.smoothing+1, self.smoothing_amount)
+        self.is_updated = False
 
-        gaussian_d = []
-
-        for l in np.linspace(0, length, num=int(length)+1) / length:
-            y_kb = (self.old_pos[1] + diff_y*l) * (self.arr_shape[0]-1)
-            x_kb = (self.old_pos[0] + diff_x*l) * (self.arr_shape[1]-1)
-            gaussian_d.append( np.exp(-0.5 * ((self.idx[0] - y_kb)**2 + (self.idx[1] - x_kb)**2) / self.sigma**2) )
-        gaussian_d = np.array(gaussian_d).reshape((len(gaussian_d), -1))
-        gaussian_d = np.max(gaussian_d, axis=0)
-        gaussian_d = gaussian_d.reshape((self.arr_shape[0], self.arr_shape[1]))
-
-        gaussian_d = 2 * gaussian_d / np.max(gaussian_d)
-        gaussian_d = np.clip(0, 1, gaussian_d*1.0)
-
-        color = np.array(self.cm(movement_angle/(2*np.pi))[:-1])
-
-        self.circle = np.expand_dims(gaussian_d, axis=2) * color.reshape(1, 1, -1)
-        self.circle += self.decay_rate * self.circle
-
-    def step(self):
-        self.animation_steps += 1
-        self.circle = (1-self.decay_rate) * self.circle
-
-        return self.circle
-    
-    def is_visible(self):
-        return self.animation_steps < 60 # magic number :S
+    def step(self, arr):
+        self.is_updated = True
+        if self.smoothing <= 0:
+            self.current_value = (1-self.decay_rate)*self.current_value
+        self.smoothing = max(self.smoothing-1, 0)
+        if self.current_value > 0.01:
+            return arr + self.background[:self.arr_shape[0], :self.arr_shape[1]] * self.current_value
+        else:
+            return arr
 
 class CustomEffect:
     def __init__(self, arr, driver):
         self.arr = arr * 0
         self.driver = driver
+        self.mouse = Controller()
         self.old_pos = None
         self.color_phase = np.random.random() * np.pi * 2
+        self.shift_effect = Shift(arr.shape)
         self.ripple_list = deque()
         self.circle_list = deque()
-        self.scroll_debounce = 0
         self.move_debounce = 0
 
         # parameters:
         self.cm = plt.get_cmap('hsv')
 
-        self.mouse = Controller()
         listener = Listener(
             on_move=self.on_move,
             on_click=self.on_click,
@@ -109,12 +106,12 @@ class CustomEffect:
         if output is not None:
             output = np.clip(output, 0.0, 1.0)
             output = np.where(output < 0.1, 0.1, output) # Keep a minimum backlight
+            output = self.shift_effect.step(output)
             self.arr[:,:,:] = output
         else:
+            self.arr = self.shift_effect.step(self.arr)
             self.arr = np.where(self.arr < 0.1, 0.1, self.arr) # Keep a minimum backlight
 
-        if self.scroll_debounce > 0:
-            self.scroll_debounce -= 1
 
         if self.move_debounce > 0:
             self.move_debounce -= 1
@@ -144,10 +141,7 @@ class CustomEffect:
             self.ripple_list.append( Ripple(i_kb, j_kb, self.arr.shape, random.random(), random.random()) )
 
     def on_scroll(self, x, y, dx, dy):
-        if self.scroll_debounce == 0:
-            i_kb, j_kb = self.get_kb_mouse_pos(x,y)
-            self.ripple_list.append( Ripple(i_kb, j_kb, self.arr.shape, random.random(), random.random()) )
-            self.scroll_debounce += self.get_fps()
+        self.shift_effect.register_movement(x, y, dx, dy)
 
     def get_scaled_mouse_pos(self, x, y):
         geometry = self.mouse._display.screen()['root'].get_geometry()._data # some quick dirty hacks. works for xorg

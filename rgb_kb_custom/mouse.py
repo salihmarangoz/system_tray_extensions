@@ -9,12 +9,13 @@ class CustomEffect:
         self.arr = arr * 0
         self.idx = np.indices((self.arr.shape[0], self.arr.shape[1]), dtype=self.arr.dtype)
         self.driver = driver
-        self.mouse = Controller()
         self.old_pos = None
         self.color_phase = np.random.random() * np.pi * 2
 
         # parameters:
         self.cm = plt.get_cmap('hsv')
+
+        self.mouse = Controller()
 
     def update(self):
         sigma = 0.65
