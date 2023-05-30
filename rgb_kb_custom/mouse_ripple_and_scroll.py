@@ -13,7 +13,7 @@ from mouse_ripple import Circle #DISABLED_check_import
 class Shift:
     def __init__(self, arr_shape):
         self.arr_shape = arr_shape
-        self.bc_shape = (self.arr_shape[0]*4, self.arr_shape[1], 3)
+        self.bc_shape = (self.arr_shape[0]*4, self.arr_shape[1]*3, 3)
         self.smoothing_amount = 3
         self.smoothing = 0
         self.is_updated = False  # background roll speed limiter
@@ -23,14 +23,12 @@ class Shift:
         self.current_value = 0.0
 
         self.background = np.zeros(self.bc_shape)
-        #np.random.seed(43)
-        for i in range(50):
-            x = np.random.random()*0.5 + 0.5
-            y = np.random.random()*0.5 + 0.5
-            dx = np.random.random()
-            dy = np.random.random()
+        #np.random.seed(42)
+        for i in range(256):
+            x = np.random.random()*0.9 + 0.05
+            y = np.random.random()*0.9 + 0.05
             color_phase = np.random.random() * np.pi * 2
-            c = Circle(x+dx, y+dy, (x,y), color_phase, self.bc_shape)
+            c = Circle(x+0.0001, y+0.0001, (x,y), color_phase, self.bc_shape)
             self.background += c.step()
             self.background = np.roll(self.background, shift=1, axis=1)
             self.background = np.roll(self.background, shift=1, axis=0)
@@ -39,8 +37,8 @@ class Shift:
     def register_movement(self, x, y, dx, dy):
         if not self.is_updated:
             return
-        #self.background = np.roll(self.background, shift=dx, axis=1)
-        self.background = np.roll(self.background, shift=-dy, axis=0)
+        self.background = np.roll(self.background, shift=-dx, axis=1)
+        self.background = np.roll(self.background, shift=dy, axis=0)
         self.current_value = (1-self.decay_rate)*self.current_value + self.decay_rate*1.0
         self.smoothing = min(self.smoothing+1, self.smoothing_amount)
         self.is_updated = False
@@ -82,11 +80,11 @@ class CustomEffect:
         output = None
         for circle in list(self.circle_list):
             if circle.is_visible():
-                    if output is None:
-                        output = circle.step()
-                    else:
-                        new_arr = circle.step()
-                        output = np.max(np.stack([output, new_arr]), axis=0)
+                if output is None:
+                    output = circle.step()
+                else:
+                    new_arr = circle.step()
+                    output = np.max(np.stack([output, new_arr]), axis=0)
 
         if len(self.circle_list) > 0:
             if not self.circle_list[0].is_visible():
@@ -94,10 +92,10 @@ class CustomEffect:
 
         for ripple in list(self.ripple_list):
             if ripple.is_visible():
-                    if output is None:
-                        output = ripple.step()
-                    else:
-                        output += ripple.step()
+                if output is None:
+                    output = ripple.step()
+                else:
+                    output += ripple.step()
 
         if len(self.ripple_list) > 0:
             if not self.ripple_list[0].is_visible():
@@ -111,7 +109,6 @@ class CustomEffect:
         else:
             self.arr = self.shift_effect.step(self.arr)
             self.arr = np.where(self.arr < 0.1, 0.1, self.arr) # Keep a minimum backlight
-
 
         if self.move_debounce > 0:
             self.move_debounce -= 1
