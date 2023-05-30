@@ -10,7 +10,7 @@ class CustomEffect:
         self.arr = arr * 0
         self.driver = driver
 
-        self.mouse_effect = self.load_effect("mouse.py", arr, driver)
+        self.mouse_effect = self.load_effect("mouse_ripple.py", arr, driver)
         self.keyboard_effect = self.load_effect("reactive_keyboard_colorful.py", arr, driver)
 
     # load effect file located in the same directory and create CustomEffect objects

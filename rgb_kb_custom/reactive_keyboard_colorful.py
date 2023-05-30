@@ -1,4 +1,4 @@
-import random
+import random #check_import
 import numpy as np #check_import
 import cv2 #check_import
 import logging #check_import
@@ -90,10 +90,10 @@ class CustomEffect:
 
         if output is not None:
             output = np.clip(output, 0.0, 1.0)
-            output = np.where(output < 0.1, 0.1, output)
+            output = np.where(output < 0.1, 0.1, output) # Keep a minimum backlight
             self.arr[:,:,:] = output
         else:
-            self.arr = np.where(self.arr < 0.1, 0.1, self.arr)
+            self.arr = np.where(self.arr < 0.1, 0.1, self.arr) # Keep a minimum backlight
 
         return self.arr
 
