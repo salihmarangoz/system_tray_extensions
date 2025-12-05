@@ -1,7 +1,7 @@
 Core
-Ite8291r3
-#TuxedoKeyboard
-UpdateManager
+#Ite8291r3
+TuxedoKeyboard
+#UpdateManager
 About
 #DgpuPowerstateMonitor   #deprecated
 #BatteryPowerDrawMonitor #deprecated
