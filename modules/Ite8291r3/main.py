@@ -77,8 +77,10 @@ class Ite8291r3:
         if self.state is None:
             self.state = self.get_default_state()
 
+        # need this debug stream due to the new lib code
+        traffic_callback = lambda *args: print("debug:", *args)
         # init rgb kb driver
-        self.ite = ite8291r3.get()
+        self.ite = ite8291r3.get(None, traffic_callback)
 
         # init qt gui
         menu = node.get_tray_menu()
